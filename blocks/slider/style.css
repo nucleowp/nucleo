@@ -1,0 +1,161 @@
+/* Le variabili di controllo non si ereditano da un blocco esterno (es. una nc/collection): il nodo le riceve dal suo stile. */
+:where(.nc-slider) {
+  --nc-control-bg: initial;
+  --nc-control-color: initial;
+  --nc-control-border: initial;
+  --nc-control-radius: initial;
+  --nc-control-padding: initial;
+  --nc-control-focus: initial;
+  --nc-control-size: initial;
+  --nc-control-dot: initial;
+  --nc-control-dot-active: initial;
+  --nc-control-inset: initial;
+}
+
+.nc-slider {
+  --nc-slider-per-view: 1;
+  --nc-slider-speed: 500ms;
+  position: relative;
+}
+
+.nc-slider[data-per-view="2"] {
+  --nc-slider-per-view: 2;
+}
+
+.nc-slider[data-per-view="3"] {
+  --nc-slider-per-view: 3;
+}
+
+.nc-slider[data-per-view="4"] {
+  --nc-slider-per-view: 4;
+}
+
+.nc-slider__track {
+  display: flex;
+  gap: var(--nc-space-4);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+}
+
+.nc-slider__slide {
+  flex: 0 0 calc((100% - (var(--nc-slider-per-view) - 1) * var(--nc-space-4)) / var(--nc-slider-per-view));
+  min-width: 0;
+  scroll-snap-align: start;
+}
+
+/* Dissolvenza: tutte le slide nella stessa cella di griglia, si vede solo is-active. perView non vale. */
+.nc-slider[data-effect="fade"] .nc-slider__track {
+  display: grid;
+  overflow: hidden;
+}
+
+.nc-slider[data-effect="fade"] .nc-slider__slide {
+  grid-area: 1 / 1;
+  scroll-snap-align: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--nc-slider-speed) ease, visibility var(--nc-slider-speed) ease;
+}
+
+.nc-slider[data-effect="fade"] .nc-slider__slide.is-active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.nc-slider__dots {
+  display: flex;
+  justify-content: center;
+  gap: var(--nc-space-2);
+  margin-top: var(--nc-space-4);
+}
+
+.nc-slider__dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: var(--nc-control-dot, currentColor);
+  cursor: pointer;
+  transition: width 0.3s;
+}
+
+.nc-slider__dot.is-active {
+  width: 24px;
+  background: var(--nc-control-dot-active, currentColor);
+}
+
+.nc-slider__dot:focus-visible {
+  outline: 3px solid var(--nc-control-focus, currentColor);
+  outline-offset: 2px;
+}
+
+.nc-slider__controls {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--nc-space-2);
+  margin-top: var(--nc-space-4);
+}
+
+.nc-slider__prev,
+.nc-slider__next,
+.nc-slider__toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--nc-control-size, 2.5rem);
+  height: var(--nc-control-size, 2.5rem);
+  padding: var(--nc-control-padding, 0);
+  border: var(--nc-control-border, 1px solid currentColor);
+  border-radius: var(--nc-control-radius, 50%);
+  background: var(--nc-control-bg, transparent);
+  color: var(--nc-control-color, inherit);
+  font: inherit;
+  cursor: pointer;
+}
+
+.nc-slider__prev:disabled,
+.nc-slider__next:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.nc-slider__prev:focus-visible,
+.nc-slider__next:focus-visible,
+.nc-slider__toggle:focus-visible {
+  outline: 3px solid var(--nc-control-focus, currentColor);
+  outline-offset: 2px;
+}
+
+/* Punti e controlli sopra le slide: un solo contenitore assoluto, il resto non intercetta i clic. */
+.nc-slider__ui {
+  position: absolute;
+  inset: var(--nc-control-inset, var(--nc-space-4));
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  gap: var(--nc-space-2);
+  pointer-events: none;
+}
+
+.nc-slider__ui > * {
+  pointer-events: auto;
+}
+
+.nc-slider__ui--bottom-left {
+  justify-content: flex-start;
+}
+
+.nc-slider__ui--bottom-right {
+  justify-content: flex-end;
+}
+
+.nc-slider__ui--bottom-center {
+  justify-content: center;
+}
+
+.nc-slider__ui .nc-slider__dots,
+.nc-slider__ui .nc-slider__controls {
+  margin-top: 0;
+}

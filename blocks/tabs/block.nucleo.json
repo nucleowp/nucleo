@@ -1,0 +1,39 @@
+{
+  "name": "nc/tabs",
+  "version": 1,
+  "title": "Tabs",
+  "category": "interactive",
+  "description": "Tabs with a title and content. Without JavaScript all contents stay visible; with JavaScript only one is shown at a time.",
+  "aiHints": "Each item has a short title and a text content. Use distinct titles and few items. Its parts for style.parts are tab and panel, for example style.parts.tab.fontWeight 600.",
+  "content": {
+    "items": {
+      "type": "array",
+      "translatable": true,
+      "required": true,
+      "item": {
+        "title": { "type": "string", "required": true },
+        "html": { "type": "rich-text", "required": true }
+      }
+    }
+  },
+  "settings": {},
+  "supports": {
+    "style": ["spacing", "color", "typography", "border", "motion"],
+    "responsive": true,
+    "visibility": true
+  },
+  "parts": {
+    "tab": " .nc-tabs__tab",
+    "panel": " .nc-tabs__panel"
+  },
+  "children": false,
+  "parents": null,
+  "assets": {
+    "style": "style.css",
+    "script": "view.js",
+    "strategy": "idle"
+  },
+  "semantics": {},
+  "renderer": "Nucleo\\Blocks\\Core\\TabsRenderer",
+  "migrations": {}
+}

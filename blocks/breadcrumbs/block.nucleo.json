@@ -1,0 +1,51 @@
+{
+  "name": "nc/breadcrumbs",
+  "version": 1,
+  "title": "Breadcrumbs",
+  "category": "navigation",
+  "description": "Navigation path: Home, optional parent or post type archive, taxonomy term, post ancestors, current page. Uses Yoast or Rank Math if active, otherwise an internal generator. Dynamic.",
+  "aiHints": "Place it below the header in single and archive layouts. Set parent to point the trail to a page (for example a products page) instead of the post type archive. Set taxonomy to show the first term of the post with its parent terms. Its parts for style.parts are list, item, link and current, for example style.parts.current.fontWeight 600.",
+  "content": {},
+  "settings": {
+    "homeLabel": {
+      "type": "string",
+      "default": "Home"
+    },
+    "archive": {
+      "type": "boolean",
+      "default": false
+    },
+    "parent": {
+      "type": "object",
+      "properties": {
+        "label": { "type": "string" },
+        "href": { "type": "string" }
+      }
+    },
+    "taxonomy": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "supports": {
+    "style": ["typography", "color", "spacing", "motion"],
+    "responsive": true,
+    "visibility": true,
+    "bind": []
+  },
+  "parts": {
+    "list": " ol",
+    "item": " li",
+    "link": " a",
+    "current": " [aria-current=\"page\"]"
+  },
+  "children": false,
+  "parents": null,
+  "assets": {
+    "style": "style.css",
+    "script": null
+  },
+  "semantics": {},
+  "migrations": {},
+  "renderer": "Nucleo\\Blocks\\Core\\BreadcrumbsRenderer"
+}

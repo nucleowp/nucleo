@@ -1,0 +1,22 @@
+.nc-post-meta {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em 1em;
+}
+
+.nc-post-meta--chips .nc-post-meta__item {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+}
+
+.nc-post-meta--chips .nc-post-meta__term {
+  display: inline-block;
+  padding: 0.25em 0.75em;
+  border: 1px solid var(--nc-color-border);
+  border-radius: var(--nc-radius-full);
+  background: var(--nc-color-surface);
+  color: var(--nc-color-text);
+  text-decoration: none;
+}

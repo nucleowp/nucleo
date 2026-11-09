@@ -1,0 +1,24 @@
+.nc-list {
+  margin: 0;
+  padding-left: var(--nc-space-6);
+}
+
+.nc-list > li {
+  padding-block: var(--nc-space-1);
+}
+
+.nc-list:has(> li > svg) {
+  padding-left: 0;
+}
+
+.nc-list > li:has(> svg) {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--nc-space-2);
+  list-style: none;
+}
+
+.nc-list > li > svg {
+  margin-top: 0.2em;
+  color: var(--nc-color-primary);
+}

@@ -1,0 +1,29 @@
+{
+  "name": "nc/post-image",
+  "version": 1,
+  "title": "Featured image",
+  "category": "media",
+  "description": "Featured image of the current post. Dynamic: read on every request.",
+  "aiHints": "Use priority only for the above-the-fold image in single layouts. Modern formats (AVIF, WebP) are optional: the original png/jpg stays the fallback, and automatic sources need the site option imageFormats.",
+  "content": {},
+  "settings": {
+    "size":     { "type": "string", "default": "large" },
+    "priority": { "type": "boolean", "default": false },
+    "formats":  { "type": "string", "enum": ["auto", "off"], "default": "auto" }
+  },
+  "supports": {
+    "style": ["spacing", "size", "border", "effects", "motion"],
+    "responsive": true,
+    "visibility": true,
+    "bind": []
+  },
+  "children": false,
+  "parents": null,
+  "assets": {
+    "style": "style.css",
+    "script": null
+  },
+  "semantics": {},
+  "migrations": {},
+  "renderer": "Nucleo\\Blocks\\Core\\PostImageRenderer"
+}

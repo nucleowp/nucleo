@@ -1,0 +1,44 @@
+{
+  "name": "nc/menu",
+  "version": 1,
+  "title": "Menu",
+  "category": "navigation",
+  "description": "WordPress menu with nested or dropdown submenus. Updates when the menu changes.",
+  "aiHints": "Choose an existing menu. An empty or missing menu outputs nothing. With mobile offcanvas, a toggle opens the menu below the breakpoint (md by default). Submenus are nested or dropdown. Its parts for style.parts are list, link and submenu, for example style.parts.link.fontWeight 600.",
+  "content": {
+    "toggleLabel": { "type": "string", "translatable": true }
+  },
+  "settings": {
+    "menu": { "type": "integer", "default": 0 },
+    "orientation": { "type": "string", "enum": ["horizontal", "vertical"], "default": "horizontal" },
+    "mobile": { "type": "string", "enum": ["none", "offcanvas"], "default": "none" },
+    "submenus": { "type": "string", "enum": ["nested", "dropdown"], "default": "nested" },
+    "toggle": { "type": "string", "enum": ["text", "icon"], "default": "text" },
+    "breakpoint": { "type": "string", "enum": ["md", "lg", "xl"], "default": "md" },
+    "panelSide": { "type": "string", "enum": ["left", "right"], "default": "left" }
+  },
+  "supports": {
+    "style": ["typography", "color", "spacing", "layout", "border", "motion", "menu"],
+    "responsive": true,
+    "visibility": true,
+    "bind": []
+  },
+  "parts": {
+    "list": " .nc-menu__list",
+    "link": " .nc-menu__link",
+    "submenu": " .nc-menu__submenu"
+  },
+  "children": ["nc/mega-panel"],
+  "parents": null,
+  "deps": ["menu:{settings.menu}"],
+  "assets": {
+    "style": "style.css",
+    "script": "view.js",
+    "strategy": "idle"
+  },
+  "semantics": {
+    "landmark": { "tag": "nav", "ifFrom": "settings.menu" }
+  },
+  "migrations": {},
+  "renderer": "Nucleo\\Blocks\\Core\\MenuRenderer"
+}

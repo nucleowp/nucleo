@@ -1,0 +1,30 @@
+{
+  "name": "nc/repeater",
+  "version": 1,
+  "title": "Repeater",
+  "category": "dynamic",
+  "description": "Repeats its one child, the row, for each row of a repeater field of the current post. Without rows it shows the empty text, if set.",
+  "aiHints": "Use it to list the rows of a repeater field (for example lessons, steps, features). Add one child with nc/text or nc/container and bind each value to {\"source\":\"item\",\"field\":\"<subfield>\"}; the item source also offers index (from 1). Set field to the repeater key of the model.",
+  "content": {},
+  "settings": {
+    "field": { "type": "string", "default": "" },
+    "tag": { "type": "string", "enum": ["div", "ul", "ol"], "default": "div" },
+    "empty": { "type": "string", "default": "" }
+  },
+  "supports": {
+    "style": ["spacing", "layout", "typography", "color", "motion"],
+    "responsive": true,
+    "visibility": true,
+    "bind": []
+  },
+  "children": true,
+  "parents": null,
+  "deps": [],
+  "assets": {
+    "style": "style.css",
+    "script": null
+  },
+  "semantics": {},
+  "migrations": {},
+  "renderer": "Nucleo\\Blocks\\Core\\RepeaterRenderer"
+}

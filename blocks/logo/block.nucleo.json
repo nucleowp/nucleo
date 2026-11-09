@@ -1,0 +1,26 @@
+{
+  "name": "nc/logo",
+  "version": 1,
+  "title": "Logo",
+  "category": "media",
+  "description": "Site logo with explicit dimensions, or the site name. Linked to the home page.",
+  "aiHints": "Use it only once, usually in the header.",
+  "content": {},
+  "settings": {},
+  "supports": {
+    "style": ["size", "spacing", "motion"],
+    "responsive": true,
+    "visibility": true,
+    "bind": []
+  },
+  "children": false,
+  "parents": null,
+  "deps": ["site"],
+  "assets": {
+    "style": "style.css",
+    "script": null
+  },
+  "semantics": {},
+  "migrations": {},
+  "renderer": "Nucleo\\Blocks\\Core\\LogoRenderer"
+}

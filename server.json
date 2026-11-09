@@ -1,0 +1,24 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "dev.nucleowp/nucleo",
+  "title": "Nucleo for WordPress",
+  "description": "WordPress page builder MCP server: AI agents build pages, layouts and design tokens with OAuth 2.1.",
+  "websiteUrl": "https://nucleowp.dev/en/mcp/",
+  "repository": {
+    "url": "https://github.com/nucleowp/nucleo",
+    "source": "github"
+  },
+  "version": "0.4.1",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://{site_host}/wp-json/nucleo/v1/mcp",
+      "variables": {
+        "site_host": {
+          "description": "Host of your WordPress site with the Nucleo plugin active, for example example.com",
+          "isRequired": true
+        }
+      }
+    }
+  ]
+}

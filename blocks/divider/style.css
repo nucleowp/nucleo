@@ -1,0 +1,5 @@
+.nc-divider {
+  border: 0;
+  border-top: 1px solid currentColor;
+  margin-block: var(--nc-space-4);
+}

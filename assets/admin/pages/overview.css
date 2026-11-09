@@ -1,0 +1,108 @@
+/* Panoramica: stili propri della pagina. Solo var(--nc-*), come admin.css. */
+
+/* Stato del sito: righe chiave/valore con separatore tratteggiato. */
+:is(.nucleo-admin, .nucleo-admin-portal) .nc-overview__kv {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	gap: var(--nc-space-3);
+	padding: 6px 0;
+	border-bottom: 1px dashed var(--nc-line);
+	font: var(--nc-text-small);
+}
+:is(.nucleo-admin, .nucleo-admin-portal) .nc-overview__kv:last-child {
+	border-bottom: 0;
+}
+
+/* Conflitti: blocco di avviso in fondo alla card (nc-card__foot). */
+:is(.nucleo-admin, .nucleo-admin-portal) .nc-overview__conflicts {
+	margin: -12px -20px;
+	padding: 14px 20px;
+	background: var(--nc-warn-bg);
+	border-bottom-left-radius: var(--nc-r-l);
+	border-bottom-right-radius: var(--nc-r-l);
+	color: var(--nc-text);
+}
+:is(.nucleo-admin, .nucleo-admin-portal) .nc-overview__conflict + .nc-overview__conflict {
+	margin-top: var(--nc-space-3);
+}
+:is(.nucleo-admin, .nucleo-admin-portal) .nc-overview__conflict-title {
+	display: block;
+	color: var(--nc-warn);
+	font: var(--nc-text-small);
+	font-weight: 600;
+}
+:is(.nucleo-admin, .nucleo-admin-portal) .nc-overview__conflict-text {
+	margin: 0;
+	font: var(--nc-text-small);
+}
+
+/* Qualità: punteggio medio grande con "/100". */
+:is(.nucleo-admin, .nucleo-admin-portal) .nc-overview__score {
+	margin-top: 6px;
+	font: var(--nc-text-stat);
+	font-variant-numeric: tabular-nums;
+	color: var(--nc-text);
+}
+:is(.nucleo-admin, .nucleo-admin-portal) .nc-overview__score-of {
+	font: var(--nc-text-small);
+	color: var(--nc-text-muted);
+}
+
+/* Qualità: elenco dei problemi più frequenti con pillola di gravità e conteggio. */
+:is(.nucleo-admin, .nucleo-admin-portal) .nc-overview__issues {
+	display: flex;
+	flex-direction: column;
+	gap: var(--nc-space-2);
+}
+:is(.nucleo-admin, .nucleo-admin-portal) .nc-overview__issue {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: var(--nc-space-2);
+	font: var(--nc-text-small);
+}
+:is(.nucleo-admin, .nucleo-admin-portal) .nc-overview__issue-main {
+	display: flex;
+	align-items: center;
+	gap: var(--nc-space-2);
+	min-width: 0;
+}
+:is(.nucleo-admin, .nucleo-admin-portal) .nc-overview__issue b {
+	flex: none;
+	font-variant-numeric: tabular-nums;
+}
+
+/* Azioni rapide: pulsanti a tutta larghezza, testo a sinistra. */
+:is(.nucleo-admin, .nucleo-admin-portal) .nc-overview__actions {
+	display: flex;
+	flex-direction: column;
+	gap: var(--nc-space-3);
+}
+:is(.nucleo-admin, .nucleo-admin-portal) .nc-overview__action {
+	width: 100%;
+	justify-content: flex-start;
+}
+
+/* Ultime modifiche: autore con pillola del client, documento come link. */
+:is(.nucleo-admin, .nucleo-admin-portal) .nc-overview__author {
+	display: inline-flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--nc-space-2);
+}
+:is(.nucleo-admin, .nucleo-admin-portal) .nc-overview__doc {
+	color: var(--nc-accent-hover);
+	font-weight: 600;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+/* Pillole piccole dentro la panoramica. */
+:is(.nucleo-admin, .nucleo-admin-portal) .nc-overview .nc-pill {
+	height: 22px;
+	font-size: 11px;
+}
+:is(.nucleo-admin, .nucleo-admin-portal) .nc-overview__issue .nc-pill {
+	height: 24px;
+}

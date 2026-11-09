@@ -1,0 +1,15 @@
+.nc-query {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.nc-query__item img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.nc-query__item h2 {
+  margin: 0.5em 0 0.25em;
+  line-height: 1.2;
+}

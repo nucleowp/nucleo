@@ -1,0 +1,20 @@
+{
+  "name": "nc/collection-card",
+  "version": 1,
+  "title": "Collection card",
+  "category": "dynamic",
+  "description": "Card of a nc/collection: its one child is repeated for each post. Only inside nc/collection.",
+  "aiHints": "Exactly one card per nc/collection. Its child holds the blocks that show each post: bind, nc/post-title, nc/post-image, nc/post-meta. Do not put lists, forms or page-level blocks in it.",
+  "content": {},
+  "settings": {},
+  "supports": {},
+  "children": true,
+  "parents": ["nc/collection"],
+  "assets": {
+    "style": null,
+    "script": null
+  },
+  "semantics": {},
+  "migrations": {},
+  "renderer": "Nucleo\\Blocks\\Core\\CollectionPartRenderer"
+}

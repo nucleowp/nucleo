@@ -1,0 +1,36 @@
+{
+  "name": "nc/search",
+  "version": 1,
+  "title": "Search form",
+  "category": "navigation",
+  "description": "Site search form. Shows the current query in the results. Dynamic.",
+  "aiHints": "Place it in the header or menu. One search per page. content.label is the field label (settings.hideLabel keeps it for screen readers only), content.buttonLabel the button text, content.placeholder the hint inside the field. Style group controls (controlBackground, controlColor, controlBorder, controlRadius, controlPadding, controlFocus) styles the field; group buttons (buttonBackground, buttonColor, buttonBorder, buttonRadius, buttonPadding) styles the button. Its parts for style.parts are label, input and button, for example style.parts.label.fontWeight 600.",
+  "content": {
+    "label": { "type": "string", "translatable": true, "default": "Search" },
+    "buttonLabel": { "type": "string", "translatable": true, "default": "Search" },
+    "placeholder": { "type": "string", "translatable": true }
+  },
+  "settings": {
+    "hideLabel": { "type": "boolean", "default": false }
+  },
+  "supports": {
+    "style": ["typography", "color", "spacing", "size", "controls", "buttons", "motion"],
+    "responsive": true,
+    "visibility": true,
+    "bind": []
+  },
+  "parts": {
+    "label": " .nc-search__label",
+    "input": " .nc-search__field",
+    "button": " .nc-search__button"
+  },
+  "children": false,
+  "parents": null,
+  "assets": {
+    "style": "style.css",
+    "script": null
+  },
+  "semantics": {},
+  "migrations": {},
+  "renderer": "Nucleo\\Blocks\\Core\\SearchRenderer"
+}

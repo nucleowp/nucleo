@@ -1,0 +1,27 @@
+{
+  "name": "nc/icon",
+  "version": 1,
+  "title": "Icon",
+  "category": "media",
+  "description": "Inline SVG icon: a site icon, or one of the built-in icons. A site icon with the name of a built-in icon replaces it.",
+  "aiHints": "Without a label the icon is decorative. With a label it becomes an image with an accessible name. Site icons come from nucleo-icons-set, or from the CLI: nucleo icons import <folder of SVG files>, nucleo icons add mdi:car lucide:truck (any Iconify library, downloaded once and stored on the site). Use the icons of the design: when the design has its own set, import it instead of using the built-in icons. Color follows the color style of the block.",
+  "content": {
+    "label": { "type": "string" }
+  },
+  "settings": {
+    "name": { "type": "string", "pattern": "^[a-z][a-z0-9-]{0,40}$" }
+  },
+  "supports": {
+    "style": ["size", "color", "spacing", "motion"],
+    "responsive": true,
+    "visibility": true
+  },
+  "children": false,
+  "parents": null,
+  "assets": {
+    "style": "style.css",
+    "script": null
+  },
+  "semantics": {},
+  "renderer": "Nucleo\\Blocks\\Core\\IconRenderer"
+}

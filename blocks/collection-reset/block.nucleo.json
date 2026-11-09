@@ -1,0 +1,24 @@
+{
+  "name": "nc/collection-reset",
+  "version": 1,
+  "title": "Collection reset",
+  "category": "dynamic",
+  "description": "Link that clears the filters of a nc/collection. Only inside nc/collection.",
+  "aiHints": "Optional. content.text is the link text, for example \"Clear filters\".",
+  "content": {
+    "text": { "type": "string", "translatable": true }
+  },
+  "settings": {},
+  "supports": {
+    "style": ["typography", "color", "spacing", "border"]
+  },
+  "children": false,
+  "parents": ["nc/collection"],
+  "assets": {
+    "style": null,
+    "script": null
+  },
+  "semantics": {},
+  "migrations": {},
+  "renderer": "Nucleo\\Blocks\\Core\\CollectionPartRenderer"
+}

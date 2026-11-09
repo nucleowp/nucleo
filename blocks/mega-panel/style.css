@@ -1,0 +1,25 @@
+.nc-mega {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .nc-menu li {
+    position: relative;
+  }
+
+  .nc-menu li:hover > .nc-mega,
+  .nc-menu li:focus-within > .nc-mega {
+    display: block;
+  }
+
+  .nc-menu .nc-mega {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 100;
+    min-width: 20rem;
+    padding: 1.5rem;
+    background: #fff;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  }
+}

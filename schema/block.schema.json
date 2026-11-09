@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nucleo.dev/schema/block.schema.json",
+  "title": "Manifest di blocco Nucleo",
+  "description": "Contenuto di block.nucleo.json. Le proprietà in content e settings usano un sottoinsieme di JSON Schema.",
+  "type": "object",
+  "required": ["name", "version", "title"],
+  "properties": {
+    "name": { "$ref": "#/$defs/blockName" },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "title": { "type": "string", "minLength": 1 },
+    "category": { "type": "string", "minLength": 1 },
+    "description": { "type": "string" },
+    "aiHints": { "type": "string" },
+    "content": { "$ref": "#/$defs/fieldMap" },
+    "settings": { "$ref": "#/$defs/fieldMap" },
+    "supports": { "$ref": "#/$defs/supports" },
+    "parts": {
+      "description": "Parti stilizzabili con style.parts: nome → selettore dentro il nodo, con lo spazio iniziale per un discendente.",
+      "type": "object",
+      "propertyNames": { "pattern": "^[a-z][a-zA-Z0-9]{0,30}$" },
+      "additionalProperties": { "type": "string", "minLength": 1 }
+    },
+    "children": {
+      "anyOf": [
+        { "type": "boolean" },
+        { "$ref": "#/$defs/blockNameList" }
+      ]
+    },
+    "parents": {
+      "anyOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/blockNameList" }
+      ]
+    },
+    "assets": { "$ref": "#/$defs/assets" },
+    "semantics": { "type": "object" },
+    "migrations": { "$ref": "#/$defs/migrations" }
+  },
+  "$defs": {
+    "blockName": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*/[a-z][a-z0-9-]*$"
+    },
+    "blockNameList": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/blockName" },
+      "uniqueItems": true
+    },
+    "fieldMap": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/field" }
+    },
+    "field": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "type": "string", "minLength": 1 },
+        "translatable": { "type": "boolean" },
+        "required": { "type": "boolean" }
+      }
+    },
+    "supports": {
+      "type": "object",
+      "properties": {
+        "style": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        },
+        "styleExclude": {
+          "description": "Gruppi di base (size, spacing, typography, color, border, motion) che il blocco non accetta.",
+          "type": "array",
+          "items": { "enum": ["size", "spacing", "typography", "color", "border", "motion"] },
+          "uniqueItems": true
+        },
+        "responsive": { "type": "boolean" },
+        "visibility": { "type": "boolean" },
+        "bind": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "assets": {
+      "type": "object",
+      "properties": {
+        "style": { "type": ["string", "null"] },
+        "script": { "type": ["string", "null"] }
+      }
+    },
+    "migrations": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[1-9][0-9]*$" },
+      "additionalProperties": {
+        "type": "array",
+        "items": { "$ref": "#/$defs/migrationOp" }
+      }
+    },
+    "migrationOp": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["op", "from", "to"],
+          "additionalProperties": false,
+          "properties": {
+            "op": { "const": "rename" },
+            "from": { "$ref": "#/$defs/fieldPath" },
+            "to": { "$ref": "#/$defs/fieldPath" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["op", "path"],
+          "additionalProperties": false,
+          "properties": {
+            "op": { "const": "remove" },
+            "path": { "$ref": "#/$defs/fieldPath" }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["op", "path", "value"],
+          "additionalProperties": false,
+          "properties": {
+            "op": { "const": "set" },
+            "path": { "$ref": "#/$defs/fieldPath" },
+            "value": {}
+          }
+        }
+      ]
+    },
+    "fieldPath": {
+      "type": "string",
+      "pattern": "^[a-zA-Z_][a-zA-Z0-9_-]*(\\.[a-zA-Z_][a-zA-Z0-9_-]*)*$"
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "name": "nc/text",
+  "version": 1,
+  "title": "Text",
+  "category": "text",
+  "description": "Paragraph with limited rich text: bold, italic, links, line breaks, lists.",
+  "aiHints": "Its link part (the a elements) is styled with style.parts, for example style.parts.link.fontWeight 600.",
+  "content": {
+    "html": { "type": "inline-rich-text", "translatable": true }
+  },
+  "supports": {
+    "style": ["typography", "color", "spacing", "border", "size", "motion"],
+    "responsive": true,
+    "visibility": true,
+    "bind": ["content.html"]
+  },
+  "parts": {
+    "link": " a"
+  },
+  "children": false,
+  "parents": null,
+  "assets": {
+    "style": "style.css",
+    "script": null
+  },
+  "semantics": {
+    "text": { "from": "content.html" }
+  },
+  "renderer": "Nucleo\\Blocks\\Core\\TextRenderer"
+}

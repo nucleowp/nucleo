@@ -1,0 +1,34 @@
+{
+  "name": "nc/video",
+  "version": 1,
+  "title": "Video",
+  "category": "media",
+  "description": "YouTube or Vimeo video with a static thumbnail; the iframe loads only on click.",
+  "aiHints": "Always set a descriptive title: it becomes the accessible name of the play button.",
+  "content": {
+    "provider": { "type": "string", "enum": ["youtube", "vimeo"], "required": true },
+    "videoId": { "type": "string", "required": true },
+    "title": { "type": "string", "translatable": true, "required": true },
+    "poster": { "type": "string" }
+  },
+  "settings": {
+    "consent": { "type": "string", "enum": ["marketing", "statistics", "preferences", "none"], "default": "marketing" }
+  },
+  "supports": {
+    "style": ["size", "border", "motion"],
+    "responsive": true,
+    "visibility": true
+  },
+  "children": false,
+  "parents": null,
+  "assets": {
+    "style": "style.css",
+    "script": "view.js",
+    "strategy": "interaction"
+  },
+  "semantics": {
+    "embed": { "providerFrom": "content.provider", "titleFrom": "content.title" }
+  },
+  "renderer": "Nucleo\\Blocks\\Core\\VideoRenderer",
+  "migrations": {}
+}

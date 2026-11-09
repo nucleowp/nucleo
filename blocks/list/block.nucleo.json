@@ -1,0 +1,33 @@
+{
+  "name": "nc/list",
+  "version": 1,
+  "title": "List",
+  "category": "text",
+  "description": "Bulleted list, optionally with an icon per item.",
+  "aiHints": "Its parts for style.parts are item and icon (the svg of each item), for example style.parts.icon.color, applied to the icons.",
+  "content": {
+    "items": { "type": "array", "items": { "type": "string" }, "required": true }
+  },
+  "settings": {
+    "icon": { "type": "string" }
+  },
+  "supports": {
+    "style": ["typography", "color", "spacing", "motion"],
+    "responsive": true,
+    "visibility": true
+  },
+  "parts": {
+    "item": " li",
+    "icon": " li > svg"
+  },
+  "children": false,
+  "parents": null,
+  "assets": {
+    "style": "style.css",
+    "script": null
+  },
+  "semantics": {
+    "text": { "from": "content.items" }
+  },
+  "renderer": "Nucleo\\Blocks\\Core\\ListRenderer"
+}

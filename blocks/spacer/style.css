@@ -1,0 +1,4 @@
+.nc-spacer {
+  display: block;
+  height: var(--nc-space-8);
+}

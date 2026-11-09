@@ -1,0 +1,26 @@
+{
+  "name": "nc/mega-panel",
+  "version": 1,
+  "title": "Mega panel",
+  "category": "navigation",
+  "description": "Full-width panel linked to an nc/menu item. Shown on mouse hover or focus from 768px.",
+  "aiHints": "Use it only as a child of nc/menu. Set item to the ID of the menu item it belongs to. The content can be a global section.",
+  "content": {},
+  "settings": {
+    "item": { "type": "integer", "default": 0 }
+  },
+  "supports": {
+    "style": ["spacing", "color", "typography", "border", "position", "motion"],
+    "responsive": true,
+    "visibility": true
+  },
+  "children": true,
+  "parents": ["nc/menu"],
+  "assets": {
+    "style": "style.css",
+    "script": null
+  },
+  "semantics": {},
+  "renderer": "Nucleo\\Blocks\\Core\\MegaPanelRenderer",
+  "migrations": {}
+}

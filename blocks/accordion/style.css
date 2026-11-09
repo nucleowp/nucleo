@@ -1,0 +1,60 @@
+.nc-accordion__item {
+  border-bottom: 1px solid currentColor;
+}
+
+.nc-accordion__item > summary {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  cursor: pointer;
+  padding: var(--nc-space-4) 0;
+  font-size: inherit;
+  color: inherit;
+  font-weight: 600;
+}
+
+.nc-accordion__item > summary::-webkit-details-marker {
+  display: none;
+}
+
+.nc-accordion__item > summary::after {
+  content: "";
+  flex: none;
+  order: 1;
+  width: 0.5em;
+  height: 0.5em;
+  margin-inline-start: var(--nc-space-4);
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform 0.2s ease;
+}
+
+.nc-accordion__item[open] > summary::after {
+  transform: rotate(225deg);
+}
+
+.nc-accordion--plus > .nc-accordion__item > summary::after {
+  width: 1em;
+  height: 1em;
+  border: 0;
+  background:
+    linear-gradient(currentColor, currentColor) center / 100% 2px no-repeat,
+    linear-gradient(currentColor, currentColor) center / 2px 100% no-repeat;
+  transform: none;
+}
+
+.nc-accordion--plus > .nc-accordion__item[open] > summary::after {
+  transform: rotate(45deg);
+}
+
+.nc-accordion__item > summary:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 2px;
+}
+
+.nc-accordion__panel {
+  padding-bottom: var(--nc-space-4);
+  font-size: inherit;
+  color: inherit;
+}

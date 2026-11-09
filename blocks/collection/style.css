@@ -1,0 +1,313 @@
+/* nc/collection: controlli, viste, menu a tendina, pannello mobile. Ogni valore legge una variabile --nc-control-* con riserva dai token. Senza .is-enhanced nessun controllo viene nascosto. */
+
+/* Non si ereditano le variabili di un blocco esterno: la classe del nodo le riscrive. */
+:where(.nc-collection) {
+  --nc-control-bg: initial;
+  --nc-control-color: initial;
+  --nc-control-border: initial;
+  --nc-control-radius: initial;
+  --nc-control-padding: initial;
+  --nc-control-focus: initial;
+  --nc-control-active-bg: initial;
+  --nc-control-active-color: initial;
+  --nc-control-active-border: initial;
+  --nc-control-button-bg: initial;
+  --nc-control-button-color: initial;
+  --nc-control-button-border: initial;
+  --nc-control-button-radius: initial;
+  --nc-control-button-padding: initial;
+  --nc-control-popover-bg: initial;
+  --nc-collection-columns: initial;
+  --nc-collection-gap: initial;
+}
+
+.nc-collection__form {
+  display: grid;
+  gap: 1rem;
+}
+
+.nc-collection__panel {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+}
+
+.nc-collection__filter {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.nc-collection__filter legend {
+  margin-bottom: 0.5rem;
+  padding: 0;
+  font-weight: 600;
+}
+
+/* Controlli: pillole, riepilogo delle tendine, pulsanti vista. */
+.nc-collection__pill,
+.nc-collection__views [data-view],
+.nc-collection__dropdown > summary,
+.nc-collection__pager a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font: inherit;
+  color: var(--nc-control-color, inherit);
+  background: var(--nc-control-bg, var(--nc-color-background));
+  border: var(--nc-control-border, 1px solid var(--nc-color-border));
+  border-radius: var(--nc-control-radius, var(--nc-radius-full));
+  padding: var(--nc-control-padding, 0.3125rem 0.75rem);
+  cursor: pointer;
+}
+
+/* Campi di testo, numero, data e select: raggio md. */
+.nc-collection__form select,
+.nc-collection__form input:not([type="checkbox"]):not([type="radio"]) {
+  font: inherit;
+  color: var(--nc-control-color, inherit);
+  background: var(--nc-control-bg, var(--nc-color-background));
+  border: var(--nc-control-border, 1px solid var(--nc-color-border));
+  border-radius: var(--nc-control-radius, var(--nc-radius-md));
+  padding: var(--nc-control-padding, 0.3125rem 0.5rem);
+}
+
+.nc-collection__pill {
+  position: relative;
+  margin: 0 0.375rem 0.375rem 0;
+}
+
+.nc-collection__pill input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+}
+
+.nc-collection__pill:focus-within,
+.nc-collection__views [data-view]:focus-visible,
+.nc-collection__dropdown > summary:focus-visible,
+.nc-collection__pager a:focus-visible {
+  outline: 2px solid var(--nc-control-focus, var(--nc-color-primary));
+  outline-offset: 2px;
+}
+
+.nc-collection__pill:has(input:disabled),
+.nc-collection__option:has(input:disabled) {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Attivo: pillola selezionata, vista premuta, tendina aperta. */
+.nc-collection__pill:has(input:checked),
+.nc-collection__views [aria-pressed="true"],
+.nc-collection__dropdown[open] > summary,
+.nc-collection__pager [aria-current="page"] {
+  font-weight: 600;
+  color: var(--nc-control-active-color, var(--nc-color-background));
+  background: var(--nc-control-active-bg, var(--nc-color-primary));
+  border-color: var(--nc-control-active-border, var(--nc-color-primary));
+}
+
+.nc-collection__option {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-bottom: 0.375rem;
+}
+
+.nc-collection__range {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.nc-collection__range label {
+  display: grid;
+  gap: 0.25rem;
+}
+
+/* Tendina: il menu è un pannello assoluto sotto il riepilogo. */
+.nc-collection__dropdown {
+  position: relative;
+}
+
+.nc-collection__dropdown > summary {
+  list-style: none;
+  font-weight: 600;
+}
+
+.nc-collection__dropdown > summary::-webkit-details-marker {
+  display: none;
+}
+
+.nc-collection__dropdown > summary::after {
+  content: "\25BE";
+  display: inline-block;
+  transition: transform 0.15s ease;
+}
+
+.nc-collection__dropdown[open] > summary::after {
+  transform: rotate(180deg);
+}
+
+/* Tendina con selezioni: bordo attivo e testo in grassetto, anche a menu chiuso. */
+.nc-collection__dropdown:has(input:checked) > summary {
+  border-color: var(--nc-control-active-border, var(--nc-color-primary));
+  font-weight: 600;
+}
+
+.nc-collection__menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 20;
+  display: grid;
+  min-width: 12rem;
+  max-height: 16rem;
+  overflow-y: auto;
+  margin-top: 0.25rem;
+  padding: 0.5rem;
+  background: var(--nc-control-popover-bg, var(--nc-color-background));
+  color: var(--nc-control-color, inherit);
+  border-radius: var(--nc-control-radius, var(--nc-radius-md));
+  box-shadow: 0 0.5rem 1.5rem color-mix(in srgb, currentColor 15%, transparent);
+}
+
+.nc-collection__menu .nc-collection__option {
+  margin-bottom: 0;
+}
+
+/* Pulsanti d'azione: applica, apri, chiudi, carica altri, pagine. */
+.nc-collection__open,
+.nc-collection__close,
+.nc-collection__apply,
+.nc-collection__more {
+  font: inherit;
+  color: var(--nc-control-button-color, var(--nc-color-background));
+  background: var(--nc-control-button-bg, var(--nc-color-primary));
+  border: var(--nc-control-button-border, none);
+  border-radius: var(--nc-control-button-radius, var(--nc-radius-full));
+  padding: var(--nc-control-button-padding, 0.5rem 1rem);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.nc-collection__apply,
+.nc-collection__more {
+  display: inline-flex;
+  align-items: center;
+}
+
+.nc-collection__pager a {
+  text-decoration: none;
+}
+
+.nc-collection-reset {
+  align-self: center;
+  color: inherit;
+}
+
+.nc-collection__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.nc-collection-count {
+  margin: 0;
+}
+
+.nc-collection__views:not([hidden]) {
+  display: inline-flex;
+  gap: 0.25rem;
+}
+
+.nc-collection__items {
+  display: grid;
+  gap: var(--nc-collection-gap, 1.5rem);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nc-collection[data-view="grid"] .nc-collection__items {
+  /* resultsColumns fissa il numero di colonne, anche per breakpoint; senza, le colonne si adattano alla larghezza. */
+  grid-template-columns: var(--nc-collection-columns, repeat(auto-fill, minmax(16rem, 1fr)));
+}
+
+/* cardSize small: colonne minime più strette (9rem). Viene dopo la regola generale, a pari specificità. */
+.nc-collection--small[data-view="grid"] .nc-collection__items {
+  grid-template-columns: var(--nc-collection-columns, repeat(auto-fill, minmax(min(9rem, 100%), 1fr)));
+}
+
+.nc-collection[data-view="rows"] .nc-collection__items {
+  grid-template-columns: 1fr;
+}
+
+.nc-collection__pager {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+/* Annuncio per lettori di schermo: nascosto visivamente, ancora letto. */
+.nc-collection__status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Con lo script i controlli di azione restano nel modulo: l'invio avviene al cambio. Il pulsante Applica torna nel drawer aperto. */
+.nc-collection.is-enhanced .nc-collection__close,
+.nc-collection.is-enhanced .nc-collection__apply {
+  display: none;
+}
+
+/* Da tablet in su: filtri in una riga che va a capo, allineata in basso. */
+@media (min-width: 768px) {
+  .nc-collection__panel {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .nc-collection.is-enhanced.nc-collection--drawer .nc-collection__panel {
+    display: none;
+  }
+
+  .nc-collection.is-enhanced.nc-collection--drawer .nc-collection__panel.is-open {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: grid;
+    overflow-y: auto;
+    padding: 1.5rem;
+    background: var(--nc-control-popover-bg, var(--nc-color-background));
+    color: var(--nc-control-color, var(--nc-color-text));
+  }
+
+  /* Chiudi e Applica compaiono solo nel drawer aperto. */
+  .nc-collection.is-enhanced.nc-collection--drawer .nc-collection__panel.is-open .nc-collection__close {
+    display: inline-flex;
+    justify-self: end;
+  }
+
+  .nc-collection.is-enhanced.nc-collection--drawer .nc-collection__panel.is-open .nc-collection__apply {
+    display: inline-flex;
+  }
+}

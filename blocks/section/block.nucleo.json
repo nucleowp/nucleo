@@ -1,0 +1,50 @@
+{
+  "name": "nc/section",
+  "version": 1,
+  "title": "Section",
+  "category": "structure",
+  "description": "Full-width band with an inner container.",
+  "aiHints": "Each horizontal band of the page is a section. Choose the tag by role: main, header, footer, nav, aside or section. Use anchor (lowercase letters, digits and hyphens) for links inside the page, for example #subscribe. A section with a child section is a transparent wrapper: its inner box loses width and padding and all its direct children go full width, so keep only sections inside it.",
+  "content": {},
+  "settings": {
+    "tag": {
+      "type": "string",
+      "enum": [
+        "section",
+        "header",
+        "footer",
+        "main",
+        "div",
+        "aside",
+        "nav"
+      ],
+      "default": "section"
+    },
+    "anchor": {
+      "type": "string"
+    }
+  },
+  "supports": {
+    "style": [
+      "spacing",
+      "size",
+      "color",
+      "border",
+      "layout", "position", "motion"],
+    "responsive": true,
+    "visibility": true
+  },
+  "children": true,
+  "parents": null,
+  "assets": {
+    "style": "style.css",
+    "script": null
+  },
+  "semantics": {
+    "landmark": {
+      "tagFrom": "settings.tag"
+    }
+  },
+  "renderer": "Nucleo\\Blocks\\Core\\SectionRenderer",
+  "migrations": {}
+}

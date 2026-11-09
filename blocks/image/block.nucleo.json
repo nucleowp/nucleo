@@ -1,0 +1,47 @@
+{
+  "name": "nc/image",
+  "version": 1,
+  "title": "Image",
+  "category": "media",
+  "description": "Image with srcset and sizes, LCP priority or deferred loading.",
+  "aiHints": "Every informative image needs a descriptive alt. Use decorative only for purely aesthetic images. Modern formats (AVIF, WebP) are optional: the original png/jpg stays the fallback, and automatic sources need the site option imageFormats.",
+  "content": {
+    "src": { "type": "string", "required": true },
+    "alt": { "type": "string" },
+    "width": { "type": "integer" },
+    "height": { "type": "integer" },
+    "srcset": { "type": "string" },
+    "sizes": { "type": "string" },
+    "id": { "type": "string" },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "enum": ["image/avif", "image/webp", "image/png", "image/jpeg"] },
+          "srcset": { "type": "string" }
+        },
+        "required": ["type", "srcset"]
+      }
+    }
+  },
+  "settings": {
+    "decorative": { "type": "boolean", "default": false },
+    "formats": { "type": "string", "enum": ["auto", "off"], "default": "auto" }
+  },
+  "supports": {
+    "style": ["size", "border", "effects", "spacing", "position", "motion"],
+    "responsive": true,
+    "visibility": true
+  },
+  "children": false,
+  "parents": null,
+  "assets": {
+    "style": "style.css",
+    "script": null
+  },
+  "semantics": {
+    "image": { "srcFrom": "content.src", "altFrom": "content.alt", "decorativeFrom": "settings.decorative" }
+  },
+  "renderer": "Nucleo\\Blocks\\Core\\ImageRenderer"
+}

@@ -1,0 +1,32 @@
+{
+  "name": "nc/button",
+  "version": 1,
+  "title": "Button",
+  "category": "action",
+  "description": "Link styled as a button, or an action button.",
+  "aiHints": "The text describes the action. With href the block is a link, without href it is a button. width \"100%\" makes it as wide as its container, with the text centered.",
+  "content": {
+    "text": { "type": "string", "translatable": true, "required": true }
+  },
+  "settings": {
+    "href": { "type": "string" },
+    "variant": { "type": "string", "enum": ["primary", "secondary", "link"], "default": "primary" },
+    "newTab": { "type": "boolean", "default": false }
+  },
+  "supports": {
+    "style": ["typography", "color", "spacing", "size", "border", "motion"],
+    "responsive": true,
+    "visibility": true,
+    "bind": ["content.text"]
+  },
+  "children": false,
+  "parents": null,
+  "assets": {
+    "style": "style.css",
+    "script": null
+  },
+  "semantics": {
+    "link": { "hrefFrom": "settings.href", "textFrom": "content.text" }
+  },
+  "renderer": "Nucleo\\Blocks\\Core\\ButtonRenderer"
+}

@@ -1,0 +1,34 @@
+{
+  "name": "nc/section-ref",
+  "version": 1,
+  "title": "Reusable section",
+  "category": "structure",
+  "description": "Inserts a reusable section (nucleo_section) with its own parameter values.",
+  "aiHints": "Use it when the same group of blocks repeats across pages: create the section once with params, then insert it here by slug. Read nucleo/section-list for slugs and params before creating a new section. A changed section updates every document that uses it.",
+  "content": {},
+  "settings": {
+    "section": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{0,199}$",
+      "required": true
+    },
+    "params": {
+      "type": "object"
+    }
+  },
+  "supports": {
+    "styleExclude": ["size", "spacing", "typography", "color", "border", "motion"],
+    "style": [],
+    "responsive": false,
+    "visibility": true
+  },
+  "children": false,
+  "parents": null,
+  "assets": {
+    "style": null,
+    "script": null
+  },
+  "semantics": {},
+  "renderer": "Nucleo\\Blocks\\Core\\SectionRefRenderer",
+  "migrations": {}
+}

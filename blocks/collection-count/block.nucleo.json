@@ -1,0 +1,25 @@
+{
+  "name": "nc/collection-count",
+  "version": 1,
+  "title": "Collection count",
+  "category": "dynamic",
+  "description": "Number of results of a nc/collection. Only inside nc/collection.",
+  "aiHints": "Optional. content.text is the text with {count} or %d, for example \"{count} events\"; \"{count} event|{count} events\" picks the singular for 1; a text without placeholder gets the number in front. Only two forms; \\\\| is a literal |, %% a literal %. content.one is the text for exactly one result. Without content.text the label resultsLabel of nc/collection applies.",
+  "content": {
+    "text": { "type": "string", "translatable": true },
+    "one": { "type": "string", "translatable": true }
+  },
+  "settings": {},
+  "supports": {
+    "style": ["typography", "color", "spacing"]
+  },
+  "children": false,
+  "parents": ["nc/collection"],
+  "assets": {
+    "style": null,
+    "script": null
+  },
+  "semantics": {},
+  "migrations": {},
+  "renderer": "Nucleo\\Blocks\\Core\\CollectionPartRenderer"
+}

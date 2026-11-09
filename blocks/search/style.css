@@ -1,0 +1,58 @@
+/* nc/search: la classe del blocco sta sul <form>. Le variabili --nc-control-* vengono dai gruppi controls e buttons. */
+
+/* Azzera le variabili ereditate da un blocco esterno; :where lascia vincere la classe del nodo. */
+:where(.nc-search) {
+  --nc-control-bg: initial;
+  --nc-control-color: initial;
+  --nc-control-border: initial;
+  --nc-control-radius: initial;
+  --nc-control-padding: initial;
+  --nc-control-focus: initial;
+  --nc-control-button-bg: initial;
+  --nc-control-button-color: initial;
+  --nc-control-button-border: initial;
+  --nc-control-button-radius: initial;
+  --nc-control-button-padding: initial;
+}
+.nc-search {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--nc-space-2, 0.5rem);
+  align-items: center;
+}
+
+.nc-search__field {
+  flex: 1 1 12em;
+  min-width: 0;
+  padding: var(--nc-control-padding, var(--nc-space-2, 0.5rem) var(--nc-space-4, 1rem));
+  border: var(--nc-control-border, 1px solid var(--nc-color-border, #d4d4d4));
+  border-radius: var(--nc-control-radius, var(--nc-radius-full, 9999px));
+  background: var(--nc-control-bg, var(--nc-color-background, #fff));
+  color: var(--nc-control-color, inherit);
+  font: inherit;
+}
+
+.nc-search__button {
+  padding: var(--nc-control-button-padding, var(--nc-space-2, 0.5rem) var(--nc-space-4, 1rem));
+  border: var(--nc-control-button-border, 0);
+  border-radius: var(--nc-control-button-radius, var(--nc-radius-full, 9999px));
+  background: var(--nc-control-button-bg, var(--nc-color-primary, #2563eb));
+  color: var(--nc-control-button-color, var(--nc-color-background, #fff));
+  font: inherit;
+  cursor: pointer;
+}
+
+.nc-search__field:focus-visible,
+.nc-search__button:focus-visible {
+  outline: 2px solid var(--nc-control-focus, var(--nc-color-primary, #2563eb));
+  outline-offset: 2px;
+}
+
+.nc-search__label.screen-reader-text {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}

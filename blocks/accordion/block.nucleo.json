@@ -1,0 +1,43 @@
+{
+  "name": "nc/accordion",
+  "version": 1,
+  "title": "Accordion",
+  "category": "interactive",
+  "description": "List of expandable sections based on details and summary.",
+  "aiHints": "Each item has a short title and text content. Use openFirst only if the first item is the most important. Its parts for style.parts are item, summary and panel, for example style.parts.summary.fontWeight 600.",
+  "content": {
+    "items": {
+      "type": "array",
+      "translatable": true,
+      "required": true,
+      "item": {
+        "title": { "type": "string", "required": true },
+        "html": { "type": "rich-text", "required": true }
+      }
+    }
+  },
+  "settings": {
+    "openFirst": { "type": "boolean", "default": false },
+    "faq": { "type": "boolean", "default": false },
+    "icon": { "type": "string", "enum": ["chevron", "plus"], "default": "chevron" }
+  },
+  "supports": {
+    "style": ["spacing", "color", "typography", "border", "motion"],
+    "responsive": true,
+    "visibility": true
+  },
+  "parts": {
+    "item": " .nc-accordion__item",
+    "summary": " summary",
+    "panel": " .nc-accordion__panel"
+  },
+  "children": false,
+  "parents": null,
+  "assets": {
+    "style": "style.css",
+    "script": null
+  },
+  "semantics": {},
+  "renderer": "Nucleo\\Blocks\\Core\\AccordionRenderer",
+  "migrations": {}
+}

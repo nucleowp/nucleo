@@ -1,0 +1,355 @@
+.nc-menu ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nc-menu li ul {
+  flex-direction: column;
+  gap: 0.25rem;
+  padding-left: 1rem;
+}
+
+.nc-menu--vertical > ul {
+  flex-direction: column;
+}
+
+.nc-menu__toggle {
+  display: none;
+}
+
+/* Testo per lettori di schermo, nascosto alla vista. */
+.nc-menu__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+html.nc-menu-locked {
+  overflow: hidden;
+}
+
+/* Icone del toggle: l'svg di chiusura compare solo con aria-expanded="true". */
+.nc-menu__toggle svg {
+  display: block;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.nc-menu__toggle--icon .nc-menu__icon--close {
+  display: none;
+}
+
+.nc-menu__toggle--icon[aria-expanded="true"] .nc-menu__icon--menu {
+  display: none;
+}
+
+.nc-menu__toggle--icon[aria-expanded="true"] .nc-menu__icon--close {
+  display: block;
+}
+
+/* Pulsante dei sottomenu: piccolo, senza bordo; il chevron ruota quando aperto. */
+.nc-menu__sub-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0.25rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.nc-menu__sub-toggle svg {
+  width: 0.75rem;
+  height: 0.75rem;
+  transition: transform 0.2s ease;
+}
+
+.nc-menu__sub-toggle[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
+/*
+ * Menu a tendina: vale quando l'off-canvas non è attivo, e sempre per i menu senza off-canvas.
+ * is-closed impedisce l'apertura da hover o focus finché il puntatore o il focus non escono dalla voce.
+ */
+.nc-menu--dropdown .nc-menu__item--has-children {
+  position: relative;
+}
+
+.nc-menu--dropdown .nc-menu__submenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 100;
+  display: none;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 12rem;
+  margin: 0;
+  padding: 0.5rem;
+  background: var(--nc-menu-submenu-bg, #fff);
+}
+
+.nc-menu--dropdown .nc-menu__submenu .nc-menu__submenu {
+  top: 0;
+  left: 100%;
+}
+
+.nc-menu--dropdown .nc-menu__item--has-children:not(.is-closed):hover > .nc-menu__submenu,
+.nc-menu--dropdown .nc-menu__item--has-children:not(.is-closed):focus-within > .nc-menu__submenu,
+.nc-menu--dropdown .nc-menu__item--has-children.is-open > .nc-menu__submenu {
+  display: flex;
+}
+
+/*
+ * Off-canvas attivo: solo con is-ready (lo aggiunge view.js). Senza JavaScript la lista resta un menu normale.
+ * Soglie: senza classe bp sotto 767.98px, nc-menu--bp-lg sotto 1023.98px, nc-menu--bp-xl sotto 1919.98px.
+ * Le stesse regole sono ripetute per ogni soglia, perché il selettore cambia con la classe bp.
+ */
+@media (max-width: 767.98px) {
+  .nc-menu--offcanvas.is-ready .nc-menu__toggle {
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    z-index: 1001;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid currentColor;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .nc-menu--offcanvas.is-ready .nc-menu__toggle--icon {
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    border: 0;
+  }
+
+  .nc-menu--offcanvas.is-ready > .nc-menu__list {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    width: var(--nc-menu-panel-width, min(20rem, 85vw));
+    flex-direction: column;
+    flex-wrap: nowrap;
+    overflow-y: auto;
+    padding: 1rem;
+    background: var(--nc-menu-panel-bg, #fff);
+    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
+    transform: translateX(-100%);
+    visibility: hidden;
+  }
+
+  .nc-menu--offcanvas.is-ready.nc-menu--panel-right > .nc-menu__list {
+    left: auto;
+    right: 0;
+    transform: translateX(100%);
+  }
+
+  .nc-menu--offcanvas.is-animated > .nc-menu__list {
+    transition: transform 0.2s ease, visibility 0.2s ease;
+  }
+
+  /* In apertura il pannello è visibile subito: il focus passa al primo link. */
+  .nc-menu--offcanvas.is-animated.is-open > .nc-menu__list {
+    transition: transform 0.2s ease, visibility 0s;
+  }
+
+  .nc-menu--offcanvas.is-ready.is-open > .nc-menu__list {
+    transform: none;
+    visibility: visible;
+  }
+
+  .nc-menu--offcanvas.is-ready .nc-menu__item--has-children {
+    position: static;
+  }
+
+  .nc-menu--offcanvas.is-ready .nc-menu__submenu {
+    position: static;
+    display: flex;
+    min-width: 0;
+    padding: 0 0 0 1rem;
+    background: none;
+  }
+
+  .nc-menu--offcanvas.is-ready .nc-menu__sub-toggle {
+    display: none;
+  }
+}
+
+@media (max-width: 1023.98px) {
+  .nc-menu--offcanvas.nc-menu--bp-lg.is-ready .nc-menu__toggle {
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    z-index: 1001;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid currentColor;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .nc-menu--offcanvas.nc-menu--bp-lg.is-ready .nc-menu__toggle--icon {
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    border: 0;
+  }
+
+  .nc-menu--offcanvas.nc-menu--bp-lg.is-ready > .nc-menu__list {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    width: var(--nc-menu-panel-width, min(20rem, 85vw));
+    flex-direction: column;
+    flex-wrap: nowrap;
+    overflow-y: auto;
+    padding: 1rem;
+    background: var(--nc-menu-panel-bg, #fff);
+    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
+    transform: translateX(-100%);
+    visibility: hidden;
+  }
+
+  .nc-menu--offcanvas.nc-menu--bp-lg.is-ready.nc-menu--panel-right > .nc-menu__list {
+    left: auto;
+    right: 0;
+    transform: translateX(100%);
+  }
+
+  .nc-menu--offcanvas.nc-menu--bp-lg.is-animated > .nc-menu__list {
+    transition: transform 0.2s ease, visibility 0.2s ease;
+  }
+
+  /* In apertura il pannello è visibile subito: il focus passa al primo link. */
+  .nc-menu--offcanvas.nc-menu--bp-lg.is-animated.is-open > .nc-menu__list {
+    transition: transform 0.2s ease, visibility 0s;
+  }
+
+  .nc-menu--offcanvas.nc-menu--bp-lg.is-ready.is-open > .nc-menu__list {
+    transform: none;
+    visibility: visible;
+  }
+
+  .nc-menu--offcanvas.nc-menu--bp-lg.is-ready .nc-menu__item--has-children {
+    position: static;
+  }
+
+  .nc-menu--offcanvas.nc-menu--bp-lg.is-ready .nc-menu__submenu {
+    position: static;
+    display: flex;
+    min-width: 0;
+    padding: 0 0 0 1rem;
+    background: none;
+  }
+
+  .nc-menu--offcanvas.nc-menu--bp-lg.is-ready .nc-menu__sub-toggle {
+    display: none;
+  }
+}
+
+@media (max-width: 1919.98px) {
+  .nc-menu--offcanvas.nc-menu--bp-xl.is-ready .nc-menu__toggle {
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    z-index: 1001;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid currentColor;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .nc-menu--offcanvas.nc-menu--bp-xl.is-ready .nc-menu__toggle--icon {
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    border: 0;
+  }
+
+  .nc-menu--offcanvas.nc-menu--bp-xl.is-ready > .nc-menu__list {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    width: var(--nc-menu-panel-width, min(20rem, 85vw));
+    flex-direction: column;
+    flex-wrap: nowrap;
+    overflow-y: auto;
+    padding: 1rem;
+    background: var(--nc-menu-panel-bg, #fff);
+    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
+    transform: translateX(-100%);
+    visibility: hidden;
+  }
+
+  .nc-menu--offcanvas.nc-menu--bp-xl.is-ready.nc-menu--panel-right > .nc-menu__list {
+    left: auto;
+    right: 0;
+    transform: translateX(100%);
+  }
+
+  .nc-menu--offcanvas.nc-menu--bp-xl.is-animated > .nc-menu__list {
+    transition: transform 0.2s ease, visibility 0.2s ease;
+  }
+
+  /* In apertura il pannello è visibile subito: il focus passa al primo link. */
+  .nc-menu--offcanvas.nc-menu--bp-xl.is-animated.is-open > .nc-menu__list {
+    transition: transform 0.2s ease, visibility 0s;
+  }
+
+  .nc-menu--offcanvas.nc-menu--bp-xl.is-ready.is-open > .nc-menu__list {
+    transform: none;
+    visibility: visible;
+  }
+
+  .nc-menu--offcanvas.nc-menu--bp-xl.is-ready .nc-menu__item--has-children {
+    position: static;
+  }
+
+  .nc-menu--offcanvas.nc-menu--bp-xl.is-ready .nc-menu__submenu {
+    position: static;
+    display: flex;
+    min-width: 0;
+    padding: 0 0 0 1rem;
+    background: none;
+  }
+
+  .nc-menu--offcanvas.nc-menu--bp-xl.is-ready .nc-menu__sub-toggle {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nc-menu,
+  .nc-menu * {
+    transition: none !important;
+  }
+}

@@ -1,0 +1,208 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nucleo.dev/schema/document.schema.json",
+  "title": "Documento Nucleo",
+  "description": "Pagina, layout, sezione globale o popup: albero di nodi con content, settings e style separati.",
+  "type": "object",
+  "required": ["schema", "kind", "root"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "kind": {
+      "enum": ["page", "layout", "section", "popup"]
+    },
+    "layout": {
+      "description": "Solo pagina o articolo: none non stampa nessuna area layout per la richiesta, header e footer compresi.",
+      "enum": ["none"]
+    },
+    "root": {
+      "$ref": "#/$defs/node"
+    },
+    "meta": {
+      "type": "object",
+      "properties": {
+        "seo": {
+          "description": "Title e meta SEO della pagina quando non c'è un plugin SEO attivo.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "title": { "type": "string", "maxLength": 70 },
+            "description": { "type": "string", "maxLength": 170 },
+            "image": { "type": "string", "format": "uri" },
+            "noindex": { "type": "boolean" },
+            "breadcrumbs": { "type": "boolean", "description": "false: niente BreadcrumbList automatico su questa pagina." },
+            "schema": {
+              "description": "Nodi schema.org della pagina (Service, Product, ContactPage...). Il valore \"@business\" rimanda all'azienda del sito.",
+              "type": "array",
+              "maxItems": 10,
+              "items": {
+                "type": "object",
+                "required": ["@type"],
+                "properties": { "@type": { "type": "string", "pattern": "^[A-Z][A-Za-z]{2,60}$" } }
+              }
+            }
+          }
+        }
+      }
+    },
+    "params": {
+      "description": "Solo per kind section: parametri che ogni nc/section-ref valorizza.",
+      "type": "object",
+      "propertyNames": { "pattern": "^[a-z][a-z0-9_]{0,31}$" },
+      "additionalProperties": {
+        "type": "object",
+        "required": ["type"],
+        "properties": {
+          "type": { "enum": ["text", "html", "image", "link", "color", "boolean", "list"] },
+          "label": { "type": "string" },
+          "required": { "type": "boolean" }
+        }
+      }
+    },
+    "blocks": {
+      "type": "object",
+      "propertyNames": { "$ref": "#/$defs/blockType" },
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 1
+      }
+    }
+  },
+  "$defs": {
+    "nodeId": {
+      "type": "string",
+      "pattern": "^[a-z0-9]{1,12}$"
+    },
+    "blockType": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*/[a-z][a-z0-9-]*$"
+    },
+    "scalar": {
+      "type": ["string", "number"]
+    },
+    "breakpoint": {
+      "enum": ["base", "md", "lg", "xl"]
+    },
+    "responsive": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "properties": {
+        "base": { "$ref": "#/$defs/scalar" },
+        "md": { "$ref": "#/$defs/scalar" },
+        "lg": { "$ref": "#/$defs/scalar" },
+        "xl": { "$ref": "#/$defs/scalar" }
+      }
+    },
+    "styleValue": {
+      "anyOf": [
+        { "$ref": "#/$defs/scalar" },
+        { "$ref": "#/$defs/responsive" }
+      ]
+    },
+    "style": {
+      "type": "object",
+      "properties": {
+        "parts": {
+          "description": "Stili delle parti interne dichiarate dal blocco (parts del manifest): nome della parte → chiavi di stile come quelle del nodo.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": { "$ref": "#/$defs/styleValue" }
+          }
+        },
+        "custom": {
+          "description": "CSS libero del nodo, per ciò che le chiavi non coprono: selettore che inizia con & → proprietà CSS → valore.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": { "type": ["string", "number"] }
+          }
+        }
+      },
+      "additionalProperties": { "$ref": "#/$defs/styleValue" }
+    },
+    "visibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "breakpoints": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "base": { "type": "boolean" },
+            "md": { "type": "boolean" },
+            "lg": { "type": "boolean" },
+            "xl": { "type": "boolean" }
+          }
+        },
+        "when": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["is"],
+            "additionalProperties": false,
+            "properties": {
+              "is": { "type": "string", "minLength": 1 },
+              "source": { "enum": ["post", "nucleo", "item", "acf", "metabox", "jetengine", "author", "term", "site"] },
+              "field": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    },
+    "bindValue": {
+      "type": "object",
+      "required": ["source", "field"],
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "enum": ["post", "term", "author", "site", "nucleo", "acf", "metabox", "jetengine", "woo", "user", "query", "param", "item"]
+        },
+        "field": { "type": "string", "minLength": 1 },
+        "fallback": { "type": "string" }
+      }
+    },
+    "bind": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/bindValue" }
+    },
+    "ref": {
+      "type": "string",
+      "pattern": "^(section):[0-9]+$"
+    },
+    "node": {
+      "type": "object",
+      "required": ["id", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/nodeId" },
+        "type": { "$ref": "#/$defs/blockType" },
+        "content": { "type": "object" },
+        "settings": { "type": "object" },
+        "style": { "$ref": "#/$defs/style" },
+        "visibility": { "$ref": "#/$defs/visibility" },
+        "bind": { "$ref": "#/$defs/bind" },
+        "children": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/node" }
+        },
+        "ref": { "$ref": "#/$defs/ref" },
+        "guide": {
+          "description": "Note per nucleo guide. distinct: il blocco somiglia a un altro ma è diverso di proposito, con il motivo; non conta tra le ripetizioni di R1.5.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "distinct": { "type": "string", "minLength": 1, "maxLength": 200, "pattern": "\\S" }
+          }
+        }
+      },
+      "not": {
+        "required": ["ref", "children"]
+      }
+    }
+  }
+}

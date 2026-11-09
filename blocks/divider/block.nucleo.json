@@ -1,0 +1,24 @@
+{
+  "name": "nc/divider",
+  "version": 1,
+  "title": "Divider",
+  "category": "structure",
+  "description": "Horizontal line separating two blocks.",
+  "aiHints": "Use the divider between different content groups, not between every block.",
+  "content": {},
+  "settings": {},
+  "supports": {
+    "style": ["spacing", "size", "color", "border", "motion"],
+    "responsive": true,
+    "visibility": true
+  },
+  "children": false,
+  "parents": null,
+  "assets": {
+    "style": "style.css",
+    "script": null
+  },
+  "semantics": {},
+  "renderer": "Nucleo\\Blocks\\Core\\DividerRenderer",
+  "migrations": {}
+}

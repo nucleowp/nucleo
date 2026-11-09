@@ -1,0 +1,70 @@
+.nc-embed {
+  position: relative;
+  overflow: hidden;
+}
+
+.nc-embed[data-ratio="16:9"] {
+  aspect-ratio: 16 / 9;
+}
+
+.nc-embed[data-ratio="4:3"] {
+  aspect-ratio: 4 / 3;
+}
+
+.nc-embed[data-ratio="1:1"] {
+  aspect-ratio: 1 / 1;
+}
+
+.nc-embed[data-ratio="21:9"] {
+  aspect-ratio: 21 / 9;
+}
+
+.nc-embed__play {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.nc-embed__play img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.nc-embed__play:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 3px;
+}
+
+.nc-embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Embed con consenso: fondo scuro finché la miniatura non arriva, avviso sotto il pulsante. */
+.nc-embed[data-nc-consent] {
+  background: #1a1a1a;
+}
+
+.nc-embed__notice {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 0.5em 0.75em;
+  font-size: 0.875rem;
+  color: #fff;
+  background: rgb(0 0 0 / 60%);
+  pointer-events: none;
+}
+
+.nc-embed.is-blocked .nc-embed__notice {
+  font-weight: 700;
+}

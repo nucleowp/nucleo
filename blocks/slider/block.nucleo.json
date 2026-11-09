@@ -1,0 +1,41 @@
+{
+  "name": "nc/slider",
+  "version": 1,
+  "title": "Carousel",
+  "category": "media",
+  "description": "Series of slides: scroll-snap by slide (effect slide) or one slide at a time with a cross-fade (effect fade). Optional arrows, dots, autoplay with a pause button, loop and speed.",
+  "aiHints": "Always set a descriptive label: it becomes the accessible name of the carousel. Each child is a slide. Use effect fade for one slide at a time (perView is ignored). autoplay is in seconds between slides, 0 = off; with autoplay a pause button is always shown. loop false: autoplay makes one pass, returns to the first slide and stops. settings.controlsPosition below (default) puts arrows and dots under the slides; bottom-left, bottom-right, bottom-center put them over the slides. Style them with the groups controls (arrows: background, color, border, radius, padding, focus) and carousel (controlSize, dotColor, dotColorActive, controlsInset). content.prevLabel, nextLabel, pauseLabel, playLabel replace the button names read by screen readers.",
+  "content": {
+    "label": { "type": "string", "translatable": true, "default": "Gallery" },
+    "prevLabel": { "type": "string", "translatable": true },
+    "nextLabel": { "type": "string", "translatable": true },
+    "pauseLabel": { "type": "string", "translatable": true },
+    "playLabel": { "type": "string", "translatable": true }
+  },
+  "settings": {
+    "perView": { "type": "integer", "min": 1, "max": 4, "default": 1 },
+    "arrows": { "type": "boolean", "default": true },
+    "effect": { "type": "string", "enum": ["slide", "fade"], "default": "slide" },
+    "autoplay": { "type": "integer", "min": 0, "max": 30, "default": 0 },
+    "loop": { "type": "boolean", "default": true },
+    "dots": { "type": "boolean", "default": false },
+    "controlsPosition": { "type": "string", "enum": ["below", "bottom-left", "bottom-right", "bottom-center"], "default": "below" },
+    "speed": { "type": "integer", "min": 100, "max": 3000, "default": 500 },
+    "pauseOnHover": { "type": "boolean", "default": true }
+  },
+  "supports": {
+    "style": ["spacing", "border", "motion", "controls", "carousel", "size"],
+    "responsive": true,
+    "visibility": true
+  },
+  "children": true,
+  "parents": null,
+  "assets": {
+    "style": "style.css",
+    "script": "view.js",
+    "strategy": "visible"
+  },
+  "semantics": {},
+  "renderer": "Nucleo\\Blocks\\Core\\SliderRenderer",
+  "migrations": {}
+}

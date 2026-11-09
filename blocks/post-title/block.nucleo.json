@@ -1,0 +1,31 @@
+{
+  "name": "nc/post-title",
+  "version": 1,
+  "title": "Post title",
+  "category": "text",
+  "description": "Title of the current post or page, from h1 to p. Dynamic: read on every request.",
+  "aiHints": "Use it in single layouts. Only one level 1 title per page. With settings.link the title is a link that inherits color and textDecoration of the title (no underline unless you set it); style group link: linkColor, linkColorHover, linkDecoration, linkDecorationHover (none, underline, inherit; hover defaults to underline). Its link part is styled with style.parts, for example style.parts.link.fontWeight 600.",
+  "content": {},
+  "settings": {
+    "tag":  { "type": "string", "enum": ["h1", "h2", "p"], "default": "h1" },
+    "link": { "type": "boolean", "default": false }
+  },
+  "supports": {
+    "style": ["typography", "color", "spacing", "link", "motion"],
+    "responsive": true,
+    "visibility": true,
+    "bind": []
+  },
+  "parts": {
+    "link": " a"
+  },
+  "children": false,
+  "parents": null,
+  "assets": {
+    "style": "style.css",
+    "script": null
+  },
+  "semantics": {},
+  "migrations": {},
+  "renderer": "Nucleo\\Blocks\\Core\\PostTitleRenderer"
+}

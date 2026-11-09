@@ -1,0 +1,29 @@
+{
+  "name": "nc/pagination",
+  "version": 1,
+  "title": "Pagination",
+  "category": "navigation",
+  "description": "Links to the pages of the main query. Outputs nothing with a single page. Dynamic.",
+  "aiHints": "Place it at the end of an archive or a list of posts. Its parts for style.parts are link and current, for example style.parts.current.fontWeight 600.",
+  "content": {},
+  "settings": {},
+  "supports": {
+    "style": ["typography", "color", "spacing", "motion"],
+    "responsive": true,
+    "visibility": true,
+    "bind": []
+  },
+  "parts": {
+    "link": " a",
+    "current": " [aria-current=\"page\"]"
+  },
+  "children": false,
+  "parents": null,
+  "assets": {
+    "style": "style.css",
+    "script": null
+  },
+  "semantics": {},
+  "migrations": {},
+  "renderer": "Nucleo\\Blocks\\Core\\PaginationRenderer"
+}

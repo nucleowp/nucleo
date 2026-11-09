@@ -1,0 +1,11 @@
+.nc-section__inner {
+  max-width: var(--nc-container-lg);
+  margin-inline: auto;
+  padding-inline: var(--nc-space-4);
+}
+
+/* Una sezione che contiene altre sezioni fa da contenitore trasparente: le fasce interne arrivano ai bordi. */
+.nc-section__inner:has(> .nc-section) {
+  max-width: none;
+  padding-inline: 0;
+}

@@ -1,0 +1,93 @@
+{
+  "name": "nc/collection",
+  "version": 1,
+  "title": "Collection",
+  "category": "dynamic",
+  "description": "Filterable and sortable list of posts with a card, pagination or load-more, counts and a browser script. Filters and results update without reloading the page.",
+  "aiHints": "Use it for catalogs with filters (taxonomies, select fields, number ranges, dates, search). Add exactly one nc/collection-card child: its one child is the card, with bind and nc/post-title, nc/post-image, nc/post-meta reading each post. Optional children: nc/collection-count, nc/collection-reset, nc/collection-empty. Use nc/query for a static list without filters. Texts of the controls go in content (filtersLabel, applyLabel, closeLabel, moreLabel, sortLabel, resultsLabel, gridLabel, rowsLabel, allLabel, upcomingLabel, pastLabel, monthLabel, fromLabel, toLabel); without them the plugin translations apply. resultsLabel holds the number: \"{count} products\" or \"%d products\"; \"{count} product|{count} products\" picks the singular for 1; a text without placeholder gets the number in front (\"products\" shows \"12 products\"). Only two forms (singular|plural); with more than one | the text is one form; \\\\| is a literal |, %% a literal %. Style the controls with the groups controls (pills, dropdowns, fields, view switch, pages), choices (chosen pill, active view, open dropdown, dropdown panel) and buttons (Apply, Close, Filters, Load more). The group results sets the grid of the results: resultsColumns (1-12 columns, per breakpoint, e.g. {\"base\": 2, \"lg\": 4}) and resultsGap; without resultsColumns the columns fit the width (min 16rem, 1 column on phones). With source terms the collection lists the terms of a taxonomy (taxonomy, parent, hideEmpty, orderby by name, slug, count or a field; no filters, no sorts) and the card reads the term with source term, never post sources. cardSize small shrinks the minimum column width of the grid to 9rem, and resultsColumns {\"base\": 2} fixes the columns on phones instead.",
+  "content": {
+    "filtersLabel": { "type": "string", "translatable": true },
+    "applyLabel": { "type": "string", "translatable": true },
+    "moreLabel": { "type": "string", "translatable": true },
+    "sortLabel": { "type": "string", "translatable": true },
+    "closeLabel": { "type": "string", "translatable": true },
+    "resultsLabel": { "type": "string", "translatable": true },
+    "allLabel": { "type": "string", "translatable": true },
+    "upcomingLabel": { "type": "string", "translatable": true },
+    "pastLabel": { "type": "string", "translatable": true },
+    "monthLabel": { "type": "string", "translatable": true },
+    "fromLabel": { "type": "string", "translatable": true },
+    "toLabel": { "type": "string", "translatable": true },
+    "gridLabel": { "type": "string", "translatable": true },
+    "rowsLabel": { "type": "string", "translatable": true }
+  },
+  "settings": {
+    "source": { "type": "string", "enum": ["posts", "component", "terms"], "default": "posts" },
+    "component": { "type": "string", "default": "" },
+    "postType": { "type": "string", "default": "" },
+    "taxonomy": { "type": "string", "default": "", "description": "Source terms: slug of a public taxonomy (not nav_menu, not wp_*)." },
+    "parent": { "type": "string", "default": "", "description": "Source terms: empty for all terms, \"0\" for the top level, or the slug of a term for its direct children." },
+    "hideEmpty": { "type": "boolean", "default": true, "description": "Source terms: hide the terms with no posts." },
+    "cardSize": { "type": "string", "enum": ["auto", "small"], "default": "auto", "description": "Every source: small sets a narrower minimum column width of the grid (9rem instead of 16rem)." },
+    "perPage": { "type": "integer", "minimum": 1, "maximum": 48, "default": 12 },
+    "orderby": { "type": "string", "description": "Default posts: date. Default terms: name. Terms accept name, slug, count or field:<key>; posts accept date, title, menu_order or field:<key>." },
+    "order": { "type": "string", "enum": ["asc", "desc"], "description": "Default posts: desc. Default terms: asc." },
+    "prefix": { "type": "string", "default": "f" },
+    "filters": {
+      "type": "array",
+      "maxItems": 12,
+      "default": [],
+      "items": {
+        "type": "object",
+        "required": ["key", "label", "type", "ui"],
+        "properties": {
+          "key": { "type": "string" },
+          "label": { "type": "string" },
+          "type": { "type": "string", "enum": ["taxonomy", "field", "date", "search", "param"] },
+          "ui": { "type": "string", "enum": ["pills", "select", "checkboxes", "dropdown", "text", "range"] },
+          "taxonomy": { "type": "string" },
+          "field": { "type": "string" },
+          "param": { "type": "string" },
+          "multiple": { "type": "boolean" },
+          "presets": { "type": "array", "items": { "type": "string", "enum": ["upcoming", "past", "month"] } }
+        }
+      }
+    },
+    "sorts": {
+      "type": "array",
+      "maxItems": 8,
+      "default": [],
+      "items": {
+        "type": "object",
+        "required": ["key", "label", "orderby", "order"],
+        "properties": {
+          "key": { "type": "string" },
+          "label": { "type": "string" },
+          "orderby": { "type": "string" },
+          "order": { "type": "string", "enum": ["asc", "desc"] }
+        }
+      }
+    },
+    "views": { "type": "array", "items": { "type": "string", "enum": ["grid", "rows"] }, "default": ["grid"] },
+    "paging": { "type": "string", "enum": ["pages", "more", "none"], "default": "pages" },
+    "counts": { "type": "boolean", "default": true },
+    "mobileFilters": { "type": "string", "enum": ["drawer", "inline"], "default": "drawer" }
+  },
+  "supports": {
+    "style": ["spacing", "layout", "typography", "color", "position", "motion", "controls", "buttons", "choices", "border", "results"],
+    "responsive": true,
+    "visibility": true,
+    "bind": []
+  },
+  "children": ["nc/collection-count", "nc/collection-reset", "nc/collection-card", "nc/collection-empty"],
+  "parents": null,
+  "deps": ["query:{settings.postType}"],
+  "assets": {
+    "style": "style.css",
+    "script": "view.js",
+    "strategy": "visible"
+  },
+  "semantics": {},
+  "migrations": {},
+  "renderer": "Nucleo\\Blocks\\Core\\CollectionRenderer"
+}

@@ -1,0 +1,334 @@
+/* Modulo nativo nc/native-form. Senza script il modulo è un form unico: i passaggi si nascondono solo con .is-enhanced. */
+
+/* Azzera le variabili ereditate da un blocco esterno; :where lascia vincere la classe del nodo. */
+:where(.nc-native-form) {
+	--nc-control-bg: initial;
+	--nc-control-color: initial;
+	--nc-control-border: initial;
+	--nc-control-radius: initial;
+	--nc-control-padding: initial;
+	--nc-control-focus: initial;
+	--nc-control-button-bg: initial;
+	--nc-control-button-color: initial;
+	--nc-control-button-border: initial;
+	--nc-control-button-radius: initial;
+	--nc-control-button-padding: initial;
+	--nc-form-label-color: initial;
+	--nc-form-label-size: initial;
+	--nc-form-label-weight: initial;
+	--nc-form-help-color: initial;
+	--nc-form-legend-color: initial;
+	--nc-form-legend-size: initial;
+	--nc-form-legend-weight: initial;
+	--nc-form-legend-line: initial;
+	--nc-form-mark-color: initial;
+	--nc-form-optional-color: initial;
+	--nc-form-field-gap: initial;
+	--nc-form-field-min-height: initial;
+	--nc-form-control-border-hover: initial;
+	--nc-form-optional-weight: initial;
+	--nc-form-optional-size: initial;
+	--nc-form-number-size: initial;
+	--nc-form-number-border: initial;
+	--nc-form-number-color: initial;
+	--nc-form-number-font: initial;
+	--nc-form-number-font-size: initial;
+	--nc-form-number-weight: initial;
+	--nc-form-control-min-height: initial;
+	--nc-form-placeholder-color: initial;
+	--nc-form-check-size: initial;
+	--nc-form-check-accent: initial;
+	--nc-form-nav-justify: initial;
+}
+
+.nc-native-form {
+	display: grid;
+	gap: 1rem;
+}
+
+/* Larghezza di default con specificità zero: lo stile maxWidth o width del nodo la sostituisce. */
+:where(.nc-native-form) {
+	max-width: 36rem;
+}
+
+.nc-native-form__step {
+	display: grid;
+	gap: 1rem;
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+/* Gruppo di campi consecutivi con lo stesso group: stessa griglia del passo. */
+.nc-native-form__group {
+	display: grid;
+	gap: 1rem;
+	grid-column: 1 / -1;
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+/* Su schermi md+ due campi half consecutivi stanno affiancati; i campi full occupano tutta la riga. Sotto, una colonna. */
+@media (min-width: 768px) {
+	.nc-native-form__step,
+	.nc-native-form__group {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.nc-native-form__field:not(.nc-native-form__field--half) {
+		grid-column: 1 / -1;
+	}
+}
+
+.nc-native-form.is-enhanced .nc-native-form__step[hidden] {
+	display: none;
+}
+
+/* Con groupNumbering il form conta i gruppi di campi e la legend di ciascuno mostra la lettera o la cifra. */
+:where(.nc-native-form[data-numbering]) {
+	counter-reset: nc-group;
+}
+
+:where(.nc-native-form[data-numbering]) .nc-native-form__group {
+	counter-increment: nc-group;
+}
+
+:where(.nc-native-form[data-numbering="letters"]) .nc-native-form__group > legend::before {
+	content: counter(nc-group, upper-alpha) ".";
+	margin-inline-end: 0.5em;
+}
+
+:where(.nc-native-form[data-numbering="numbers"]) .nc-native-form__group > legend::before {
+	content: counter(nc-group, decimal) ".";
+	margin-inline-end: 0.5em;
+}
+
+/* Varianti -box: lettera o cifra senza punto, in un riquadro quadrato. */
+:where(.nc-native-form[data-numbering="letters-box"]) .nc-native-form__group > legend::before,
+:where(.nc-native-form[data-numbering="numbers-box"]) .nc-native-form__group > legend::before {
+	display: inline-grid;
+	flex: none;
+	place-items: center;
+	box-sizing: border-box;
+	width: var(--nc-form-number-size, 1.5em);
+	height: var(--nc-form-number-size, 1.5em);
+	margin-inline-end: 0.75rem;
+	border: var(--nc-form-number-border, 1px solid currentColor);
+	color: var(--nc-form-number-color, inherit);
+	font-family: var(--nc-form-number-font, inherit);
+	font-size: var(--nc-form-number-font-size, inherit);
+	font-weight: var(--nc-form-number-weight, inherit);
+	line-height: 1;
+}
+
+:where(.nc-native-form[data-numbering="letters-box"]) .nc-native-form__group > legend::before {
+	content: counter(nc-group, upper-alpha);
+}
+
+:where(.nc-native-form[data-numbering="numbers-box"]) .nc-native-form__group > legend::before {
+	content: counter(nc-group, decimal);
+}
+
+/* Con --nc-form-legend-line la legend è una riga: il testo, poi una linea di quel colore fino al bordo. */
+.nc-native-form legend {
+	display: flex;
+	align-items: center;
+	box-sizing: border-box;
+	/* Una legend è larga quanto il testo: senza width la linea dopo il testo avrebbe larghezza zero. */
+	width: 100%;
+	padding: 0;
+	margin-bottom: 0.5rem;
+	color: var(--nc-form-legend-color, inherit);
+	font-size: var(--nc-form-legend-size, inherit);
+	font-weight: var(--nc-form-legend-weight, 600);
+}
+
+.nc-native-form legend::after {
+	content: "";
+	flex: 1;
+	height: 1px;
+	margin-inline-start: 0.75rem;
+	background: var(--nc-form-legend-line, transparent);
+}
+
+.nc-native-form__field,
+.nc-native-form__choice {
+	display: flex;
+	flex-direction: column;
+	gap: var(--nc-form-field-gap, 0.35rem);
+	min-width: 0;
+	min-height: var(--nc-form-field-min-height, 0);
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+.nc-native-form__field > label {
+	color: var(--nc-form-label-color, inherit);
+	font-size: var(--nc-form-label-size, inherit);
+	font-weight: var(--nc-form-label-weight, inherit);
+}
+
+/* Marchio dopo l'etichetta: asterisco dei campi obbligatori e dicitura dei facoltativi. */
+.nc-native-form__mark,
+.nc-native-form__optional {
+	margin-inline-start: 0.2em;
+}
+
+.nc-native-form__mark {
+	color: var(--nc-form-mark-color, inherit);
+}
+
+.nc-native-form__optional {
+	color: var(--nc-form-optional-color, inherit);
+	font-size: var(--nc-form-optional-size, inherit);
+	font-weight: var(--nc-form-optional-weight, inherit);
+}
+
+.nc-native-form__choice label,
+.nc-native-form__check {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.nc-native-form input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+.nc-native-form select,
+.nc-native-form textarea {
+	width: 100%;
+	box-sizing: border-box;
+	padding: var(--nc-control-padding, 0.6rem 0.75rem);
+	font: inherit;
+	color: var(--nc-control-color, inherit);
+	background: var(--nc-control-bg, #fff);
+	border: var(--nc-control-border, 1px solid #8a8a8a);
+	border-radius: var(--nc-control-radius, 4px);
+	min-height: var(--nc-form-control-min-height, 0);
+}
+
+.nc-native-form input::placeholder,
+.nc-native-form textarea::placeholder {
+	color: var(--nc-form-placeholder-color, revert);
+}
+
+.nc-native-form input[type="checkbox"],
+.nc-native-form input[type="radio"] {
+	flex: none;
+	width: var(--nc-form-check-size, auto);
+	height: var(--nc-form-check-size, auto);
+	accent-color: var(--nc-form-check-accent, auto);
+}
+
+/* Più specifica della regola dei controlli, che fissa il bordo con lo shorthand: vince senza !important. */
+.nc-native-form input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):hover:not([aria-invalid="true"]),
+.nc-native-form select:hover:not([aria-invalid="true"]),
+.nc-native-form textarea:hover:not([aria-invalid="true"]) {
+	border: var(--nc-form-control-border-hover, var(--nc-control-border, 1px solid #8a8a8a));
+}
+
+.nc-native-form textarea {
+	min-height: 6rem;
+	resize: vertical;
+}
+
+.nc-native-form input:focus-visible,
+.nc-native-form select:focus-visible,
+.nc-native-form textarea:focus-visible,
+.nc-native-form button:focus-visible {
+	outline: 2px solid var(--nc-control-focus, var(--nc-color-primary, #2563eb));
+	outline-offset: 2px;
+}
+
+/* Più specifica della regola dei controlli, che fissa il bordo con lo shorthand: vince senza !important. */
+.nc-native-form input[aria-invalid="true"]:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]),
+.nc-native-form select[aria-invalid="true"],
+.nc-native-form textarea[aria-invalid="true"] {
+	border-color: #b00020;
+}
+
+/* Campo email bloccato dopo la verifica del codice. Più specifico della regola dei controlli, che fissa lo sfondo. */
+.nc-native-form input[readonly]:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]) {
+	background: #f2f2f2;
+}
+
+.nc-native-form__help {
+	margin: 0;
+	font-size: 0.875rem;
+	color: var(--nc-form-help-color, #4a4a4a);
+}
+
+.nc-native-form__error:not([hidden]) {
+	margin: 0;
+	font-size: 0.875rem;
+	color: #b00020;
+}
+
+.nc-native-form__message:empty {
+	display: none;
+}
+
+.nc-native-form__message {
+	margin: 0;
+	font-weight: 600;
+}
+
+/* Trappola per i bot: fuori schermo, ancora nel documento per chi usa un lettore. */
+.nc-native-form__hp {
+	position: absolute;
+	left: -10000px;
+	top: auto;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+}
+
+/* Widget del captcha sopra i pulsanti; reCAPTCHA v3 non mostra niente qui. */
+.nc-native-form__captcha {
+	margin-block: 1rem;
+}
+
+.nc-native-form__captcha:empty,
+.nc-native-form__captcha[data-captcha="recaptcha-v3"] {
+	margin-block: 0;
+}
+
+.nc-native-form__nav {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+	justify-content: var(--nc-form-nav-justify, flex-end);
+}
+
+.nc-native-form__nav[hidden],
+.nc-native-form__otp[hidden] {
+	display: none;
+}
+
+.nc-native-form__otp {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+}
+
+/* Pulsanti del modulo, incluso l'invio: gruppo buttons. */
+.nc-native-form button {
+	padding: var(--nc-control-button-padding, 0.6rem 1.2rem);
+	border: var(--nc-control-button-border, 0);
+	border-radius: var(--nc-control-button-radius, 4px);
+	background: var(--nc-control-button-bg, var(--nc-color-primary, #2563eb));
+	color: var(--nc-control-button-color, var(--nc-color-background, #fff));
+	font: inherit;
+	cursor: pointer;
+}
+
+.nc-native-form button[hidden] {
+	display: none;
+}
+
+.nc-native-form button:disabled {
+	cursor: progress;
+	opacity: 0.6;
+}

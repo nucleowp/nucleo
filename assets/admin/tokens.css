@@ -1,0 +1,146 @@
+/*
+ * Token dell'interfaccia di Nucleo (stile vetro, gli stessi del sito di vendita).
+ * Fonte unica: admin.css, editor.css, mockup.css e fields.css usano solo queste variabili.
+ * Dichiarati solo sui contenitori di Nucleo, mai su :root: la cornice di WordPress resta intatta.
+ * --nc-bg-image arriva dal PHP (Nucleo\Admin\Assets) con l'URL assoluto dell'immagine.
+ * Riferimento: docs/ui/design/00-tema.html.
+ */
+.nucleo-admin-portal,
+.nucleo-admin,
+.nc-fields {
+	/* Colori di base. */
+	--nc-bg: #f3f6f4;
+	/* Sfondo dell'editor: panna con disturbo fine (rumore SVG al 9%). */
+	--nc-bg-cream: #f4efe4;
+	--nc-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+	--nc-surface: #fff;
+	--nc-surface-2: rgba(13, 25, 18, 0.05);
+	--nc-tint: rgba(13, 25, 18, 0.04);
+	--nc-tint-hover: rgba(13, 25, 18, 0.06);
+	--nc-line: rgba(13, 25, 18, 0.07);
+	--nc-border: rgba(13, 25, 18, 0.12);
+	--nc-border-input: #7f8f85;
+	--nc-text: #0d1912;
+	--nc-text-muted: #4c5c53;
+	--nc-text-disabled: #6f7d74;
+	--nc-accent: #0f7a3c;
+	--nc-accent-hover: #0b6330;
+	--nc-accent-bg: #e3f2e8;
+	--nc-accent-tint: rgba(15, 122, 60, 0.07);
+	--nc-on-accent: #fff;
+	--nc-ink: #0d1912;
+	--nc-on-ink: #fff;
+
+	/* Stati: testo, sfondo, bordo. */
+	--nc-ok: #0b6330;
+	--nc-ok-bg: #e3f2e8;
+	--nc-ok-bd: rgba(15, 122, 60, 0.35);
+	--nc-warn: #7a4f00;
+	--nc-warn-bg: #f7eedc;
+	--nc-warn-bd: rgba(138, 90, 0, 0.35);
+	--nc-err: #9e1f33;
+	--nc-err-bg: #fbe9ec;
+	--nc-err-bd: rgba(180, 35, 58, 0.35);
+	--nc-info: #0b5f80;
+	--nc-info-bg: #e4f1f6;
+	--nc-info-bd: rgba(11, 106, 143, 0.35);
+
+	/* Vetro: un solo livello per area, mai vetro dentro vetro. */
+	--nc-glass: linear-gradient(180deg, rgba(255, 255, 255, 0.66), rgba(255, 255, 255, 0.4));
+	--nc-glass-strong: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.6));
+	--nc-glass-solid: rgba(255, 255, 255, 0.94);
+	--nc-glass-edge: rgba(255, 255, 255, 0.75);
+	--nc-glass-blur: blur(28px) saturate(175%);
+	--nc-glass-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(255, 255, 255, 0.3), 0 24px 60px -24px rgba(13, 40, 26, 0.28), 0 2px 8px rgba(13, 40, 26, 0.06);
+	--nc-field-bg: rgba(255, 255, 255, 0.9);
+	--nc-tile-bg: linear-gradient(180deg, #fff, rgba(255, 255, 255, 0.7));
+	--nc-tile-edge: rgba(255, 255, 255, 0.95);
+	--nc-tile-shadow: inset 0 1px 0 #fff, 0 8px 20px -10px rgba(13, 40, 26, 0.35);
+	--nc-btn-shadow: 0 10px 30px -10px rgba(15, 122, 60, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+	--nc-btn-shadow-hover: 0 16px 40px -12px rgba(15, 122, 60, 0.7);
+	--nc-bar-shadow: 0 10px 30px -24px rgba(13, 40, 26, 0.35);
+	--nc-gradient: linear-gradient(90deg, #0f9e6e, #1689b8 60%, #6b57d6);
+	--nc-code-bg: rgba(13, 25, 18, 0.06);
+	--nc-pre-bg: rgba(13, 25, 18, 0.9);
+	--nc-pre-text: #d7f5e4;
+	--nc-overlay: rgba(13, 25, 18, 0.45);
+	--nc-shadow-overlay: 0 24px 60px -24px rgba(13, 40, 26, 0.35), 0 2px 8px rgba(13, 40, 26, 0.08);
+
+	/* Raggi. */
+	--nc-r-xs: 6px;
+	--nc-r-s: 10px;
+	--nc-r-m: 14px;
+	--nc-r-base: 18px;
+	--nc-r-l: 24px;
+	--nc-r-xl: 32px;
+	--nc-r-pill: 999px;
+
+	/* Spazi e altezze dei controlli. */
+	--nc-space-1: 4px;
+	--nc-space-2: 8px;
+	--nc-space-3: 12px;
+	--nc-space-4: 16px;
+	--nc-space-5: 24px;
+	--nc-space-6: 32px;
+	--nc-pad-card-y: 24px;
+	--nc-pad-card-x: 28px;
+	--nc-control-h: 48px;
+	--nc-control-h-s: 38px;
+	--nc-control-h-xs: 32px;
+
+	/* Movimento. */
+	--nc-ease: cubic-bezier(0.22, 0.8, 0.24, 1);
+	--nc-dur: 0.4s;
+	--nc-dur-fast: 0.15s;
+
+	/* Tipografia: titoli e testo in sans, etichette e codice in mono. */
+	--nc-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+	--nc-font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+	--nc-text-h1: 650 48px/54px var(--nc-font-sans);
+	--nc-text-lead: 400 18px/28px var(--nc-font-sans);
+	--nc-text-h2: 620 22px/28px var(--nc-font-sans);
+	--nc-text-h3: 620 18px/26px var(--nc-font-sans);
+	--nc-text-body: 400 15px/24px var(--nc-font-sans);
+	--nc-text-small: 400 14px/21px var(--nc-font-sans);
+	--nc-text-button: 600 16px/20px var(--nc-font-sans);
+	--nc-text-button-s: 600 14px/18px var(--nc-font-sans);
+	--nc-text-tag: 600 12px/16px var(--nc-font-sans);
+	--nc-text-label: 500 12px/16px var(--nc-font-mono);
+	--nc-text-kicker: 500 12px/16px var(--nc-font-mono);
+	--nc-text-data: 650 48px/52px var(--nc-font-sans);
+	--nc-text-stat: 650 36px/40px var(--nc-font-sans);
+	--nc-text-th: 600 13px/18px var(--nc-font-sans);
+	--nc-text-cell: 400 14px/21px var(--nc-font-sans);
+	--nc-text-cell-mono: 400 12.5px/20px var(--nc-font-mono);
+	--nc-text-code: 400 12.5px/20px var(--nc-font-mono);
+	--nc-tracking-label: 0.14em;
+	--nc-tracking-title: -0.03em;
+
+	/* Ponte con @wordpress/components. */
+	--wp-components-color-accent: var(--nc-accent);
+	--wp-components-color-accent-darker-10: var(--nc-accent-hover);
+	--wp-components-color-accent-darker-20: var(--nc-accent-hover);
+	--wp-components-color-background: var(--nc-surface);
+	--wp-components-color-foreground: var(--nc-text);
+	--wp-admin-theme-color: var(--nc-accent);
+	--wp-admin-theme-color-darker-10: var(--nc-accent-hover);
+	--wp-admin-theme-color-darker-20: var(--nc-accent-hover);
+	--wp-admin-border-width-focus: 2px;
+}
+
+/* Senza backdrop-filter o con trasparenza ridotta il vetro diventa bianco al 94%. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+	.nucleo-admin-portal,
+	.nucleo-admin {
+		--nc-glass: var(--nc-glass-solid);
+		--nc-glass-strong: var(--nc-glass-solid);
+	}
+}
+@media (prefers-reduced-transparency: reduce) {
+	.nucleo-admin-portal,
+	.nucleo-admin {
+		--nc-glass: var(--nc-glass-solid);
+		--nc-glass-strong: var(--nc-glass-solid);
+		--nc-glass-blur: none;
+	}
+}

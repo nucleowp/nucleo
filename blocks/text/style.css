@@ -1,0 +1,12 @@
+.nc-text {
+  overflow-wrap: break-word;
+}
+
+.nc-text p + p {
+  margin-top: var(--nc-space-3);
+}
+
+.nc-text ul,
+.nc-text ol {
+  padding-left: var(--nc-space-6);
+}

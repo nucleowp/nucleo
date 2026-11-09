@@ -1,0 +1,39 @@
+.nc-tabs__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--nc-space-2);
+  border-bottom: 1px solid currentColor;
+}
+
+.nc-tabs__tab {
+  padding: var(--nc-space-3) var(--nc-space-4);
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.nc-tabs__tab[aria-selected="true"] {
+  border-bottom-color: currentColor;
+  font-weight: 600;
+}
+
+.nc-tabs__tab:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 2px;
+}
+
+.nc-tabs__panel {
+  padding-top: var(--nc-space-4);
+}
+
+/* Senza JavaScript (classe is-ready assente) tutti i pannelli restano visibili. */
+.nc-tabs.is-ready .nc-tabs__panel {
+  display: none;
+}
+
+.nc-tabs.is-ready .nc-tabs__panel.is-active {
+  display: block;
+}

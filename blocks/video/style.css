@@ -1,0 +1,55 @@
+.nc-video {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+}
+
+.nc-video__play {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.nc-video__play img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.nc-video__play:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 3px;
+}
+
+.nc-video iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Video con consenso: fondo scuro finché la miniatura non arriva, avviso sotto il pulsante. */
+.nc-video[data-nc-consent] {
+  background: #1a1a1a;
+}
+
+.nc-video__notice {
+  position: absolute;
+  inset: auto 0 0;
+  padding: 0.5em 0.75em;
+  font-size: 0.875rem;
+  color: #fff;
+  background: rgb(0 0 0 / 60%);
+  pointer-events: none;
+}
+
+.nc-video.is-blocked .nc-video__notice {
+  font-weight: 700;
+}

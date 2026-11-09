@@ -1,0 +1,26 @@
+.nc-container--flex {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--nc-space-4);
+}
+
+.nc-container--grid {
+  display: grid;
+  gap: var(--nc-space-4);
+}
+
+/* Card con link: il link copre il contenitore, link e pulsanti interni restano sopra. */
+.nc-container--linked {
+  position: relative;
+}
+
+.nc-container__link {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.nc-container--linked :is(a, button):not(.nc-container__link) {
+  position: relative;
+  z-index: 1;
+}

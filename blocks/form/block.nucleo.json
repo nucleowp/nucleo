@@ -1,0 +1,29 @@
+{
+  "name": "nc/form",
+  "version": 1,
+  "title": "Form",
+  "category": "interactive",
+  "description": "Form from an external plugin (Contact Form 7, Gravity Forms, WPForms, Fluent Forms) inserted via shortcode.",
+  "aiHints": "Choose the plugin and enter the ID of the form created in the plugin. The form is loaded by the plugin, not by this block.",
+  "content": {},
+  "settings": {
+    "plugin": { "type": "string", "enum": ["cf7", "gravity", "wpforms", "fluent"], "required": true },
+    "id":     { "type": "string", "required": true }
+  },
+  "supports": {
+    "style": ["spacing", "typography", "motion"],
+    "responsive": true,
+    "visibility": true,
+    "bind": []
+  },
+  "deps": ["form:{settings.plugin}"],
+  "children": false,
+  "parents": null,
+  "assets": {
+    "style": "style.css",
+    "script": null
+  },
+  "semantics": {},
+  "migrations": {},
+  "renderer": "Nucleo\\Integrations\\Forms\\FormRenderer"
+}

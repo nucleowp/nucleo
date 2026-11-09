@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nucleo.dev/schema/content-model.schema.json",
+  "title": "Modello dei contenuti Nucleo",
+  "description": "Tipi di contenuto, tassonomie e gruppi di campi. Le regole che dipendono da WordPress e dall'edizione stanno in ModelValidator.",
+  "type": "object",
+  "required": ["schema"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": 1 },
+    "postTypes": { "type": "array", "items": { "$ref": "#/$defs/postType" } },
+    "taxonomies": { "type": "array", "items": { "$ref": "#/$defs/taxonomy" } },
+    "fieldGroups": { "type": "array", "items": { "$ref": "#/$defs/fieldGroup" } }
+  },
+  "$defs": {
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]*$"
+    },
+    "label": {
+      "type": "string",
+      "minLength": 1
+    },
+    "postType": {
+      "type": "object",
+      "required": ["slug", "singular", "plural"],
+      "additionalProperties": false,
+      "properties": {
+        "slug": { "$ref": "#/$defs/slug" },
+        "singular": { "$ref": "#/$defs/label" },
+        "plural": { "$ref": "#/$defs/label" },
+        "public": { "type": "boolean" },
+        "hasArchive": { "type": "boolean" },
+        "rewrite": { "type": "string", "minLength": 1 },
+        "supports": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "icon": { "type": "string", "minLength": 1 }
+      }
+    },
+    "taxonomy": {
+      "type": "object",
+      "required": ["slug", "singular", "plural"],
+      "additionalProperties": false,
+      "properties": {
+        "slug": { "$ref": "#/$defs/slug" },
+        "singular": { "$ref": "#/$defs/label" },
+        "plural": { "$ref": "#/$defs/label" },
+        "postTypes": { "type": "array", "items": { "$ref": "#/$defs/slug" } },
+        "hierarchical": { "type": "boolean" },
+        "public": { "type": "boolean" }
+      }
+    },
+    "location": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["postType"],
+          "additionalProperties": false,
+          "properties": { "postType": { "$ref": "#/$defs/slug" } }
+        },
+        {
+          "type": "object",
+          "required": ["taxonomy"],
+          "additionalProperties": false,
+          "properties": { "taxonomy": { "$ref": "#/$defs/slug" } }
+        }
+      ]
+    },
+    "fieldGroup": {
+      "type": "object",
+      "required": ["id", "title", "location", "fields"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/slug" },
+        "title": { "$ref": "#/$defs/label" },
+        "location": { "$ref": "#/$defs/location" },
+        "fields": { "type": "array", "items": { "$ref": "#/$defs/field" } }
+      }
+    },
+    "option": {
+      "type": "object",
+      "required": ["value", "label"],
+      "additionalProperties": false,
+      "properties": {
+        "value": { "type": "string" },
+        "label": { "$ref": "#/$defs/label" }
+      }
+    },
+    "field": {
+      "type": "object",
+      "required": ["key", "type", "label"],
+      "additionalProperties": false,
+      "properties": {
+        "key": { "type": "string", "pattern": "^[a-z][a-z0-9_]{0,31}$" },
+        "type": { "enum": ["text", "textarea", "number", "url", "email", "image", "date", "select", "boolean", "relation", "repeater"] },
+        "label": { "$ref": "#/$defs/label" },
+        "required": { "type": "boolean" },
+        "help": { "type": "string" },
+        "min": { "type": "number" },
+        "max": { "type": "number" },
+        "step": { "type": "number" },
+        "options": { "type": "array", "items": { "$ref": "#/$defs/option" } },
+        "multiple": { "type": "boolean" },
+        "postTypes": { "type": "array", "items": { "$ref": "#/$defs/slug" } },
+        "fields": { "type": "array", "items": { "$ref": "#/$defs/field" } }
+      }
+    }
+  }
+}

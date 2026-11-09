@@ -1,0 +1,30 @@
+{
+  "name": "nc/container",
+  "version": 1,
+  "title": "Container",
+  "category": "structure",
+  "description": "Flex or grid container for columns and groups of blocks.",
+  "aiHints": "Use grid layout for equal columns, flex for groups of items that wrap. Do not nest more than two containers.",
+  "content": {},
+  "settings": {
+    "layout": { "type": "string", "enum": ["flex", "grid"], "default": "flex" },
+    "responsiveMode": { "type": "string", "enum": ["media", "container"] },
+    "anchor": { "type": "string" },
+    "href": { "type": "string" },
+    "label": { "type": "string" }
+  },
+  "supports": {
+    "style": ["spacing", "size", "color", "border", "effects", "layout", "position", "motion"],
+    "responsive": true,
+    "visibility": true
+  },
+  "children": true,
+  "parents": null,
+  "assets": {
+    "style": "style.css",
+    "script": null
+  },
+  "semantics": {},
+  "renderer": "Nucleo\\Blocks\\Core\\ContainerRenderer",
+  "migrations": {}
+}

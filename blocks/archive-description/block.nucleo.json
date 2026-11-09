@@ -1,0 +1,25 @@
+{
+  "name": "nc/archive-description",
+  "version": 1,
+  "title": "Archive description",
+  "category": "dynamic",
+  "description": "Description of a category, tag or archive. Empty if the archive has no description. Dynamic: read on every request.",
+  "aiHints": "Use it below the archive title.",
+  "content": {},
+  "settings": {},
+  "supports": {
+    "style": ["typography", "color", "spacing", "motion"],
+    "responsive": true,
+    "visibility": true,
+    "bind": []
+  },
+  "children": false,
+  "parents": null,
+  "assets": {
+    "style": "style.css",
+    "script": null
+  },
+  "semantics": {},
+  "migrations": {},
+  "renderer": "Nucleo\\Blocks\\Core\\ArchiveDescriptionRenderer"
+}

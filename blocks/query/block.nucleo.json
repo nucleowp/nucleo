@@ -1,0 +1,34 @@
+{
+  "name": "nc/query",
+  "version": 1,
+  "title": "Post list",
+  "category": "dynamic",
+  "description": "Post list. Without children: card with image, linked title and excerpt. With one child: the child is the card, repeated for each post. Static: updates when posts change. With relatedTo (a taxonomy slug): lists the other posts of the same type that share a term of that taxonomy with the current post, computed at request time and cached per post.",
+  "aiHints": "Use it for lists of news or articles. Keep the number of cards low (1-24). For a custom card add one child (nc/container or a ref to a section): inside it, bind and nc/post-title, nc/post-image, nc/post-meta read each post. For filters use nc/collection. For related posts (for example more articles on the same topic) set relatedTo to the taxonomy slug: the list excludes the current post and is empty when it has no terms in that taxonomy; empty \"\" hides the text.",
+  "content": {},
+  "settings": {
+    "postType": { "type": "string", "default": "post" },
+    "perPage": { "type": "integer", "minimum": 1, "maximum": 24, "default": 6 },
+    "taxonomy": { "type": "string", "default": "" },
+    "term": { "type": "string", "default": "" },
+    "relatedTo": { "type": "string", "default": "" },
+    "orderby": { "type": "string", "enum": ["date", "title"], "default": "date" },
+    "empty": { "type": "string", "default": "No content" }
+  },
+  "supports": {
+    "style": ["spacing", "layout", "typography", "color", "position", "motion"],
+    "responsive": true,
+    "visibility": true,
+    "bind": []
+  },
+  "children": true,
+  "parents": null,
+  "deps": ["query:{settings.postType}"],
+  "assets": {
+    "style": "style.css",
+    "script": null
+  },
+  "semantics": {},
+  "migrations": {},
+  "renderer": "Nucleo\\Blocks\\Core\\QueryRenderer"
+}

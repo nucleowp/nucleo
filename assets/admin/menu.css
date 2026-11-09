@@ -1,0 +1,66 @@
+/* Etichette del menu Nucleo (tag PRO e contatore) e notice Nucleo fuori dal wrapper, su ogni schermata di amministrazione.
+   Colori di assets/admin/tokens.css scritti come valori letterali: le notice di WordPress non ereditano le variabili --nc-*. */
+#adminmenu .nc-menu-badge {
+	display:inline-block;
+	min-width:18px;
+	margin-left:4px;
+	padding:0 6px;
+	border-radius:999px;
+	background:#9e1f33;
+	color:#fff;
+	font-size:9px;
+	line-height:18px;
+	text-align:center
+}
+.nucleo-notice {
+	margin:5px 0 15px;
+	padding:12px 16px;
+	border:1px solid rgba(13,25,18,.12);
+	border-radius:18px;
+	background:#fff;
+	color:#0d1912;
+	font-size:15px;
+	line-height:24px
+}
+.nucleo-notice--info {
+	background:#e4f1f6;
+	border-color:#0b5f80
+}
+.nucleo-notice--warn {
+	background:#f7eedc;
+	border-color:#7a4f00
+}
+.nucleo-notice--err {
+	background:#fbe9ec;
+	border-color:#9e1f33
+}
+.nucleo-notice--ok {
+	background:#e3f2e8;
+	border-color:#0b6330
+}
+.nucleo-notice--info .nucleo-notice__glyph,.nucleo-notice--info strong {
+	color:#0b5f80
+}
+.nucleo-notice--warn .nucleo-notice__glyph,.nucleo-notice--warn strong {
+	color:#7a4f00
+}
+.nucleo-notice--err .nucleo-notice__glyph,.nucleo-notice--err strong {
+	color:#9e1f33
+}
+.nucleo-notice--ok .nucleo-notice__glyph,.nucleo-notice--ok strong {
+	color:#0b6330
+}
+.nucleo-notice__glyph {
+	font-weight:700;
+	margin-right:8px
+}
+.nucleo-notice .button,.nucleo-notice .button-primary,.nucleo-notice .button-secondary {
+	background:#0f7a3c!important;
+	border-color:#0f7a3c!important;
+	color:#fff!important
+}
+.nucleo-notice .button:hover,.nucleo-notice .button:focus,.nucleo-notice .button-primary:hover,.nucleo-notice .button-primary:focus {
+	background:#0b6330!important;
+	border-color:#0b6330!important;
+	color:#fff!important
+}

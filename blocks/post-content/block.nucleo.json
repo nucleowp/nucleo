@@ -1,0 +1,28 @@
+{
+  "name": "nc/post-content",
+  "version": 1,
+  "title": "Post content",
+  "category": "text",
+  "description": "Content of the current post or page. Dynamic: read on every request.",
+  "aiHints": "Use it only once in single layouts, usually after the title. Its link part (the links inside the content) is styled with style.parts, for example style.parts.link.fontWeight 600.",
+  "content": {},
+  "settings": {},
+  "supports": {
+    "style": ["typography", "color", "spacing", "motion"],
+    "responsive": true,
+    "visibility": true,
+    "bind": []
+  },
+  "parts": {
+    "link": " a"
+  },
+  "children": false,
+  "parents": null,
+  "assets": {
+    "style": "style.css",
+    "script": null
+  },
+  "semantics": {},
+  "migrations": {},
+  "renderer": "Nucleo\\Blocks\\Core\\PostContentRenderer"
+}

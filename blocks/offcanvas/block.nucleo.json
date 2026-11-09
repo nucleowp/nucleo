@@ -1,0 +1,35 @@
+{
+  "name": "nc/offcanvas",
+  "version": 1,
+  "title": "Off-canvas",
+  "category": "navigation",
+  "description": "Trigger button that opens a side panel holding child blocks. The panel is a modal dialog.",
+  "aiHints": "settings.label is the trigger text and is required; an empty label outputs nothing. settings.side is left or right, default left. settings.width is a CSS length such as 20rem, 320px or 80vw, default 20rem. Child blocks go inside the panel. The panel is hidden until the trigger is pressed.",
+  "content": {},
+  "settings": {
+    "label": { "type": "string", "translatable": true, "required": true },
+    "side": { "type": "string", "enum": ["left", "right"], "default": "left" },
+    "width": { "type": "string", "default": "20rem" }
+  },
+  "supports": {
+    "style": ["color", "spacing", "border", "motion"],
+    "responsive": true,
+    "visibility": true,
+    "bind": []
+  },
+  "parts": {
+    "trigger": " .nc-offcanvas__trigger",
+    "panel": " .nc-offcanvas__panel"
+  },
+  "children": true,
+  "parents": null,
+  "deps": [],
+  "assets": {
+    "style": "style.css",
+    "script": "view.js",
+    "strategy": "idle"
+  },
+  "semantics": {},
+  "migrations": {},
+  "renderer": "Nucleo\\Blocks\\Core\\OffcanvasRenderer"
+}

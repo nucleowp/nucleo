@@ -1,0 +1,29 @@
+.nc-form {
+  display: grid;
+  gap: var(--nc-space-4, 1rem);
+}
+
+.nc-form input,
+.nc-form select,
+.nc-form textarea {
+  font: inherit;
+  max-width: 100%;
+  padding: var(--nc-space-2, 0.5em) var(--nc-space-3, 0.75em);
+  border: 1px solid var(--nc-color-border, currentColor);
+  border-radius: var(--nc-radius-md, 4px);
+  background: var(--nc-color-background, transparent);
+  color: var(--nc-color-text, currentColor);
+}
+
+.nc-form button {
+  font: inherit;
+  cursor: pointer;
+}
+
+.nc-form input:focus-visible,
+.nc-form select:focus-visible,
+.nc-form textarea:focus-visible,
+.nc-form button:focus-visible {
+  outline: 3px solid var(--nc-color-text, currentColor);
+  outline-offset: 2px;
+}

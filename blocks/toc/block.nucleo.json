@@ -1,0 +1,28 @@
+{
+  "name": "nc/toc",
+  "version": 1,
+  "title": "Table of contents",
+  "category": "navigation",
+  "description": "In-page table of contents: links to the sections of the page, with the current section highlighted while scrolling.",
+  "aiHints": "Children are nc/text or nc/button links to anchors (#id) of nc/section or nc/container blocks on the same page; the anchor settings of those targets are lowercase letters, digits and hyphens. The label names the list for screen readers (e.g. Indice). Style the current entry (the child block) with the Current keys: colorCurrent, borderLeftCurrent, fontWeightCurrent. To keep the list visible while scrolling, use style position sticky. Its part for style.parts is link, for example style.parts.link.fontWeight 600.",
+  "content": {
+    "label": { "type": "string", "translatable": true }
+  },
+  "settings": {},
+  "supports": {
+    "style": ["spacing", "size", "color", "border", "effects", "layout", "position", "motion"],
+    "responsive": true,
+    "visibility": true
+  },
+  "parts": {"link": " a"},
+  "children": true,
+  "parents": null,
+  "assets": {
+    "style": "style.css",
+    "script": "view.js",
+    "strategy": "visible"
+  },
+  "semantics": {},
+  "renderer": "Nucleo\\Blocks\\Core\\TocRenderer",
+  "migrations": {}
+}

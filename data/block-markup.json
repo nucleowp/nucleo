@@ -1,0 +1,302 @@
+{
+    "nc/accordion": {
+        "html": "<div class=\"nc-accordion …\"><details class=\"nc-accordion__item\" (open on the first item when openFirst)><summary>…</summary><div class=\"nc-accordion__panel\">…</div></details>… one per item; with faq also a <script type=\"application/ld+json\"> FAQPage after the div</div>",
+        "css": "item: bottom border 1px currentColor; summary: pointer cursor, padding var(--nc-space-4) 0, font-weight 600, 3px outline on focus; panel: padding-bottom var(--nc-space-4)",
+        "dynamic": false
+    },
+    "nc/archive-description": {
+        "html": "<div class=\"nc-archive-description …\">archive description HTML</div>; empty when the archive has no description",
+        "css": "children after the first get margin-top 0.5em; no width or display rules",
+        "dynamic": true
+    },
+    "nc/archive-title": {
+        "html": "<h1|h2|h3 class=\"nc-archive-title …\">title</h1|h2|h3>; empty when there is no title; search pages show the search query",
+        "css": "margin: 0 0 0.5em",
+        "dynamic": true
+    },
+    "nc/breadcrumbs": {
+        "html": "<nav class=\"nc-breadcrumbs …\" aria-label=\"Breadcrumb\"><ol><li><a href=\"…\">…</a></li>… <li aria-current=\"page\">current title</li></ol></nav>; items without href are plain text; with Yoast or Rank Math active, <div class=\"nc-breadcrumbs …\"> holds their output instead",
+        "css": "ol: wrapped flex row, gap 0.25em, margin and padding 0, no bullets; li + li::before shows a \"›\" separator with margin-right 0.25em",
+        "dynamic": true
+    },
+    "nc/button": {
+        "html": "<a|button class=\"nc-button (nc-button--primary|nc-button--secondary|nc-button--link) …\" href=\"…\" (target and rel when newTab)>text</a|button>; a button with type=\"button\" and no href replaces the link when href is missing or unsafe (javascript:, data:, vbscript:)",
+        "css": "inline-flex, centred, gap var(--nc-space-2), padding var(--nc-space-2) var(--nc-space-4), radius var(--nc-radius-md), font inherit with weight 600, no underline; primary: filled with primary colour; secondary: transparent with border; link: no side padding, underlined in primary colour; focus-visible outline 2px accent",
+        "dynamic": false
+    },
+    "nc/collection": {
+        "html": "<div class=\"nc-collection … (nc-collection--drawer)\" data-nc-collection=\"node id\"><form class=\"nc-collection__form\" method=\"get\"><button type=\"button\" class=\"nc-collection__open\" hidden>…</button><div class=\"nc-collection__panel\">filters: <fieldset|details class=\"nc-collection__filter|nc-collection__dropdown\">…</fieldset|details> <button type=\"button\" class=\"nc-collection__close\">…</button><button type=\"submit\" class=\"nc-collection__apply\">…</button></div><div class=\"nc-collection__bar\"><p class=\"nc-collection-count\">n results</p> [<a class=\"nc-collection-reset\" href=\"?\">reset</a>] [<div class=\"nc-collection__views\"> grid and rows buttons </div>]</div><div class=\"nc-collection__results\" tabindex=\"-1\">(<ul class=\"nc-collection__items\" role=\"list\"><li class=\"nc-collection__item\">…</li></ul> or <div class=\"nc-collection__empty\">…</div>) <nav class=\"nc-collection__pager\" aria-label=\"Pages\">…</nav></div><p class=\"nc-collection__status\" role=\"status\" aria-live=\"polite\"></p></form></div>; the card, empty, count and reset children are drawn here",
+        "css": "form and panel are grids with 1rem gaps; filter legends bold, fieldsets without border or padding; pills and options are inline-flex (pills rounded with a border); bar is a wrapped flex row with space-between; items are an unstyled list: grid with 1.5rem gaps (auto-fill minmax(16rem, 1fr) in grid view, one column in rows view; style keys resultsColumns and resultsGap of the group results replace them, also per breakpoint; settings.cardSize small adds nc-collection--small and lowers the minimum to min(9rem, 100%)); pager is a wrapped flex row with 0.5rem gaps and an underlined bold current page; status is visually hidden; below 768px an enhanced drawer panel is hidden until opened, then fixed full screen",
+        "dynamic": true
+    },
+    "nc/collection-card": {
+        "html": "",
+        "css": "",
+        "dynamic": false
+    },
+    "nc/collection-count": {
+        "html": "",
+        "css": "",
+        "dynamic": false
+    },
+    "nc/collection-empty": {
+        "html": "",
+        "css": "",
+        "dynamic": false
+    },
+    "nc/collection-reset": {
+        "html": "",
+        "css": "",
+        "dynamic": false
+    },
+    "nc/container": {
+        "html": "<div class=\"nc-container (nc-container--flex|nc-container--grid) …\">…</div>",
+        "css": "flex (wrapped) or grid, with gap var(--nc-space-4)",
+        "dynamic": false
+    },
+    "nc/divider": {
+        "html": "<hr class=\"nc-divider …\">",
+        "css": "border 0, top border 1px currentColor, margin-block var(--nc-space-4)",
+        "dynamic": false
+    },
+    "nc/embed": {
+        "html": "<div class=\"nc-embed …\" data-src=\"embed url\" data-title=\"title\" [data-nc-consent=\"category\" and consent attributes]><button type=\"button\" class=\"nc-embed__play\" aria-label=\"Load: title\">[<img src=\"poster\"|data-nc-src=\"poster\" alt=\"\" loading=\"lazy\" width=\"480\" height=\"270\">]</button>[<span class=\"nc-embed__notice\">consent notice</span>]</div>; the iframe is added by view.js on click",
+        "css": "relative box with the chosen aspect ratio (16:9, 4:3, 1:1, 21:9) and hidden overflow; the button covers the box, its image fills it; visible focus outline; iframe absolute and full size; with consent: dark background and a notice at the bottom",
+        "dynamic": false
+    },
+    "nc/form": {
+        "html": "<div class=\"nc-form …\">plugin form markup</div>, from a shortcode of Contact Form 7, Gravity Forms, WPForms or Fluent Forms; empty without a supported plugin or id",
+        "css": "grid with 1rem gaps; inputs, selects and textareas inherit font, max-width 100%, padding 0.5em 0.75em, 1px currentColor border, 4px radius, transparent background; buttons inherit font and have a pointer cursor; focus-visible outline 3px offset 2px",
+        "dynamic": true
+    },
+    "nc/heading": {
+        "html": "<h1|h2|h3|h4|h5|h6 class=\"nc-heading …\">inline rich text</h1|h2|h3|h4|h5|h6>; level defaults to 2",
+        "css": "margin 0, line-height 1.2, overflow-wrap break-word",
+        "dynamic": false
+    },
+    "nc/icon": {
+        "html": "<svg class=\"nc-icon …\" aria-hidden=\"true\"|role=\"img\" aria-label=\"label\" viewBox=\"0 0 24 24\" width=\"24\" height=\"24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" focusable=\"false\"><path…></svg>; names: check, arrow-right, phone, mail, map-pin, star, menu, close, plus, minus; empty for any other name",
+        "css": "inline-block, width and height 1em, flex-shrink 0, vertical-align middle",
+        "dynamic": false
+    },
+    "nc/image": {
+        "html": "<img class=\"nc-image …\" src=\"…\" alt=\"…\" (width, height, srcset, sizes when set) decoding=\"async\" loading=\"lazy\"|fetchpriority=\"high\">; alt is empty when decorative; no closing tag",
+        "css": "display block, max-width 100%, height auto",
+        "dynamic": false
+    },
+    "nc/list": {
+        "html": "<ul class=\"nc-list …\"><li>(svg icon when set)inline rich text</li>…</ul>",
+        "css": "margin 0, padding-left var(--nc-space-6), items padding-block var(--nc-space-1); with an icon: list padding 0, items are flex rows with gap var(--nc-space-2) and no marker, icon with 0.2em top margin in primary colour",
+        "dynamic": false
+    },
+    "nc/logo": {
+        "html": "<a class=\"nc-logo …\" href=\"home URL\">custom logo <img> with width and height, or the site name text</a>",
+        "css": "inline-block, no underline; logo image block, max-width 100%, height auto",
+        "dynamic": false
+    },
+    "nc/mega-panel": {
+        "html": "<div class=\"nc-mega …\">…</div>, placed inside the menu item after the link",
+        "css": "hidden by default; from 768px, inside .nc-menu, the item is relative and the panel is absolute below it (top 100%, left 0, min-width 20rem, padding 1.5rem, white background, shadow), shown on item hover or focus-within",
+        "dynamic": false
+    },
+    "nc/menu": {
+        "html": "<nav class=\"nc-menu … (nc-menu--horizontal|nc-menu--vertical) [nc-menu--dropdown] [nc-menu--offcanvas [nc-menu--bp-lg|nc-menu--bp-xl] [nc-menu--panel-right]]\" aria-label=\"menu name\">[offcanvas: <button type=\"button\" class=\"nc-menu__toggle [nc-menu__toggle--icon]\" aria-expanded=\"false\" aria-controls=\"list id\">label or icon</button>]<ul class=\"nc-menu__list\" [id]><li class=\"nc-menu__item [nc-menu__item--has-children]\"><a class=\"nc-menu__link\" href=\"…\" data-nc-mi=\"id\" [data-nc-mt] [data-nc-ma]>title</a>[dropdown: <button type=\"button\" class=\"nc-menu__sub-toggle\" aria-expanded=\"false\" aria-controls=\"…\"><span class=\"nc-menu__sr\">…</span><svg…></button>][mega panel]<ul class=\"nc-menu__submenu\" [id]>…</ul></li>…</ul></nav>; empty when the menu is missing or has no items",
+        "css": "lists are wrapped flex rows with 1rem gaps and no bullets; nested lists are columns with 0.25rem gaps and 1rem left padding; dropdown submenus are absolute panels below the item (min-width 12rem, padding 0.5rem, background var(--nc-menu-submenu-bg, #fff)), deeper levels open to the side; below 767.98px, 1023.98px or 1919.98px an off-canvas menu shows a bordered toggle and a fixed side panel (width min(20rem, 85vw), background var(--nc-menu-panel-bg, #fff)) that slides in once JS is ready, with submenus static and expanded; screen reader text hidden; transitions off under prefers-reduced-motion",
+        "dynamic": false
+    },
+    "nc/native-form": {
+        "html": "<form class=\"nc-native-form …\" method=\"post\"><p class=\"nc-native-form__message\" role=\"status\"></p><input type=\"hidden\" (nonce, context and back fields)> <fieldset class=\"nc-native-form__step\" data-step=\"n\" [hidden]>[<legend>…</legend>]<div class=\"nc-native-form__field\" data-field=\"name\"><label>…</label><input|textarea|select>[<p class=\"nc-native-form__help\">…</p>]<p class=\"nc-native-form__error\" hidden></p></div>… [<fieldset class=\"nc-native-form__choice\"> for select, radio and checkboxes options] [<div class=\"nc-native-form__check\"> for checkbox and consent] [<div class=\"nc-native-form__otp\"> when an otp action exists]</fieldset>… <div class=\"nc-native-form__hp\" aria-hidden=\"true\"> honeypot field </div><div class=\"nc-native-form__nav\"> back, next and submit buttons </div></form>; the markup comes from the slot at each request",
+        "css": "form is a grid with 1rem gaps and max-width 36rem; steps are grid fieldsets without border or padding, hidden steps are hidden only with .is-enhanced; legends bold; fields are flex columns with 0.35rem gaps; choices and checkboxes are flex rows with 0.5rem gaps; text inputs, selects and textareas are full width (padding 0.6rem 0.75rem, 1px #8a8a8a border, 4px radius; textarea min-height 6rem); invalid fields get a #b00020 border; help text 0.875rem #4a4a4a; errors 0.875rem #b00020; empty message hidden; honeypot moved off-screen; nav is a wrapped flex row aligned right with 0.75rem gaps; buttons padding 0.6rem 1.2rem, disabled at 0.6 opacity",
+        "dynamic": true
+    },
+    "nc/offcanvas": {
+        "html": "<div class=\"nc-offcanvas …\" style=\"--nc-offcanvas-width: width\"><button type=\"button\" class=\"nc-offcanvas__trigger\" aria-expanded=\"false\" aria-controls=\"panel id\">label</button><div class=\"nc-offcanvas__backdrop\" aria-hidden=\"true\" hidden></div><div class=\"nc-offcanvas__panel\" id=\"panel id\" role=\"dialog\" aria-modal=\"true\" tabindex=\"-1\" hidden>children</div></div>; view.js opens and closes the panel",
+        "css": "panel fixed on the left or right edge, full height, width from --nc-offcanvas-width (default 20rem), scrolls on overflow; backdrop fixed over the page with semi-transparent black; html gets nc-offcanvas-locked while open (no page scroll)",
+        "dynamic": false
+    },
+    "nc/pagination": {
+        "html": "<nav class=\"nc-pagination …\" aria-label=\"Paginazione\"><ul class=\"page-numbers\"><li>…</li>…</ul></nav>; the list is the WordPress paginate_links output, current page as span.current; empty when there is a single page",
+        "css": "ul is a wrapped flex row with 0.25em gaps, margin 0, padding 0 and no bullets; .current is bold",
+        "dynamic": true
+    },
+    "nc/post-content": {
+        "html": "<div class=\"nc-post-content …\">the_content HTML</div>; empty when there is no queried post",
+        "css": "overflow-wrap break-word",
+        "dynamic": true
+    },
+    "nc/post-image": {
+        "html": "<img class=\"nc-post-image …\" src=\"…\" srcset=\"…\" sizes=\"…\" alt=\"…\" width=\"…\" height=\"…\" loading=\"lazy\"|\"eager\" fetchpriority=\"high\"> from the featured image; empty without one",
+        "css": "display block, max-width 100%, height auto",
+        "dynamic": true
+    },
+    "nc/post-meta": {
+        "html": "<p class=\"nc-post-meta … [nc-post-meta--chips]\"><span class=\"nc-post-meta__item\">…</span>…</p>; each item is <time datetime=\"ISO\">date</time>, the author name, category links, or term links <a class=\"nc-post-meta__term\" href=\"…\"> for tax:slug fields; empty when no field has a value",
+        "css": "margin 0, wrapped flex row with gap 0.5em 1em; chips: items are wrapped inline-flex rows and terms are inline-block pills with padding 0.25em 0.75em, 1px border, full radius, surface background, no underline",
+        "dynamic": true
+    },
+    "nc/post-title": {
+        "html": "<h1|h2|p class=\"nc-post-title …\">title, wrapped in <a href=\"permalink\"> when link is on</h1|h2|p>",
+        "css": "margin 0, line-height 1.2, overflow-wrap break-word",
+        "dynamic": true
+    },
+    "nc/query": {
+        "html": "<div class=\"nc-query …\"> one per post: with a card child <div class=\"nc-query__item\">card</div>; without one <article class=\"nc-query__item\">[<img>]<h2><a href=\"…\">title</a></h2><p>excerpt</p></article></div>; with relatedTo the same list holds related posts; with no posts <p class=\"nc-query …\">empty text</p>",
+        "css": "grid with 1.5rem gaps; images in items are block, max-width 100%, height auto; h2 margin 0.5em 0 0.25em, line-height 1.2",
+        "dynamic": true
+    },
+    "nc/repeater": {
+        "html": "<div|ul|ol class=\"nc-repeater …\">one card per row, wrapped in <li class=\"nc-repeater__item\"> for ul and ol</div|ul|ol>; <p class=\"nc-repeater …\">empty text</p> when there are no rows and an empty text is set, otherwise nothing",
+        "css": "grid with 1rem gaps; ul and ol lose bullets, margin and padding",
+        "dynamic": true
+    },
+    "nc/search": {
+        "html": "<form role=\"search\" method=\"get\" action=\"home URL\" class=\"nc-search …\"><label for=\"nc-search-N\">label</label><input type=\"search\" id=\"nc-search-N\" name=\"s\" value=\"current query\"><button type=\"submit\">Search</button></form>",
+        "css": "form is a centred, wrapped flex row with 0.5em gaps; search input is flex 1 1 12em with min-width 0",
+        "dynamic": true
+    },
+    "nc/section": {
+        "html": "<section|header|footer|main|div|aside|nav id=anchor class=\"nc-section …\"><div class=\"nc-section__inner\">…</div></section>",
+        "css": "inner: max-width var(--nc-container-lg), margin-inline auto, padding-inline var(--nc-space-4); an inner with a child section is transparent (max-width none, padding-inline 0): all its direct children go full width",
+        "dynamic": false
+    },
+    "nc/section-ref": {
+        "html": "",
+        "css": "",
+        "dynamic": false
+    },
+    "nc/slider": {
+        "html": "<div class=\"nc-slider …\" role=\"region\" aria-roledescription=\"carousel\" aria-label=\"label\" data-per-view=\"1|2|3|4\" data-effect=\"slide|fade\" data-autoplay=\"seconds\" data-loop=\"true|false\" data-pause-on-hover=\"true|false\" style=\"--nc-slider-speed:Nms\"><div class=\"nc-slider__track\"><div class=\"nc-slider__slide [is-active]\" role=\"group\" aria-roledescription=\"slide\" aria-label=\"n di N\">…</div>…</div>[<div class=\"nc-slider__dots\"> one <button class=\"nc-slider__dot [is-active]\"> per slide</div>][<div class=\"nc-slider__controls\"> previous, pause or play, next buttons</div>]</div>",
+        "css": "relative; per-view count set by data-per-view; track is a flex row with gap var(--nc-space-4), overflow-x auto and scroll snap; slides share the track equally, minus the gaps; fade: track is a grid with slides stacked in one cell, shown when is-active; dots are a centred flex row of 8px circles, the active one 24px wide; controls are a flex row aligned to the end with margin-top var(--nc-space-4), 2.5rem round outlined buttons, disabled at 0.4 opacity",
+        "dynamic": false
+    },
+    "nc/spacer": {
+        "html": "<div class=\"nc-spacer …\" aria-hidden=\"true\"></div>",
+        "css": "display block, height var(--nc-space-8)",
+        "dynamic": false
+    },
+    "nc/tabs": {
+        "html": "<div class=\"nc-tabs …\"><div class=\"nc-tabs__list\" role=\"tablist\"><button type=\"button\" class=\"nc-tabs__tab\" role=\"tab\" id=\"…\" aria-controls=\"…\" aria-selected=\"true|false\" tabindex=\"0|-1\">title</button>…</div><div class=\"nc-tabs__panel\" role=\"tabpanel\" id=\"…\" aria-labelledby=\"…\">inline rich text</div>…</div>; empty when there are no items",
+        "css": "list is a wrapped flex row with gap var(--nc-space-2) and 1px currentColor bottom border; tabs have padding var(--nc-space-3) var(--nc-space-4), transparent 3px bottom border, no background, inherited font and colour; selected tab gets a currentColor bottom border and bold text; panels have padding-top var(--nc-space-4); inactive panels are hidden only when is-ready is set by JS, so without JS all panels stay visible",
+        "dynamic": false
+    },
+    "nc/text": {
+        "html": "<div class=\"nc-text …\">rich text, paragraphs and lists</div>",
+        "css": "overflow-wrap break-word; p + p margin-top var(--nc-space-3); ul and ol padding-left var(--nc-space-6)",
+        "dynamic": false
+    },
+    "nc/toc": {
+        "html": "<nav class=\"nc-toc …\" aria-label=\"label\">children</nav>; aria-label only with a label",
+        "css": "column flex with gap var(--nc-space-2); view.js puts is-current on the entry (nearest nc- element around the link) of the section in view and aria-current=\"true\" on its link",
+        "dynamic": false
+    },
+    "nc/video": {
+        "html": "<div class=\"nc-video …\" data-provider=\"youtube|vimeo\" data-id=\"id\" [data-nc-consent=\"category\" and consent attributes]><button type=\"button\" class=\"nc-video__play\" aria-label=\"Play: title\">[<img src=\"poster\"|data-nc-src=\"poster\" alt=\"\" loading=\"lazy\" width=\"480\" height=\"360\">]</button>[<span class=\"nc-video__notice\">consent notice</span>]</div>; the player iframe is added by view.js on click",
+        "css": "relative 16:9 box with hidden overflow; play button covers the box with no border or background, its image fills it (object-fit cover); focus outline 3px offset 3px; iframe absolute and full size; with consent: #1a1a1a background and a notice at the bottom (white text on 60% black, pointer-events none, bold when blocked)",
+        "dynamic": false
+    },
+    "woo/account": {
+        "html": "<div class=\"nc-woo-account …\">account area output of the WooCommerce my-account shortcode (login, orders, addresses)</div>",
+        "css": "margin-block 1rem; no other rules",
+        "dynamic": true
+    },
+    "woo/add-to-cart": {
+        "html": "<div class=\"nc-add-to-cart …\"> simple product: <form class=\"nc-add-to-cart__form\" method=\"post\" data-nc-cart-form data-product-id> with quantity input, <button class=\"nc-button\" type=\"submit\" name=\"add-to-cart\"> and <p class=\"nc-add-to-cart__notice\" role=\"status\"></p>; variable product: the nc-variations form with <div class=\"nc-variations__field\"> selects and <div class=\"nc-variations__details\"> price and stock</div>",
+        "css": "wrapped flex row with gap var(--nc-space-2); quantity input 4.5em with 1px border; button filled with primary colour, hover and focus-visible states, disabled and busy states; variation fields in a flex row with bordered selects; details hidden when empty; notice hidden when empty",
+        "dynamic": true
+    },
+    "woo/attributes": {
+        "html": "<dl class=\"nc-woo-attributes …\"><dt>attribute label</dt><dd>value</dd>…</dl>; the visible attributes of the product",
+        "css": "grid with max-content and 1fr columns, gap 0.25rem 1rem, margin-block 1rem; dt bold; dd margin 0",
+        "dynamic": true
+    },
+    "woo/cart": {
+        "html": "<div class=\"… nc-woo-cart\"> blocks or classic mode: the WooCommerce cart output; nucleo mode: <div data-nc-cart> with <p class=\"nc-woo-cart__notice\" role=\"status\" aria-live=\"polite\"></p>, <script type=\"application/json\" class=\"nc-woo-cart__state\"> and the woo/cart-* parts (div data-nc-cart-part), filled by the cart script</div>",
+        "css": "[data-nc-cart] margin-block 1rem and text colour; parts with the hidden attribute stay hidden; notice hidden when empty; title, items, totals, calculator, coupons and rates classes; items are flex rows that move thumbnail, info, stepper and price side by side from 40rem; buttons reuse nc-button",
+        "dynamic": true
+    },
+    "woo/cart-actions": {
+        "html": "<div data-nc-cart-part=\"actions\" data-options=\"…\"><a class=\"nc-button\" href=\"checkout URL\">checkout text</a> [<a href=\"shop URL\">continue text</a>]</div>",
+        "css": "actions part rule and nc-button inside the cart; focus-visible outline on cart links; no other rules",
+        "dynamic": false
+    },
+    "woo/cart-coupon": {
+        "html": "<div data-nc-cart-part=\"coupon\" data-options=\"…\"> coupon field and the applied coupons, filled by the cart script</div>",
+        "css": "coupons list and coupon items; coupon remove button; no other rules",
+        "dynamic": false
+    },
+    "woo/cart-empty": {
+        "html": "<div data-nc-cart-part=\"empty\" data-options=\"…\" hidden>empty-cart message and links (children)</div>; starts hidden, the cart script shows it",
+        "css": "no rules of its own; hidden through the generic hidden-part rule of the cart",
+        "dynamic": false
+    },
+    "woo/cart-items": {
+        "html": "<div data-nc-cart-part=\"items\" data-options=\"…\"> filled by the cart script with the list of lines: ul.nc-woo-cart__items with li.nc-woo-cart__item (thumbnail, info, name, variation, price, quantity stepper, remove)</div>",
+        "css": "items list without bullets; line rows flex-wrapped, thumbnail, info, stepper, price and remove aligned side by side from 40rem; quantity controls styled as a stepper",
+        "dynamic": false
+    },
+    "woo/cart-shipping": {
+        "html": "<div data-nc-cart-part=\"shipping\" data-options=\"…\"> filled by the cart script: calculator form (country select, postcode, button) and the list of rates, or a no-rates message</div>",
+        "css": "calculator labels, select and button; rates list and rate rows; no-rates message",
+        "dynamic": false
+    },
+    "woo/cart-totals": {
+        "html": "<div data-nc-cart-part=\"totals\" data-options=\"…\"> optional title (nc-woo-cart__title, h2 when set) and the totals list nc-woo-cart__totals filled by the cart script (subtotal, discounts, shipping, tax, total)</div>",
+        "css": "title 1.125rem bold; totals as rows of label and amount, with the total row emphasised (nc-woo-cart__total--total)",
+        "dynamic": false
+    },
+    "woo/checkout": {
+        "html": "<div class=\"… nc-woo-checkout\">WooCommerce checkout output (blocks or classic shortcode)</div>",
+        "css": "margin-block 1rem; no other rules",
+        "dynamic": true
+    },
+    "woo/mini-cart": {
+        "html": "<div class=\"nc-minicart [nc-minicart--drawer]\" data-nc-minicart data-store-api=\"URL\"><button type=\"button\" class=\"nc-minicart__toggle\" aria-expanded=\"false\" [aria-haspopup=\"dialog\"]>cart icon<span class=\"nc-minicart__count\">n</span><span class=\"nc-minicart__label\">Cart</span></button><dialog class=\"nc-minicart__panel\" aria-label=\"Cart\"> (drawer) or <div class=\"nc-minicart__panel\" hidden> (dropdown)</div>; the cart loads only when opened",
+        "css": "toggle button with icon, counter and label; dropdown panel hidden until opened; drawer: fixed full-height side dialog with head, body, footer, item cards (thumbnail, name, variation, quantity, price, remove), totals, coupon field, links and free shipping progress, slides in unless reduced motion is set; page scroll locked while open",
+        "dynamic": true
+    },
+    "woo/notices": {
+        "html": "<div class=\"nc-woo-notices …\">WooCommerce session messages (confirmations and errors); empty when there are none</div>",
+        "css": "margin-block 1rem; each notice a flex row with 4px primary left border and light tinted background; error notices in the error colour; buttons in notices bold",
+        "dynamic": true
+    },
+    "woo/price": {
+        "html": "<p class=\"nc-woo-price …\">price HTML of the product, with sale price and variations</p>",
+        "css": "margin-block 0",
+        "dynamic": true
+    },
+    "woo/product-grid": {
+        "html": "<div class=\"nc-woo-grid …\"> optional <h2 class=\"nc-woo-grid__title\">; one <article class=\"nc-woo-grid__item\"> per product with image, <h3 class=\"nc-woo-grid__name\"><a>, <p class=\"nc-woo-grid__price\"> and, with addToCart, a nc-button link or a form.nc-woo-card__cart; <p class=\"nc-woo-grid …\">No products</p> when empty</div>",
+        "css": "grid auto-fill minimum 12rem with 1.5rem gaps; cards are flex columns with the button pushed to the bottom; images block at full width; name and price margins; links inherit colour without underline; notice hidden when empty",
+        "dynamic": false
+    },
+    "woo/related": {
+        "html": "<div class=\"nc-woo-related …\"> optional <h2 class=\"nc-woo-related__title\">; one <article class=\"nc-woo-related__item\"> per product with image, <h3 class=\"nc-woo-related__name\"><a>, <p class=\"nc-woo-related__price\"></div>",
+        "css": "grid auto-fill minimum 12rem with 1rem gaps and margin-block 1rem; images block at full width; name margins; links inherit colour without underline; title margin 0",
+        "dynamic": true
+    },
+    "woo/short-description": {
+        "html": "<div class=\"nc-woo-short-description …\">short description HTML of the product</div>",
+        "css": "margin-block 1rem; no other rules",
+        "dynamic": true
+    },
+    "woo/stock": {
+        "html": "<div class=\"nc-woo-stock …\">stock status HTML of the product</div>",
+        "css": "margin-block 0; no other rules",
+        "dynamic": true
+    },
+    "woo/tabs": {
+        "html": "<div class=\"nc-woo-tabs nc-tabs …\"><div class=\"nc-tabs__list\" role=\"tablist\"><button type=\"button\" class=\"nc-tabs__tab\" role=\"tab\" aria-selected=\"true|false\">title</button>…</div><div class=\"nc-tabs__panel\" role=\"tabpanel\">WooCommerce tab content; reviews with the star rating fieldset nc-rating</div>…</div>; all panels stay visible without JavaScript",
+        "css": "reuses the nc-tabs styles (list, tabs, selected tab, panels); WooCommerce review list, comment and form styles; star rating drawn with radio inputs (nc-rating__stars, nc-rating__star) that fill on hover and focus",
+        "dynamic": true
+    },
+    "woo/upsell": {
+        "html": "<div class=\"nc-woo-upsell …\"> optional <h2 class=\"nc-woo-upsell__title\">; one <article class=\"nc-woo-upsell__item\"> per upsell with image, <h3 class=\"nc-woo-upsell__name\"><a>, <p class=\"nc-woo-upsell__price\">; nothing when there are no upsells</div>",
+        "css": "grid auto-fill minimum 12rem with 1rem gaps and margin-block 1rem; images block at full width; name margins; links inherit colour without underline; title margin 0",
+        "dynamic": true
+    },
+    "woo/gallery": {
+        "html": "<div class=\"nc-woo-gallery …\" tabindex=\"0\" [data-lightbox=\"false\"]><div class=\"nc-woo-gallery__main\"><img class=\"nc-woo-gallery__image\" loading=\"eager\"|\"lazy\" [fetchpriority=\"high\"]></div><ul class=\"nc-woo-gallery__thumbs\"><li><button type=\"button\" class=\"nc-woo-gallery__thumb\" data-index data-src>thumbnail</button></li>…</ul></div>",
+        "css": "thumbnails a flex row with 0.5rem gaps, no bullets, horizontal scroll; zoomable main hides overflow and scales the image on hover; lightbox dialog fixed over a black 85% backdrop with a contained image and a close button; transitions off under reduced motion",
+        "dynamic": true
+    }
+}

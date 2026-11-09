@@ -1,0 +1,845 @@
+/*
+ * Stili dell'editor Nucleo (assets/editor/editor.js) sui token di assets/admin/tokens.css.
+ * I token sono dichiarati sul wrapper #nucleo-editor (classe nucleo-admin): qui nessun colore letterale.
+ * Riferimento: docs/ui/design/e1-editor-struttura.html, e2-editor-solo-testi.html, e3-editor-stati-critici.html.
+ */
+
+.nucleo-editor {
+	color: var(--nc-text);
+	font-family: var(--nc-font-sans);
+}
+
+/* Barra superiore: titolo, stato, ora di salvataggio, azioni a destra. Vetro forte, bordo e ombra della barra. */
+.nucleo-editor__topbar {
+	display: flex;
+	align-items: center;
+	gap: var(--nc-space-3);
+	height: 64px;
+	padding: 0 20px;
+	background: var(--nc-glass-strong);
+	-webkit-backdrop-filter: var(--nc-glass-blur);
+	backdrop-filter: var(--nc-glass-blur);
+	border-bottom: 1px solid var(--nc-glass-edge);
+	box-shadow: var(--nc-bar-shadow);
+}
+
+.nucleo-editor__title {
+	min-width: 0;
+	overflow: hidden;
+	font: var(--nc-text-h3);
+	color: var(--nc-text);
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.nucleo-editor__status {
+	font: var(--nc-text-label);
+	color: var(--nc-text-muted);
+	white-space: nowrap;
+}
+
+.nucleo-editor__saved {
+	font: var(--nc-text-small);
+	color: var(--nc-text-muted);
+	white-space: nowrap;
+}
+
+/* Modifiche in attesa di salvataggio. */
+.nucleo-editor__saved.is-dirty {
+	color: var(--nc-warn);
+}
+
+.nucleo-editor__spacer {
+	flex: 1 1 auto;
+}
+
+/* Nella barra stretta si accorcia solo il titolo: i comandi restano interi. */
+.nucleo-editor__topbar > :not(.nucleo-editor__topbar-start) {
+	flex: none;
+}
+.nucleo-editor__topbar-start .nucleo-editor__title {
+	flex: 0 1 auto;
+	min-width: 3em;
+}
+.nucleo-editor__topbar-start > :not(.nucleo-editor__title) {
+	flex: none;
+}
+
+/* Elementi della barra a sinistra: titolo, stato, ora, con spazio tra loro. */
+.nucleo-editor__topbar-start {
+	flex: 1 1 auto;
+	min-width: 0;
+	display: flex;
+	align-items: center;
+	gap: var(--nc-space-3);
+	min-width: 0;
+}
+
+/* Pillole di stato e qualità: stesse forme dei badge dell'admin, qui scoped all'editor. */
+.nucleo-editor .nc-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	height: 24px;
+	padding: 0 10px;
+	border: 1px solid var(--nc-border);
+	border-radius: var(--nc-r-pill);
+	background: var(--nc-surface-2);
+	color: var(--nc-text-muted);
+	font: var(--nc-text-label);
+	white-space: nowrap;
+}
+
+.nucleo-editor .nc-pill--ok {
+	background: var(--nc-ok-bg);
+	border-color: var(--nc-ok);
+	color: var(--nc-ok);
+}
+
+.nucleo-editor .nc-pill--warn {
+	background: var(--nc-warn-bg);
+	border-color: var(--nc-warn);
+	color: var(--nc-warn);
+}
+
+.nucleo-editor .nc-pill--err {
+	background: var(--nc-err-bg);
+	border-color: var(--nc-err);
+	color: var(--nc-err);
+}
+
+.nucleo-editor .nc-pill--neutral {
+	background: var(--nc-surface-2);
+	border-color: var(--nc-border);
+	color: var(--nc-text-muted);
+}
+
+.nucleo-editor__toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--nc-space-2);
+	align-items: center;
+	padding: var(--nc-space-2) 0;
+}
+
+.nucleo-editor__group-btns {
+	display: flex;
+	gap: var(--nc-space-1);
+}
+
+/* Griglia dell'editor: albero o schede a sinistra, anteprima al centro, proprietà a destra. */
+.nucleo-editor__layout,
+.nucleo-editor__body,
+.nucleo-editor__body--texts {
+	display: grid;
+	grid-template-columns: 260px minmax(0, 1fr) 300px;
+	align-items: stretch;
+}
+
+.nucleo-editor__layout {
+	grid-template-columns: var(--nucleo-tree-w, 260px) minmax(0, 1fr) 300px;
+}
+
+.nucleo-editor__layout {
+	height: calc(100vh - 32px - 64px);
+}
+
+.nucleo-editor__left,
+.nucleo-editor__inspector,
+.nucleo-editor__side,
+.nucleo-editor__tree {
+	min-height: 0;
+	overflow: auto;
+}
+
+/* Colonne laterali in vetro: stessa sfocatura, bordo di vetro verso l'anteprima. */
+.nucleo-editor__left {
+	display: flex;
+	flex-direction: column;
+	gap: var(--nc-space-2);
+	padding: var(--nc-space-4);
+	background: var(--nc-glass);
+	-webkit-backdrop-filter: var(--nc-glass-blur);
+	backdrop-filter: var(--nc-glass-blur);
+	border-right: 1px solid var(--nc-glass-edge);
+}
+
+.nucleo-editor__inspector {
+	display: flex;
+	flex-direction: column;
+	gap: var(--nc-space-2);
+	padding: var(--nc-space-4);
+	background: var(--nc-glass);
+	-webkit-backdrop-filter: var(--nc-glass-blur);
+	backdrop-filter: var(--nc-glass-blur);
+	border-left: 1px solid var(--nc-glass-edge);
+}
+
+.nucleo-editor__tree,
+.nucleo-editor__side {
+	max-height: calc(100vh - 160px);
+}
+
+/* Schede Struttura / Inserisci e Contenuto / Stile / Avanzate: pillole, voce attiva ink/on-ink. */
+.nucleo-editor__tabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--nc-space-1);
+	padding-bottom: var(--nc-space-3);
+	border-bottom: 1px solid var(--nc-line);
+}
+
+.nucleo-editor__tab {
+	min-height: 36px;
+	padding: 0 14px;
+	border: 1px solid transparent;
+	border-radius: var(--nc-r-pill);
+	background: transparent;
+	color: var(--nc-text-muted);
+	font: var(--nc-text-small);
+}
+
+.nucleo-editor__tab[aria-selected="true"] {
+	background: var(--nc-ink);
+	color: var(--nc-on-ink);
+	border-color: var(--nc-ink);
+	font-weight: 600;
+}
+
+/* Righe dell'albero: l'indentazione è inline e la imposta il JS. */
+.nucleo-editor__group {
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+.nucleo-editor__row {
+	display: flex;
+	align-items: center;
+	gap: var(--nc-space-1);
+	min-height: 34px;
+	padding: 0 var(--nc-space-1);
+	border: 1px solid transparent;
+	border-radius: var(--nc-r-s);
+	font: var(--nc-text-cell);
+	color: var(--nc-text);
+	position: relative;
+}
+
+/* Etichetta su una riga, poi puntini, come in un navigatore: segue la larghezza della colonna. */
+.nucleo-editor__row .components-button.is-tertiary {
+	flex: 1;
+	min-width: 0;
+	height: auto;
+	min-height: 32px;
+	padding-block: var(--nc-space-1);
+	text-align: left;
+	white-space: normal;
+}
+
+.nucleo-editor__row-label {
+	display: -webkit-box;
+	overflow: hidden;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 1;
+	line-clamp: 1;
+	overflow-wrap: anywhere;
+}
+
+.nucleo-editor__row.is-layout {
+	background: var(--nc-surface-2);
+	color: var(--nc-text-muted);
+}
+
+/* Riga selezionata: colore di stato e contorno, così la selezione si vede anche senza colore. */
+.nucleo-editor__row.is-selected {
+	background: var(--nc-ok-bg);
+	border-color: var(--nc-ok-bd);
+	color: var(--nc-accent-hover);
+	font-weight: 600;
+	outline: 2px solid var(--nc-accent);
+	outline-offset: 3px;
+}
+
+.nucleo-editor__glyph {
+	flex: none;
+	width: 16px;
+	color: var(--nc-text-muted);
+	text-align: center;
+}
+
+/* Freccia dello schema: ruota di 90° quando il nodo è aperto. Senza figli resta uno spazio vuoto per l'allineamento. */
+.nucleo-editor__caret {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	height: 18px;
+	padding: 0;
+	border: 0;
+	border-radius: var(--nc-r-xs);
+	background: transparent;
+	color: var(--nc-text-muted);
+	font-size: 11px;
+	cursor: pointer;
+	transition: transform var(--nc-dur-fast) ease;
+}
+/* Chevron disegnato con due bordi: non dipende dal font. */
+.nucleo-editor__caret::before {
+	content: "";
+	width: 5px;
+	height: 5px;
+	border-right: 1.5px solid currentColor;
+	border-bottom: 1.5px solid currentColor;
+	transform: rotate(-45deg);
+}
+span.nucleo-editor__caret::before {
+	display: none;
+}
+.nucleo-editor__caret[aria-expanded="true"] {
+	transform: rotate(90deg);
+}
+.nucleo-editor__caret:hover {
+	background: var(--nc-tint-hover);
+	color: var(--nc-text);
+}
+
+
+
+/* Indicatore di inserimento: linea accent da 2 px con pallino. */
+.nucleo-editor__row.is-drop-before,
+.nucleo-editor__row.is-drop-after {
+	position: relative;
+}
+
+.nucleo-editor__row.is-drop-before::before,
+.nucleo-editor__row.is-drop-after::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	height: 2px;
+	background: var(--nc-accent);
+	border-radius: var(--nc-r-xs);
+}
+
+.nucleo-editor__row.is-drop-before::after,
+.nucleo-editor__row.is-drop-after::after {
+	content: "";
+	position: absolute;
+	left: -4px;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--nc-accent);
+}
+
+.nucleo-editor__row.is-drop-before::before {
+	top: -1px;
+}
+
+.nucleo-editor__row.is-drop-before::after {
+	top: -4px;
+}
+
+.nucleo-editor__row.is-drop-after::before {
+	bottom: -1px;
+}
+
+.nucleo-editor__row.is-drop-after::after {
+	bottom: -4px;
+}
+
+.nucleo-editor__row.is-drop-inside {
+	box-shadow: inset 0 0 0 2px var(--nc-accent);
+}
+
+/* Pannello Inserisci. */
+.nucleo-editor__inserter {
+	display: flex;
+	flex-direction: column;
+	gap: var(--nc-space-2);
+}
+
+/* Chiusura dell'inserter: pillola compatta come gli altri pulsanti dell'editor, allineata a destra. */
+.nucleo-admin .nucleo-editor__inserter .nucleo-editor__inserter-close {
+	align-self: flex-end;
+	min-height: var(--nc-control-h-xs);
+	padding: 0 12px;
+}
+
+.nucleo-editor__inserter-search {
+	height: var(--nc-control-h);
+}
+
+/* Blocchi in griglia a due colonne: icona sopra, titolo sotto; la descrizione è nel suggerimento al passaggio. */
+.nucleo-editor__inserter-group {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--nc-space-2);
+}
+
+.nucleo-editor__inserter-group > h3 {
+	grid-column: 1 / -1;
+}
+
+.nucleo-editor__inserter-item {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: var(--nc-space-2);
+	width: 100%;
+	height: 100%;
+	min-height: 84px;
+	padding: 12px 8px;
+	border: 1px solid var(--nc-border);
+	border-radius: var(--nc-r-base);
+	background: var(--nc-surface);
+	color: var(--nc-text);
+	font: var(--nc-text-tag);
+	text-align: center;
+	cursor: pointer;
+}
+
+.nucleo-editor__inserter-item:hover:not(:disabled) {
+	border-color: var(--nc-accent);
+	color: var(--nc-accent);
+}
+
+/* Posto non ammesso: il motivo è scritto nel testo della voce. */
+.nucleo-editor__inserter-item:is([aria-disabled="true"], :disabled) {
+	background: var(--nc-surface-2);
+	color: var(--nc-text-disabled);
+	cursor: not-allowed;
+}
+
+/* Revisioni nel cassetto. */
+.nucleo-editor__revisions {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: var(--nc-space-2);
+}
+
+.nucleo-editor__revisions > * {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--nc-space-2);
+	padding: 8px 10px;
+	border: 1px solid transparent;
+	border-radius: var(--nc-r-m);
+	font: var(--nc-text-cell);
+}
+
+/* Anteprima: fondo panna con disturbo, iframe centrato. */
+.nucleo-editor__preview {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	overflow: hidden;
+	gap: var(--nc-space-2);
+	min-width: 0;
+	min-height: 0;
+	padding: 28px;
+	background-color: var(--nc-bg-cream);
+	background-image: var(--nc-noise);
+}
+
+.nucleo-editor__preview-label {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--nc-space-2);
+	min-width: 280px;
+	max-width: 100%;
+	font: var(--nc-text-label);
+	color: var(--nc-text-muted);
+}
+
+/* Finestra del dispositivo: misura in scala; dentro, il frame alla misura reale ridotto con transform. */
+.nucleo-editor__window {
+	flex: none;
+	overflow: hidden;
+	border-radius: var(--nc-r-l);
+	background: var(--nc-surface);
+	box-shadow: var(--nc-glass-shadow);
+}
+
+.nucleo-editor__window.is-mockup {
+	overflow: visible;
+	border: 0;
+	border-radius: 0;
+	background: none;
+	box-shadow: none;
+}
+
+.nucleo-editor__mockup {
+	transform-origin: 0 0;
+}
+
+/* Il frame segue la barra dell'indirizzo che si riduce o torna. */
+.nucleo-editor__mockup .nucleo-editor__frame {
+	transition: height 0.2s ease;
+}
+
+.nucleo-editor__preview-tools {
+	display: flex;
+	gap: var(--nc-space-2);
+}
+
+.nucleo-editor__frame {
+	display: block;
+	max-width: none;
+	border: 0;
+	background: var(--nc-surface);
+	transform-origin: 0 0;
+}
+
+.nucleo-editor__rotate.components-button.has-icon {
+	min-width: 30px;
+	padding: 0 var(--nc-space-1);
+}
+
+.nucleo-editor__rotate svg {
+	transition: transform 0.15s ease;
+}
+
+.nucleo-editor__rotate[aria-pressed="true"] svg {
+	transform: rotate(90deg);
+}
+
+.nucleo-editor__bps {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--nc-space-1);
+	margin-bottom: var(--nc-space-2);
+}
+
+/* Editor: pulsanti di wp.components compatti (32 px), senza ombra, in ogni zona.
+ * Restano fuori le voci dello schema e le schede dei TabPanel, che hanno regole proprie. */
+.nucleo-admin :is(.nucleo-editor__topbar, .nucleo-editor__tabs) .components-button.components-button,
+.nucleo-admin .nucleo-editor :is(.components-button.is-primary, .components-button.is-secondary, .components-button.is-small, .components-button.has-icon):not(.components-tab-panel__tabs-item) {
+	min-height: var(--nc-control-h-xs);
+	height: var(--nc-control-h-xs);
+	padding: 0 12px;
+	box-shadow: none;
+	font: var(--nc-text-button-s);
+}
+
+/* Pulsante solo icona nell'editor (es. chiusura del pannello revisioni): quadrato. */
+.nucleo-admin .nucleo-editor .components-button.has-icon:not(.components-tab-panel__tabs-item) {
+	width: var(--nc-control-h-xs);
+	min-width: var(--nc-control-h-xs);
+	padding: 0;
+	justify-content: center;
+}
+
+/* Gruppi di pillole della barra (vista, dispositivo): fondo tenue comune, come nc-segmented. */
+.nucleo-editor__topbar .nucleo-editor__group-btns {
+	display: inline-flex;
+	gap: 2px;
+	padding: 3px;
+	border-radius: var(--nc-r-pill);
+	background: var(--nc-tint);
+}
+
+/* Voci dei gruppi di pillole come nc-segmented: senza bordo né fondo, all'hover cambia solo il testo. */
+.nucleo-admin :is(.nucleo-editor__group-btns, .nucleo-editor__tabs, .nucleo-editor__bps) .components-button.components-button:not([aria-pressed="true"], .is-primary) {
+	border-color: transparent;
+	background: transparent;
+	color: var(--nc-text-muted);
+}
+
+.nucleo-admin :is(.nucleo-editor__group-btns, .nucleo-editor__tabs, .nucleo-editor__bps) .components-button.components-button:not([aria-pressed="true"], .is-primary, :disabled):hover {
+	color: var(--nc-text);
+}
+
+/* Focus nei gruppi di pillole e nelle righe dello schema: anello interno, così non esce dalla voce. */
+.nucleo-admin :is(.nucleo-editor__group-btns, .nucleo-editor__tabs, .nucleo-editor__bps, .nucleo-editor__row) .components-button:focus-visible {
+	outline: 2px solid var(--nc-accent);
+	outline-offset: -2px;
+}
+
+.nucleo-admin :is(.nucleo-editor__group-btns, .nucleo-editor__tabs, .nucleo-editor__bps) .components-button[aria-pressed="true"]:focus-visible {
+	outline-color: var(--nc-on-ink);
+}
+
+/* Controlli segmentati a pillola: la voce premuta è aria-pressed="true", in ink/on-ink come nell'admin. */
+.nucleo-editor__group-btns .components-button,
+.nucleo-editor__bps .components-button {
+	border-radius: var(--nc-r-pill);
+}
+
+.nucleo-editor__group-btns .components-button[aria-pressed="true"],
+.nucleo-editor__bps .components-button[aria-pressed="true"] {
+	background: var(--nc-ink);
+	border-color: var(--nc-ink);
+	color: var(--nc-on-ink);
+}
+
+/* Vista Solo testi: elenco fisso in cima, moduli in ordine di pagina. */
+.nucleo-editor__texts-bar {
+	position: sticky;
+	top: 0;
+	z-index: 1;
+	padding: var(--nc-space-2) 0;
+	background: var(--nc-bg);
+}
+
+.nucleo-editor__panels {
+	margin-top: var(--nc-space-4);
+}
+
+/* Schede del pannello destro e dei pannelli: forma e colori da admin.css, qui solo la misura compatta.
+   Vanno a capo: sei etichette non stanno in 300 px su una riga. */
+.nucleo-editor__inspector .components-tab-panel__tabs,
+.nucleo-editor__panels .components-tab-panel__tabs {
+	display: flex;
+	background: var(--nc-tint);
+	box-shadow: none;
+	-webkit-backdrop-filter: none;
+	backdrop-filter: none;
+	border-color: transparent;
+	border-radius: var(--nc-r-m);
+}
+
+.nucleo-editor__inspector .components-tab-panel__tabs-item.components-button,
+.nucleo-editor__panels .components-tab-panel__tabs-item.components-button {
+	min-height: 28px;
+	padding: 0 10px;
+	font: var(--nc-text-tag);
+}
+
+/* Tabelle nel pannello destro (es. Layout di questa pagina): larghezza della colonna, celle che vanno a capo. */
+.nucleo-editor__inspector table,
+.nucleo-editor__panels table {
+	width: 100%;
+	max-width: 100%;
+	table-layout: fixed;
+}
+
+.nucleo-editor__inspector td,
+.nucleo-editor__inspector th,
+.nucleo-editor__panels td,
+.nucleo-editor__panels th {
+	word-break: break-word;
+	overflow-wrap: anywhere;
+}
+
+.nucleo-editor__field {
+	display: grid;
+	gap: 6px;
+}
+
+/* Pannello destro stretto: i contenuti si restringono invece di debordare in orizzontale. */
+.nucleo-editor__inspector,
+.nucleo-editor__inspector > * {
+	min-width: 0;
+	max-width: 100%;
+}
+
+.nucleo-editor__quality h2 {
+	font: var(--nc-text-button-s);
+	color: var(--nc-text);
+}
+
+.nucleo-editor__issue {
+	padding: 10px 12px;
+	border: 1px solid var(--nc-border);
+	border-radius: var(--nc-r-base);
+	background: var(--nc-surface);
+}
+
+.nucleo-editor__issue.is-error {
+	border-color: var(--nc-err);
+	background: var(--nc-err-bg);
+	color: var(--nc-err);
+}
+
+.nucleo-editor__quality li.is-error {
+	color: var(--nc-err);
+}
+
+.nucleo-editor__notice {
+	margin: var(--nc-space-2) 0;
+}
+
+/* Sotto 1024 px l'editor completo non entra: avviso al posto della griglia. */
+.nucleo-editor__narrow {
+	display: none;
+	padding: var(--nc-space-3) var(--nc-space-4);
+	border: 1px solid var(--nc-info);
+	border-radius: var(--nc-r-l);
+	background: var(--nc-info-bg);
+	color: var(--nc-text);
+	font: var(--nc-text-small);
+}
+
+.nucleo-editor :focus-visible {
+	outline: 2px solid var(--nc-accent);
+	outline-offset: 2px;
+}
+
+/* Sotto 1280 px il pannello destro si stringe a 260 px: anteprima e proprietà restano visibili fino a 1024 px. */
+@media (max-width: 1279px) {
+	.nucleo-editor__layout {
+		grid-template-columns: var(--nucleo-tree-w, 260px) minmax(0, 1fr) 260px;
+	}
+
+	.nucleo-editor__body--texts {
+		grid-template-columns: 260px minmax(0, 1fr) 260px;
+	}
+}
+
+/* Sotto 1024 px nascondi la griglia e mostra l'avviso. */
+@media (max-width: 1023px) {
+	.nucleo-editor__layout,
+	.nucleo-editor__body,
+	.nucleo-editor__body--texts {
+		display: none;
+	}
+
+	.nucleo-editor__narrow {
+		display: block;
+	}
+}
+
+/* Rifiniture della barra e dell'albero. */
+.nucleo-admin .nucleo-editor__topbar {
+	gap: var(--nc-space-3);
+	overflow-x: auto;
+}
+.nucleo-admin .nucleo-editor__title {
+	margin-left: var(--nc-space-2);
+	white-space: nowrap;
+}
+.nucleo-admin .nucleo-editor__row,
+.nucleo-admin .nucleo-editor__row .components-button {
+	font-weight: 400;
+	color: var(--nc-text);
+}
+.nucleo-admin .nucleo-editor__row.is-selected .components-button {
+	font-weight: 600;
+	color: var(--nc-accent);
+}
+body:has(#nucleo-editor) #wpfooter {
+	display: none;
+}
+
+.nucleo-admin .nucleo-editor__inserter-group h3 {
+	font: var(--nc-text-label);
+	text-transform: uppercase;
+	letter-spacing: 0.14em;
+	color: var(--nc-text-muted);
+}
+
+/* Contenuto senza documento Nucleo: scheda centrata con le due scelte. */
+.nucleo-editor__start {
+	display: grid;
+	place-items: start center;
+	padding: var(--nc-space-6) var(--nc-space-4);
+}
+
+.nucleo-editor__start .nc-card {
+	display: flex;
+	flex-direction: column;
+	gap: var(--nc-space-3);
+	max-width: 36rem;
+	padding: var(--nc-space-5);
+	background: var(--nc-surface);
+	border: 1px solid var(--nc-border);
+	border-radius: var(--nc-r-l);
+}
+
+.nucleo-editor__start-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--nc-space-2);
+}
+
+/* Bordo trascinabile della colonna Struttura: sta sul bordo della griglia, fuori dalla colonna che scorre. */
+.nucleo-editor__layout {
+	position: relative;
+}
+
+.nucleo-editor__resizer {
+	position: absolute;
+	top: 0;
+	left: calc(var(--nucleo-tree-w, 260px) - 4px);
+	bottom: 0;
+	z-index: 2;
+	width: 8px;
+	cursor: col-resize;
+	touch-action: none;
+}
+
+.nucleo-editor__resizer::after {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 3px;
+	width: 2px;
+	background: transparent;
+	content: "";
+}
+
+.nucleo-editor__resizer:hover::after,
+.nucleo-editor__resizer:focus-visible::after {
+	background: var(--nc-accent);
+}
+
+.nucleo-editor__resizer:focus-visible {
+	outline: none;
+}
+
+body.nucleo-is-resizing {
+	cursor: col-resize;
+	user-select: none;
+}
+
+/* Durante il trascinamento l'anteprima non deve catturare il puntatore. */
+body.nucleo-is-resizing iframe {
+	pointer-events: none;
+}
+
+/* Campi di testo ricco: scelta Testo/HTML sopra l'area. */
+.nucleo-editor__rich {
+	display: grid;
+	gap: var(--nc-space-2);
+	justify-items: start;
+}
+
+.nucleo-editor__rich > :not(.nc-segmented) {
+	width: 100%;
+}
+
+/* Voci di tabs e accordion: una scheda per voce, comandi in fondo. */
+.nucleo-editor__items {
+	display: grid;
+	gap: var(--nc-space-2);
+	margin: 0;
+	padding: 0;
+	border: 0;
+	justify-items: start;
+}
+
+.nucleo-editor__item {
+	display: grid;
+	gap: var(--nc-space-2);
+	width: 100%;
+	padding: var(--nc-space-3);
+	border: 1px solid var(--nc-border);
+	border-radius: var(--nc-r-m);
+	background: var(--nc-surface);
+}
+
+.nucleo-editor__item-actions {
+	display: flex;
+	gap: var(--nc-space-1);
+	justify-content: flex-end;
+}

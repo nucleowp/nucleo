@@ -1,0 +1,20 @@
+{
+  "name": "nc/collection-empty",
+  "version": 1,
+  "title": "Collection empty state",
+  "category": "dynamic",
+  "description": "Content shown by a nc/collection when no post matches. Only inside nc/collection.",
+  "aiHints": "Optional. Put a short text inside it, for example a nc/text child. Without it the collection shows nothing when there are no results.",
+  "content": {},
+  "settings": {},
+  "supports": {},
+  "children": true,
+  "parents": ["nc/collection"],
+  "assets": {
+    "style": null,
+    "script": null
+  },
+  "semantics": {},
+  "migrations": {},
+  "renderer": "Nucleo\\Blocks\\Core\\CollectionPartRenderer"
+}

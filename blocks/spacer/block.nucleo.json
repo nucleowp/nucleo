@@ -1,0 +1,25 @@
+{
+  "name": "nc/spacer",
+  "version": 1,
+  "title": "Spacing",
+  "category": "structure",
+  "description": "Empty vertical space between two blocks.",
+  "aiHints": "Use block spacing before resorting to the spacer. Do not use it to align content.",
+  "content": {},
+  "settings": {},
+  "supports": {
+    "styleExclude": ["spacing", "typography", "border", "color"],
+    "style": ["size", "color", "motion"],
+    "responsive": true,
+    "visibility": true
+  },
+  "children": false,
+  "parents": null,
+  "assets": {
+    "style": "style.css",
+    "script": null
+  },
+  "semantics": {},
+  "renderer": "Nucleo\\Blocks\\Core\\SpacerRenderer",
+  "migrations": {}
+}

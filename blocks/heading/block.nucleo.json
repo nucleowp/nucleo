@@ -1,0 +1,30 @@
+{
+  "name": "nc/heading",
+  "version": 1,
+  "title": "Heading",
+  "category": "text",
+  "description": "Section heading from h1 to h6.",
+  "aiHints": "Use only one level 1 per page. Do not skip levels.",
+  "content": {
+    "text": { "type": "inline-rich-text", "translatable": true, "required": true }
+  },
+  "settings": {
+    "level": { "type": "integer", "enum": [1, 2, 3, 4, 5, 6], "default": 2 }
+  },
+  "supports": {
+    "style": ["typography", "color", "spacing", "border", "size", "motion"],
+    "responsive": true,
+    "visibility": true,
+    "bind": ["content.text"]
+  },
+  "children": false,
+  "parents": null,
+  "assets": {
+    "style": "style.css",
+    "script": null
+  },
+  "semantics": {
+    "heading": { "levelFrom": "settings.level", "textFrom": "content.text" }
+  },
+  "renderer": "Nucleo\\Blocks\\Core\\HeadingRenderer"
+}

@@ -1,0 +1,177 @@
+/*
+ * Cornice del mockup dell'anteprima (mockup.js). Misure di larghezza, altezza, padding e raggi arrivano in linea
+ * dal componente; qui solo colori, font e disposizione. Il nero di cornice e isola non ha token: valore letterale.
+ * Lo schermo è una colonna: barre e barra del browser hanno altezza fissa, il contenuto prende il resto.
+ */
+.nc-mockup {
+	box-sizing: border-box;
+	position: relative;
+	flex: none;
+	background: #000; /* nero della cornice: nessun token */
+	box-shadow: var(--nc-shadow-overlay);
+	overflow: hidden;
+}
+
+.nc-mockup__screen {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	background: var(--nc-surface);
+	color: var(--nc-text);
+	font-family: var(--nc-font-sans);
+}
+
+.nc-mockup__bar {
+	position: relative;
+	flex: none;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 var(--nc-space-4);
+	box-sizing: border-box;
+	font: var(--nc-text-button-s);
+}
+
+.nc-mockup__bar--bottom {
+	justify-content: center;
+}
+
+.nc-mockup__time {
+	font-family: var(--nc-font-mono);
+}
+
+.nc-mockup__status {
+	display: flex;
+	align-items: center;
+	gap: var(--nc-space-1);
+}
+
+.nc-mockup__icon {
+	display: block;
+	flex: none;
+	width: 16px;
+	height: 16px;
+	fill: currentColor;
+}
+
+.nc-mockup__key {
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 2;
+}
+
+.nc-mockup__notch {
+	position: absolute;
+	top: 11px;
+	left: 50%;
+	width: 120px;
+	height: 34px;
+	transform: translateX(-50%);
+	border-radius: 17px;
+	background: #000; /* isola: nessun token */
+}
+
+.nc-mockup__keys-row {
+	display: flex;
+	align-items: center;
+	gap: 48px;
+	color: var(--nc-text);
+}
+
+.nc-mockup__keys-row .nc-mockup__icon {
+	width: 20px;
+	height: 20px;
+}
+
+.nc-mockup__home {
+	width: 134px;
+	height: 5px;
+	border-radius: 3px;
+	background: var(--nc-text);
+}
+
+.nc-mockup__url {
+	flex: none;
+	overflow: hidden;
+	box-sizing: border-box;
+	background: var(--nc-surface);
+	color: var(--nc-text);
+	font: var(--nc-text-small);
+	transition: height 0.2s;
+}
+
+.nc-mockup__url-row {
+	display: flex;
+	align-items: center;
+	gap: var(--nc-space-2);
+	height: 100%;
+	padding: 0 var(--nc-space-3);
+	box-sizing: border-box;
+}
+
+.nc-mockup__pill {
+	flex: 1 1 auto;
+	min-width: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--nc-space-1);
+	height: 32px;
+	padding: 0 var(--nc-space-2);
+	box-sizing: border-box;
+	border-radius: var(--nc-r-base);
+	background: var(--nc-surface-2);
+	color: var(--nc-text-muted);
+}
+
+.nc-mockup__host {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font: var(--nc-text-cell);
+}
+
+.nc-mockup__url-host {
+	display: block;
+	overflow: hidden;
+	text-align: center;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	color: var(--nc-text-muted);
+	font: var(--nc-text-label);
+	line-height: 28px;
+}
+
+.nc-mockup__aa {
+	flex: none;
+	font: var(--nc-text-button-s);
+	color: var(--nc-text-muted);
+}
+
+.nc-mockup__tabs {
+	flex: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	box-sizing: border-box;
+	border: 2px solid currentColor;
+	border-radius: var(--nc-r-s);
+	font: var(--nc-text-tag);
+	color: var(--nc-text);
+}
+
+.nc-mockup__content {
+	position: relative;
+	flex: 1 1 0;
+	min-height: 0;
+	overflow: hidden;
+}
+
+/* Telefono orizzontale: angoli molto arrotondati, ora e icone si allontanano dal bordo. */
+.nc-mockup--phone.nc-mockup--landscape .nc-mockup__bar:not(.nc-mockup__bar--bottom) {
+	padding-inline: 40px;
+}

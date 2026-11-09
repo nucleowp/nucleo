@@ -1,0 +1,43 @@
+.nc-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--nc-space-2);
+  padding: var(--nc-space-2) var(--nc-space-4);
+  border: 1px solid transparent;
+  border-radius: var(--nc-radius-md);
+  font: inherit;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.nc-button--primary {
+  background: var(--nc-color-primary);
+  color: var(--nc-color-background);
+}
+
+.nc-button--secondary {
+  background: transparent;
+  border-color: var(--nc-color-secondary);
+  color: var(--nc-color-secondary);
+}
+
+.nc-button--link {
+  padding-left: 0;
+  padding-right: 0;
+  background: none;
+  color: var(--nc-color-primary);
+  text-decoration: none;
+}
+
+.nc-button--link:hover,
+.nc-button--link:focus-visible {
+  text-decoration: underline;
+}
+
+.nc-button:focus-visible {
+  outline: 2px solid var(--nc-color-accent);
+  outline-offset: 2px;
+}

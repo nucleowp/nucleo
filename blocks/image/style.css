@@ -1,0 +1,9 @@
+.nc-image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+picture:has(> .nc-image) {
+  display: contents;
+}

@@ -1,0 +1,41 @@
+{
+  "name": "nc/post-meta",
+  "version": 1,
+  "title": "Post meta",
+  "category": "text",
+  "description": "Date, author, categories and custom taxonomy terms of the current post. Dynamic: read on every request.",
+  "aiHints": "Show only the fields useful to the reader. The date goes in a time element. Use tax:<taxonomy> to show the terms of a custom taxonomy; set terms to chips to show them as chips instead of a comma list. Its parts for style.parts are item, term and link, for example style.parts.term.fontWeight 600.",
+  "content": {},
+  "settings": {
+    "fields": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^(date|author|categories|tax:[a-z0-9_-]+)$" },
+      "default": ["date"]
+    },
+    "terms": {
+      "type": "string",
+      "enum": ["text", "chips"],
+      "default": "text"
+    }
+  },
+  "supports": {
+    "style": ["typography", "color", "spacing", "motion"],
+    "responsive": true,
+    "visibility": true,
+    "bind": []
+  },
+  "parts": {
+    "item": " .nc-post-meta__item",
+    "term": " .nc-post-meta__term",
+    "link": " a"
+  },
+  "children": false,
+  "parents": null,
+  "assets": {
+    "style": "style.css",
+    "script": null
+  },
+  "semantics": {},
+  "migrations": {},
+  "renderer": "Nucleo\\Blocks\\Core\\PostMetaRenderer"
+}

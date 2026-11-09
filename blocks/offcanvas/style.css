@@ -1,0 +1,43 @@
+/* Pulsante e pannello off-canvas di nc/offcanvas. Il pannello è nascosto dall'attributo hidden, che view.js toglie in apertura. */
+.nc-offcanvas__panel[hidden],
+.nc-offcanvas__backdrop[hidden] {
+  display: none;
+}
+
+.nc-offcanvas__trigger {
+  cursor: pointer;
+}
+
+.nc-offcanvas__panel {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
+  width: var(--nc-offcanvas-width, 20rem);
+  max-width: 85vw;
+  overflow-y: auto;
+  padding: 1rem;
+  background: var(--nc-offcanvas-bg, #fff);
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
+}
+
+.nc-offcanvas--right .nc-offcanvas__panel {
+  left: auto;
+  right: 0;
+}
+
+.nc-offcanvas__backdrop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 999;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+/* Con il pannello aperto la pagina sotto non scorre. */
+html.nc-offcanvas-locked {
+  overflow: hidden;
+}

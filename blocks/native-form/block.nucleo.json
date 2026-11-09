@@ -1,0 +1,147 @@
+{
+  "name": "nc/native-form",
+  "version": 1,
+  "title": "Native form",
+  "category": "dynamic",
+  "description": "Native form with fields, steps and actions: email code check, save, email, webhook, create post.",
+  "aiHints": "Use it for sign-ups, requests and contact forms that save data, send emails or create posts. Field types: text, email, tel, url, textarea, number, date, select, radio, checkboxes, checkbox, consent, hidden, context. An otp action must be first and name an email field. With \"step\": N (N below the last step, email field in step N or before) the visitor gets the code when leaving step N and confirms it before the next steps; sendCodeLabel and verifyLabel name the two buttons. Without step the code is asked at the final submit. On local sites the emails of Nucleo forms are not sent: read them, with the code, through mail-log. Texts can use {field:name}, {post.title}, {post.url}, {site.name}, {fields}. Field width \"half\" puts two consecutive half fields side by side on wide screens (\"full\" is the default). Field group (a string) puts consecutive fields with the same group in a fieldset with that legend; groupNumbering (none, letters or numbers, default none) numbers those group legends with letters or digits. requiredMark (for example \"*\") is shown after the label of required fields and optionalMark (for example \"(optional)\") after the label of the others; both are empty by default, and checkbox, consent, hidden and context fields never get a mark. Style group controls (controlBackground, controlColor, controlBorder, controlRadius, controlPadding, controlFocus, controlBorderHover) styles fields, select and textarea; group buttons (buttonBackground, buttonColor, buttonBorder, buttonRadius, buttonPadding) styles the buttons, submit included; group fields (labelColor, labelSize, labelWeight, helpColor, legendColor, legendSize, legendWeight, legendLine, markColor, optionalColor, optionalSize, optionalWeight, numberSize, numberBorder, numberColor, numberFont, numberFontSize, numberWeight, controlMinHeight, placeholderColor, checkSize, checkAccent, navJustify, fieldGap, fieldMinHeight) styles labels, help texts, group legends, marks, checkboxes and the spacing of fields; legendLine draws a line after the legend text, controlBorderHover is the whole border of the controls on hover, written like controlBorder (1px solid $color.text). With groupNumbering letters-box or numbers-box the number* keys style the square around the letter (numberSize the side of the square, numberBorder like controlBorder, numberFont a font family such as $font.mono, numberFontSize and numberWeight as fontSize and fontWeight). navJustify places the submit and step buttons: flex-start, center, flex-end (default) or space-between. When a captcha is configured for the site (settings-set, group captcha: reCAPTCHA v2 or v3, hCaptcha, Cloudflare Turnstile, Friendly Captcha), every native form shows it above the buttons; settings.captcha false removes it from one form, and captchaMessage is the text shown when the check fails. The form is 36rem wide by default: maxWidth \"none\" or width \"100%\" makes it fill its container. Its parts for style.parts are field, label, legend, number, legendLine, mark, optional, help, control, placeholder, check, nav, button and message, for example style.parts.label.fontWeight 600.",
+  "content": {
+    "submitLabel": { "type": "string", "translatable": true },
+    "successMessage": { "type": "string", "translatable": true },
+    "errorMessage": { "type": "string", "translatable": true },
+    "codeLabel": { "type": "string", "translatable": true },
+    "nextLabel": { "type": "string", "translatable": true },
+    "backLabel": { "type": "string", "translatable": true },
+    "sentMessage": { "type": "string", "translatable": true },
+    "sendCodeLabel": { "type": "string", "translatable": true },
+    "verifyLabel": { "type": "string", "translatable": true },
+    "otpFailedMessage": { "type": "string", "translatable": true },
+    "expiredMessage": { "type": "string", "translatable": true },
+    "requiredMark": { "type": "string", "translatable": true },
+    "optionalMark": { "type": "string", "translatable": true },
+    "captchaMessage": { "type": "string", "translatable": true }
+  },
+  "settings": {
+    "fields": {
+      "type": "array",
+      "maxItems": 40,
+      "default": [],
+      "items": {
+        "type": "object",
+        "required": ["name", "type"],
+        "properties": {
+          "name": { "type": "string" },
+          "type": { "type": "string", "enum": ["text", "email", "tel", "url", "textarea", "number", "date", "select", "radio", "checkboxes", "checkbox", "consent", "hidden", "context"] },
+          "label": { "type": "string" },
+          "required": { "type": "boolean" },
+          "help": { "type": "string" },
+          "step": { "type": "integer", "minimum": 0, "default": 0 },
+          "maxLength": { "type": "integer", "minimum": 1 },
+          "min": { "type": ["number", "string"] },
+          "max": { "type": ["number", "string"] },
+          "decimals": { "type": "integer", "minimum": 0 },
+          "placeholder": { "type": "string" },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["value"],
+              "properties": {
+                "value": { "type": ["string", "number"] },
+                "label": { "type": "string" }
+              }
+            }
+          },
+          "value": { "type": ["string", "number"] },
+          "from": { "type": "string", "enum": ["post.id", "post.title", "post.url"] },
+          "width": { "type": "string", "enum": ["full", "half"], "default": "full" },
+          "group": { "type": "string" }
+        }
+      }
+    },
+    "steps": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "object",
+        "required": ["title"],
+        "properties": {
+          "title": { "type": "string" }
+        }
+      }
+    },
+    "actions": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "object",
+        "required": ["type"],
+        "properties": {
+          "type": { "type": "string", "enum": ["otp", "save", "email", "webhook", "create-post", "component"] },
+          "field": { "type": "string" },
+          "subject": { "type": "string" },
+          "body": { "type": "string" },
+          "ttl": { "type": "integer", "minimum": 5, "maximum": 30, "default": 15 },
+          "step": { "type": "integer", "minimum": 0 },
+          "to": { "type": "string" },
+          "replyTo": { "type": "string" },
+          "url": { "type": "string" },
+          "postType": { "type": "string" },
+          "status": { "type": "string" },
+          "title": { "type": "string" },
+          "fields": { "type": "object" },
+          "name": { "type": "string" },
+          "input": { "type": "object" }
+        }
+      }
+    },
+    "redirect": {
+      "type": "string",
+      "description": "Dove andare dopo l'invio riuscito: home, page:<slug> o un URL. Vuoto: resta il messaggio di esito."
+    },
+    "captcha": {
+      "type": "boolean",
+      "default": true,
+      "description": "Mostra il captcha configurato per il sito (nucleo/settings-set, gruppo captcha). false lo toglie da questo modulo. Senza captcha configurato non ha effetto."
+    },
+    "groupNumbering": {
+      "type": "string",
+      "enum": ["none", "letters", "numbers", "letters-box", "numbers-box"],
+      "default": "none",
+      "description": "Numera le legend dei gruppi di campi: none, letters (A., B.), numbers (1., 2.). letters-box e numbers-box mettono la lettera o la cifra in un riquadro, senza punto (stili numberSize, numberBorder, numberColor, numberFont, numberFontSize, numberWeight)."
+    }
+  },
+  "supports": {
+    "style": ["size", "spacing", "typography", "color", "border", "motion", "controls", "buttons", "fields"],
+    "responsive": true,
+    "visibility": true,
+    "bind": []
+  },
+  "children": false,
+  "parents": null,
+  "parts": {
+    "field": " .nc-native-form__field",
+    "label": " .nc-native-form__field > label",
+    "legend": " legend",
+    "number": " .nc-native-form__group > legend::before",
+    "legendLine": " legend::after",
+    "mark": " .nc-native-form__mark",
+    "optional": " .nc-native-form__optional",
+    "help": " .nc-native-form__help",
+    "control": " :is(input:not([type=\"checkbox\"]):not([type=\"radio\"]):not([type=\"hidden\"]), select, textarea)",
+    "placeholder": " ::placeholder",
+    "check": " :is(input[type=\"checkbox\"], input[type=\"radio\"])",
+    "nav": " .nc-native-form__nav",
+    "button": " button",
+    "message": " .nc-native-form__message"
+  },
+  "deps": [],
+  "assets": {
+    "style": "style.css",
+    "script": "view.js",
+    "strategy": "interaction"
+  },
+  "semantics": {},
+  "migrations": {},
+  "renderer": "Nucleo\\Blocks\\Core\\NativeFormRenderer"
+}

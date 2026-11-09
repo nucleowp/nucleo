@@ -1,0 +1,16 @@
+/* Editor a blocchi su una pagina Nucleo: la scheda Nucleo prende il posto del contenuto (come fa Elementor). */
+body.nucleo-mode-nucleo .editor-visual-editor > :not(.nucleo-mode-banner) {
+	display: none;
+}
+/* Con i riquadri sotto il contenuto WordPress riduce l'area del contenuto a zero (flex-basis 0, :has()): serve !important. */
+body.nucleo-mode-nucleo .editor-visual-editor {
+	display: block !important;
+	flex: 0 0 auto !important;
+	overflow: visible !important;
+	/* Fuori dai contenitori Nucleo i token --nc-space-* non esistono: 32px e 16px come --nc-space-6 e --nc-space-4. */
+	padding: 32px 16px;
+}
+body.nucleo-mode-nucleo .nucleo-mode-banner {
+	max-width: 40rem;
+	margin-inline: auto;
+}

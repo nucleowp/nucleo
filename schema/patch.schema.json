@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nucleo.dev/schema/patch.schema.json",
+  "title": "Patch di documento Nucleo",
+  "description": "Lista di operazioni semantiche (per id) o JSON Patch RFC 6902 (per path). Il campo baseRevision sta nel contenitore della patch, non in questo array.",
+  "type": "array",
+  "items": {
+    "oneOf": [
+      { "$ref": "#/$defs/insert" },
+      { "$ref": "#/$defs/moveNode" },
+      { "$ref": "#/$defs/removeNode" },
+      { "$ref": "#/$defs/set" },
+      { "$ref": "#/$defs/duplicate" },
+      { "$ref": "#/$defs/wrap" },
+      { "$ref": "#/$defs/pointerValue" },
+      { "$ref": "#/$defs/pointerRemove" },
+      { "$ref": "#/$defs/pointerFrom" }
+    ]
+  },
+  "$defs": {
+    "nodeId": { "$ref": "https://nucleo.dev/schema/document.schema.json#/$defs/nodeId" },
+    "blockType": { "$ref": "https://nucleo.dev/schema/document.schema.json#/$defs/blockType" },
+    "style": { "$ref": "https://nucleo.dev/schema/document.schema.json#/$defs/style" },
+    "node": { "$ref": "https://nucleo.dev/schema/document.schema.json#/$defs/node" },
+    "pointer": {
+      "type": "string",
+      "pattern": "^(/([^/~]|~[01])*)*$"
+    },
+    "insert": {
+      "type": "object",
+      "required": ["op", "parent", "node"],
+      "additionalProperties": false,
+      "properties": {
+        "op": { "const": "insert" },
+        "parent": { "$ref": "#/$defs/nodeId" },
+        "index": { "type": "integer", "minimum": 0 },
+        "node": { "$ref": "#/$defs/node" }
+      }
+    },
+    "moveNode": {
+      "type": "object",
+      "required": ["op", "id", "parent"],
+      "additionalProperties": false,
+      "properties": {
+        "op": { "const": "move" },
+        "id": { "$ref": "#/$defs/nodeId" },
+        "parent": { "$ref": "#/$defs/nodeId" },
+        "index": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "removeNode": {
+      "type": "object",
+      "required": ["op", "id"],
+      "additionalProperties": false,
+      "properties": {
+        "op": { "const": "remove" },
+        "id": { "$ref": "#/$defs/nodeId" }
+      }
+    },
+    "set": {
+      "type": "object",
+      "required": ["op", "id", "path", "value"],
+      "additionalProperties": false,
+      "properties": {
+        "op": { "const": "set" },
+        "id": { "$ref": "#/$defs/nodeId" },
+        "path": { "type": "string", "minLength": 1 },
+        "value": {}
+      }
+    },
+    "duplicate": {
+      "type": "object",
+      "required": ["op", "id"],
+      "additionalProperties": false,
+      "properties": {
+        "op": { "const": "duplicate" },
+        "id": { "$ref": "#/$defs/nodeId" }
+      }
+    },
+    "wrap": {
+      "type": "object",
+      "required": ["op", "ids", "with"],
+      "additionalProperties": false,
+      "properties": {
+        "op": { "const": "wrap" },
+        "ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/nodeId" }
+        },
+        "with": {
+          "type": "object",
+          "required": ["type"],
+          "additionalProperties": false,
+          "properties": {
+            "type": { "$ref": "#/$defs/blockType" },
+            "content": { "type": "object" },
+            "settings": { "type": "object" },
+            "style": { "$ref": "#/$defs/style" }
+          }
+        }
+      }
+    },
+    "pointerValue": {
+      "type": "object",
+      "required": ["op", "path", "value"],
+      "additionalProperties": false,
+      "properties": {
+        "op": { "enum": ["add", "replace", "test"] },
+        "path": { "$ref": "#/$defs/pointer" },
+        "value": {}
+      }
+    },
+    "pointerRemove": {
+      "type": "object",
+      "required": ["op", "path"],
+      "additionalProperties": false,
+      "properties": {
+        "op": { "const": "remove" },
+        "path": { "$ref": "#/$defs/pointer" }
+      }
+    },
+    "pointerFrom": {
+      "type": "object",
+      "required": ["op", "from", "path"],
+      "additionalProperties": false,
+      "properties": {
+        "op": { "enum": ["move", "copy"] },
+        "from": { "$ref": "#/$defs/pointer" },
+        "path": { "$ref": "#/$defs/pointer" }
+      }
+    }
+  }
+}

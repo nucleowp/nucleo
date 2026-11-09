@@ -1,0 +1,16 @@
+.nc-post-title {
+  margin: 0;
+  line-height: 1.2;
+  overflow-wrap: break-word;
+}
+
+/* Il link eredita colore e decorazione del titolo; il gruppo di stile link li cambia. */
+.nc-post-title a {
+  color: var(--nc-link-color, inherit);
+  text-decoration: var(--nc-link-decoration, inherit);
+}
+
+.nc-post-title a:is(:hover, :focus-visible) {
+  color: var(--nc-link-color-hover, var(--nc-link-color, inherit));
+  text-decoration: var(--nc-link-decoration-hover, underline);
+}

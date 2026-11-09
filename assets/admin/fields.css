@@ -1,0 +1,103 @@
+/*
+ * Campi dei contenuti e dei termini (fields.js e meta box). Solo var(--nc-*) dichiarate in tokens.css: nessun colore letterale.
+ * Fuori dal wrapper: lo scope e' .nc-fields, superficie piena e senza vetro.
+ */
+
+.nc-fields {
+	display: grid;
+	gap: var(--nc-space-4);
+}
+
+.nc-field {
+	display: grid;
+	gap: var(--nc-space-1);
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+.nc-field__label {
+	font: var(--nc-text-th);
+	color: var(--nc-text);
+}
+
+.nc-field__input {
+	max-width: 100%;
+	min-height: var(--nc-control-h);
+	padding: 0 var(--nc-space-4);
+	border: 1px solid var(--nc-border-input);
+	border-radius: var(--nc-r-m);
+	background: var(--nc-field-bg);
+	color: var(--nc-text);
+	font-family: var(--nc-font-sans);
+	font-size: 16px;
+	line-height: 24px;
+}
+
+.nc-field__help {
+	font: var(--nc-text-small);
+	color: var(--nc-text-muted);
+}
+
+.nc-check {
+	display: flex;
+	align-items: center;
+	gap: var(--nc-space-2);
+	font: var(--nc-text-body);
+	color: var(--nc-text);
+}
+
+.nc-repeater__rows {
+	display: grid;
+	gap: var(--nc-space-3);
+}
+
+.nc-repeater__row {
+	display: grid;
+	gap: var(--nc-space-2);
+	padding: var(--nc-space-3);
+	border: 1px solid var(--nc-border);
+	border-radius: var(--nc-r-base);
+	background: var(--nc-surface-2);
+}
+
+.nc-repeater__fields {
+	display: grid;
+	gap: var(--nc-space-2);
+}
+
+.nc-repeater__actions,
+.nc-image__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--nc-space-2);
+	margin: 0;
+}
+
+.nc-image__preview img {
+	display: block;
+	max-width: 96px;
+	height: auto;
+	border-radius: var(--nc-r-s);
+}
+
+.nc-relation__items,
+.nc-relation__results {
+	display: grid;
+	gap: var(--nc-space-1);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.nc-relation__item {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--nc-space-2);
+}
+
+.nc-relation__results[hidden] {
+	display: none;
+}

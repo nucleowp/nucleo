@@ -1,0 +1,29 @@
+{
+  "name": "nc/archive-title",
+  "version": 1,
+  "title": "Archive title",
+  "category": "dynamic",
+  "description": "Title of a category, tag or archive, without prefix. With search it shows the query. Dynamic: read on every request.",
+  "aiHints": "Use it in archive templates. Only one level 1 title per page.",
+  "content": {},
+  "settings": {
+    "level": { "type": "integer", "enum": [1, 2, 3], "default": 1 }
+  },
+  "supports": {
+    "style": ["typography", "color", "spacing", "motion"],
+    "responsive": true,
+    "visibility": true,
+    "bind": []
+  },
+  "children": false,
+  "parents": null,
+  "assets": {
+    "style": "style.css",
+    "script": null
+  },
+  "semantics": {
+    "heading": { "levelFrom": "settings.level" }
+  },
+  "migrations": {},
+  "renderer": "Nucleo\\Blocks\\Core\\ArchiveTitleRenderer"
+}

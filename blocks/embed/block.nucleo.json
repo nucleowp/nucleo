@@ -1,0 +1,34 @@
+{
+  "name": "nc/embed",
+  "version": 1,
+  "title": "Embed",
+  "category": "media",
+  "description": "YouTube, Vimeo, Google Maps or generic https embed with a static facade; the iframe loads only on click.",
+  "aiHints": "Always set a descriptive title: it becomes the iframe title and the accessible name of the button. The url must be https.",
+  "content": {
+    "title": { "type": "string", "translatable": true, "required": true },
+    "poster": { "type": "string" }
+  },
+  "settings": {
+    "url": { "type": "string", "required": true },
+    "aspectRatio": { "type": "string", "enum": ["16:9", "4:3", "1:1", "21:9"], "default": "16:9" },
+    "consent": { "type": "string", "enum": ["marketing", "statistics", "preferences", "none"], "default": "marketing" }
+  },
+  "supports": {
+    "style": ["size", "border", "motion"],
+    "responsive": true,
+    "visibility": true
+  },
+  "children": false,
+  "parents": null,
+  "assets": {
+    "style": "style.css",
+    "script": "view.js",
+    "strategy": "interaction"
+  },
+  "semantics": {
+    "embed": { "urlFrom": "settings.url", "titleFrom": "content.title" }
+  },
+  "renderer": "Nucleo\\Blocks\\Core\\EmbedRenderer",
+  "migrations": {}
+}

@@ -1,0 +1,11 @@
+.nc-repeater {
+  display: grid;
+  gap: 1rem;
+}
+
+ul.nc-repeater,
+ol.nc-repeater {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
