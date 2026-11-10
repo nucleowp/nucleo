@@ -25,7 +25,7 @@ final class DocList implements AbilityDefinition
     {
         return [
             'label' => __('Document list', 'nucleo'),
-            'description' => 'List of Nucleo documents with id, title, status, revision, link and quality (last check). Filters: post type, text search, status, quality, page.',
+            'description' => 'List of Nucleo documents with id, title, status, revision, link and quality (last check). Filters: post type, text search, status, quality, page. Nucleo documents are the block trees of pages, posts, layouts and sections. Items without a Nucleo document, and title, fields and terms of any item, go through nucleo/content-list. Sections with their parameters: nucleo/section-list; layouts with conditions and conflicts: nucleo/layout-list.',
             'input_schema' => [
                 'type' => 'object',
                 'properties' => [

@@ -20,7 +20,7 @@ final class QualityScan implements AbilityDefinition
     {
         return [
             'label' => __('Site quality check', 'nucleo'),
-            'description' => 'Checks all published documents in batches: duplicate title and h1, orphan pages without internal links, breadcrumbs duplicated by the SEO plugin, sections repeated with different visibility. Returns the site issues, the SEO, accessibility and performance scores of the pages in the batch, the rules with their severity (rules), the number of pages with blocking errors (errorPages) and the next page (next).',
+            'description' => 'Checks all published documents in batches: duplicate title and h1, orphan pages without internal links, breadcrumbs duplicated by the SEO plugin, sections repeated with different visibility. Returns the site issues, the SEO, accessibility and performance scores of the pages in the batch, the rules with their severity (rules), the number of pages with blocking errors (errorPages) and the next page (next). For the full report of one document use nucleo/quality-check.',
             'input_schema' => [
                 'type' => 'object',
                 'properties' => [

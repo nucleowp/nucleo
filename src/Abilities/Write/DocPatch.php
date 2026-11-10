@@ -21,7 +21,7 @@ final class DocPatch implements AbilityDefinition
     {
         return [
             'label' => __('Edit document', 'nucleo'),
-            'description' => 'Applies patch operations to an existing document. baseRevision must match the current revision, otherwise it returns conflict. With dryRun true it does not save.',
+            'description' => 'Applies patch operations to an existing document. baseRevision must match the current revision, otherwise it returns conflict. With dryRun true it does not save. It edits the blocks of a Nucleo document; to publish use nucleo/doc-publish; title, fields and terms of the post go through nucleo/content-upsert.',
             'input_schema' => [
                 'type' => 'object',
                 'required' => ['postId', 'baseRevision', 'ops'],

@@ -20,7 +20,7 @@ final class ContentGet implements AbilityDefinition
     {
         return [
             'label' => __('Get content item', 'nucleo'),
-            'description' => 'Returns one content item by type and slug, with all its keys and "hash": pass it as "base" to content-upsert, which then saves only if the item did not change since. The item can be sent back to content-upsert as it is (hash, id and protected are ignored). Returns not_found when no item has that slug, read_only_type for product (listed by content-list, never read or written here).',
+            'description' => 'Returns one content item by type and slug, with all its keys and "hash": pass it as "base" to content-upsert, which then saves only if the item did not change since. The item can be sent back to content-upsert as it is (hash, id and protected are ignored). Returns not_found when no item has that slug, read_only_type for product (listed by content-list, never read or written here). For the blocks of a page or post with a Nucleo document (managedBy) use nucleo/doc-get.',
             'input_schema' => [
                 'type' => 'object',
                 'required' => ['type', 'slug'],

@@ -21,7 +21,7 @@ final class DocGet implements AbilityDefinition
     {
         return [
             'label' => __('Read document', 'nucleo'),
-            'description' => 'Nucleo document in compact form (default) or in full (format "full": the stored document unchanged), whole or only a subtree (nodeId), with a maximum depth (depth, compact only). Also returns the revision: pass it as baseRevision to doc-patch, which refuses with conflict if the document changed since.',
+            'description' => 'Nucleo document in compact form (default) or in full (format "full": the stored document unchanged), whole or only a subtree (nodeId), with a maximum depth (depth, compact only). Also returns the revision: pass it as baseRevision to doc-patch, which refuses with conflict if the document changed since. The post data around the document (title, slug, status, fields, terms) is read with nucleo/content-get.',
             'input_schema' => [
                 'type' => 'object',
                 'required' => ['postId'],

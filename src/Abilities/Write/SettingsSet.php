@@ -26,7 +26,7 @@ final class SettingsSet implements AbilityDefinition
         return [
             'label' => __('Save settings', 'nucleo'),
             'description' => 'Saves Nucleo settings. Partial: groups and keys left out are kept. Every value is checked before anything is written. '
-                . 'The captcha secret is write-only and is never returned.',
+                . 'The captcha secret is write-only and is never returned. WordPress site options (title, tagline, homepage, date formats, icons) go through nucleo/site-options-set, design tokens through nucleo/tokens-set.',
             'input_schema' => [
                 'type' => 'object',
                 'required' => ['settings'],

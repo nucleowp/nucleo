@@ -17,7 +17,7 @@ final class Server
 
     private const ABILITY_PREFIX = 'nucleo/';
 
-    private const INSTRUCTIONS = 'Before writing, call nucleo-guide and follow the phases in order. It reads the state of the site and returns the rules, the tools and the exit conditions of the current phase. nucleo-site-describe describes the site, the design tokens and the document constraints. Everything goes through Nucleo: no mu-plugins, no code in functions.php or in the theme, no CSS or scripts in wp_head. When Nucleo cannot do something, tell the user it is a Nucleo gap; site PHP goes only in a component (nucleo component new), with the user\'s consent.';
+    private const INSTRUCTIONS = 'Before writing, call nucleo-guide and follow the phases in order. It reads the state of the site and returns the rules, the tools and the exit conditions of the current phase. nucleo-site-describe describes the site, the design tokens and the document constraints. Pages, posts, layouts and sections built with Nucleo blocks go through nucleo-doc-*; title, fields, terms and items without a Nucleo document go through nucleo-content-*. Everything goes through Nucleo: no mu-plugins, no code in functions.php or in the theme, no CSS or scripts in wp_head. When Nucleo cannot do something, tell the user it is a Nucleo gap; site PHP goes only in a component (nucleo component new), with the user\'s consent.';
 
     /**
      * Decodifica un messaggio JSON grezzo (una riga STDIO o il corpo HTTP) e risponde.

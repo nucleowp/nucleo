@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.2 · 2026-11-10
+
+* Migliorato: le descrizioni dei tool MCP indicano quando usarli e quale tool usare al loro posto.
+
 ## 0.4.1 · 2026-11-09
 
 * Nuovo: I campi repeater e relation e i gruppi di campi con posizione su una tassonomia funzionano anche in Free.

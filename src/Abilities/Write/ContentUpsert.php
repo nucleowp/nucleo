@@ -23,7 +23,7 @@ final class ContentUpsert implements AbilityDefinition
     {
         return [
             'label' => __('Create or update content items', 'nucleo'),
-            'description' => 'Creates or updates content items by type and slug, and trashes items with status "trash". An item identical to the saved one is not written and reports action "unchanged" (counted in unchanged). An item with errors writes nothing; the others go on. With "dryRun" nothing is written.',
+            'description' => 'Creates or updates content items by type and slug, and trashes items with status "trash". An item identical to the saved one is not written and reports action "unchanged" (counted in unchanged). An item with errors writes nothing; the others go on. With "dryRun" nothing is written. body is plain HTML and is refused on items with a Nucleo document: edit their blocks with nucleo/doc-patch; create pages built with Nucleo blocks with nucleo/doc-create.',
             'input_schema' => [
                 'type' => 'object',
                 'required' => ['items'],

@@ -21,7 +21,7 @@ final class Guide implements AbilityDefinition
     {
         return [
             'label' => __('Guide', 'nucleo'),
-            'description' => 'Phase of the site guide: state of the site, rules of the phase, open tasks and exit conditions. Call it before writing, then follow next.',
+            'description' => 'Phase of the site guide: state of the site, rules of the phase, open tasks and exit conditions. Entry point: call it before writing, then follow next. Each rule names the tools to use. To read a block use nucleo/catalog-get {name}, a rule topic nucleo/catalog-get {topic}; when the name is unknown use nucleo/docs-search; the index of blocks is nucleo/catalog-list.',
             'input_schema' => [
                 'type' => 'object',
                 'additionalProperties' => false,

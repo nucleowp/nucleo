@@ -25,7 +25,7 @@ final class SectionList implements AbilityDefinition
     {
         return [
             'label' => __('Section list', 'nucleo'),
-            'description' => 'Reusable sections with their parameters and the number of documents that use them. Check here before creating a section.',
+            'description' => 'Reusable sections with their parameters and the number of documents that use them. Check here before creating a section. nucleo/doc-list lists all Nucleo documents without parameters; read the blocks of a section with nucleo/doc-get.',
             'input_schema' => ['type' => 'object', 'additionalProperties' => false],
             'output_schema' => [
                 'type' => 'object',

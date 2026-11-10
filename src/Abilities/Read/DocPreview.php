@@ -20,7 +20,7 @@ final class DocPreview implements AbilityDefinition
     {
         return [
             'label' => __('Document preview', 'nucleo'),
-            'description' => 'Compiles a document without saving it and returns HTML and CSS. Accepts document or postId. With contextPostId the dynamic slots (woo/*, bindings) are filled as on the page of that post: use it to see a product layout on a real product.',
+            'description' => 'Compiles a document without saving it and returns HTML and CSS. Accepts document or postId. With contextPostId the dynamic slots (woo/*, bindings) are filled as on the page of that post: use it to see a product layout on a real product. It does not check schema or quality: use nucleo/doc-validate before saving, nucleo/quality-check after.',
             'input_schema' => [
                 'type' => 'object',
                 'properties' => [

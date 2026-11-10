@@ -37,7 +37,7 @@ final class CatalogGet implements AbilityDefinition
     {
         return [
             'label' => __('Block manifest', 'nucleo'),
-            'description' => 'With name: full manifest of a Nucleo block (content, settings, supports, allowed children, hints for the AI), the style keys of its groups with CSS property and allowed values, its HTML markup, its base CSS and an example node built from its required content and settings. With names (up to 20): a compact entry per block, without base CSS; the style keys of all their groups appear once in styleKeys. The response stays under 25,000 characters: names that do not fit are listed in remaining, to request in a second call. With topic: reference rules that are not in any manifest: ' . implode(', ', Reference::TOPICS) . '.',
+            'description' => 'With name: full manifest of a Nucleo block (content, settings, supports, allowed children, hints for the AI), the style keys of its groups with CSS property and allowed values, its HTML markup, its base CSS and an example node built from its required content and settings. With names (up to 20): a compact entry per block, without base CSS; the style keys of all their groups appear once in styleKeys. The response stays under 25,000 characters: names that do not fit are listed in remaining, to request in a second call. With topic: reference rules that are not in any manifest: ' . implode(', ', Reference::TOPICS) . '. When the block or topic name is unknown use nucleo/docs-search; the index of blocks is nucleo/catalog-list.',
             'input_schema' => [
                 'type' => 'object',
                 'properties' => [

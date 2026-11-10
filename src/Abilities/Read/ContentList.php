@@ -20,7 +20,7 @@ final class ContentList implements AbilityDefinition
     {
         return [
             'label' => __('List content items', 'nucleo'),
-            'description' => 'Lists content items of the allowed content types, paginated. Without "full" each item is a summary with id (pass it as contextPostId to doc-preview). With full each item is complete and has "hash": pass it as "base" to content-upsert, which then saves only if the item did not change since; the item can be sent back as it is (hash, id and protected are ignored). product items are listed read-only: content-get and content-upsert do not handle them. Trashed items are never listed.',
+            'description' => 'Lists content items of the allowed content types, paginated. Without "full" each item is a summary with id (pass it as contextPostId to doc-preview). With full each item is complete and has "hash": pass it as "base" to content-upsert, which then saves only if the item did not change since; the item can be sent back as it is (hash, id and protected are ignored). product items are listed read-only: content-get and content-upsert do not handle them. Trashed items are never listed. Content items are WordPress posts with title, slug, status, fields, terms and a plain HTML body. A page or post built with Nucleo blocks has managedBy and no body: list and read its blocks with nucleo/doc-list and nucleo/doc-get.',
             'input_schema' => [
                 'type' => 'object',
                 'properties' => [

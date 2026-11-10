@@ -19,7 +19,7 @@ final class CatalogList implements AbilityDefinition
     {
         return [
             'label' => __('Block list', 'nucleo'),
-            'description' => 'List of Nucleo blocks with title, category and short description. The full manifest, with style keys, HTML and base CSS, is read with nucleo/catalog-get {name}. Rules that no manifest holds are read with nucleo/catalog-get {topic}: documents (node format, ids, section parameters), tokens, styles (with the style groups of every block), bindings, visibility, data, theme, site-files, acknowledge, components.',
+            'description' => 'List of Nucleo blocks with title, category and short description. The full manifest, with style keys, HTML and base CSS, is read with nucleo/catalog-get {name}. Rules that no manifest holds are read with nucleo/catalog-get {topic}: documents (node format, ids, section parameters), tokens, styles (with the style groups of every block), bindings, visibility, data, theme, site-files, acknowledge, components. To find a block or topic by words use nucleo/docs-search. What the current phase needs is in nucleo/guide.',
             'input_schema' => ['type' => 'object', 'additionalProperties' => false],
             'output_schema' => [
                 'type' => 'object',

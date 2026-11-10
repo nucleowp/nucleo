@@ -20,7 +20,7 @@ final class SiteOptionsSet implements AbilityDefinition
     {
         return [
             'label' => __('Save site options', 'nucleo'),
-            'description' => 'Saves the site title, tagline, homepage, posts page, date and time formats, the business shown in the structured data, the site icons and the modern image formats (avif, webp). Pages are given by slug and must be published. Every value is checked before anything is written.',
+            'description' => 'Saves the site title, tagline, homepage, posts page, date and time formats, the business shown in the structured data, the site icons and the modern image formats (avif, webp). Pages are given by slug and must be published. Every value is checked before anything is written. These are WordPress options, not Nucleo settings: the plugin settings (editor, performance, quality rules, captcha) go through nucleo/settings-set, the design tokens through nucleo/tokens-set.',
             'input_schema' => [
                 'type' => 'object',
                 'properties' => [

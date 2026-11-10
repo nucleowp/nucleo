@@ -22,7 +22,7 @@ final class QualityCheck implements AbilityDefinition
     {
         return [
             'label' => __('Quality check', 'nucleo'),
-            'description' => 'Quality report (SEO, accessibility, performance) of a saved document (postId or url of its page) or of one passed as input (document). A document without postId is checked inside the site layouts of postType (default page), as doc-create does. Issues acknowledged with acknowledge do not block.',
+            'description' => 'Quality report (SEO, accessibility, performance) of a saved document (postId or url of its page) or of one passed as input (document). A document without postId is checked inside the site layouts of postType (default page), as doc-create does. Issues acknowledged with acknowledge do not block. For a document not yet saved nucleo/doc-validate returns the same quality report together with the schema errors. For issues across pages (duplicate titles, orphan pages) use nucleo/quality-scan.',
             'input_schema' => [
                 'type' => 'object',
                 'properties' => [

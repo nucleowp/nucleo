@@ -22,7 +22,7 @@ final class DocsSearch implements AbilityDefinition
     {
         return [
             'label' => __('Search docs', 'nucleo'),
-            'description' => 'Searches the reference topics (nucleo/catalog-get with topic) and the block manifests by terms, and returns the best matches ranked by term matches: topic or block, title and excerpt. Use it when the topic or block name is unknown.',
+            'description' => 'Searches the reference topics (nucleo/catalog-get with topic) and the block manifests by terms, and returns the best matches ranked by term matches: topic or block, title and excerpt. Use it when the topic or block name is unknown, then read the match with nucleo/catalog-get. What to do next on this site is in nucleo/guide.',
             'input_schema' => [
                 'type' => 'object',
                 'required' => ['query'],

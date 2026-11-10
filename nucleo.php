@@ -3,7 +3,7 @@
 /**
  * Plugin Name:       Nucleo
  * Description:       AI-first block builder: JSON documents compiled at save time, zero runtime cost.
- * Version:           0.4.1
+ * Version:           0.4.2
  * Requires at least: 6.9
  * Requires PHP:      8.2
  * License:           GPL-2.0-or-later
@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 defined('ABSPATH') || exit;
 
-define('NUCLEO_VERSION', '0.4.1');
+define('NUCLEO_VERSION', '0.4.2');
 define('NUCLEO_FILE', __FILE__);
 define('NUCLEO_DIR', __DIR__ . '/');
 define('NUCLEO_MIN_PHP', '8.2');

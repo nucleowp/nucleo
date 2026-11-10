@@ -4,7 +4,7 @@ Tags: blocks, page builder, layout, mcp, ai
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 0.4.1
+Stable tag: 0.4.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -105,6 +105,10 @@ These features contact only the address that you or a connected AI agent provide
 All PHP and JavaScript of Nucleo ships unminified. The only minified files are the Friendly Captcha widget scripts in assets/lib/friendlycaptcha (version 0.1.37, MPL-2.0). Their source is at https://github.com/FriendlyCaptcha/friendly-captcha-sdk and on npm as @friendlycaptcha/sdk.
 
 == Changelog ==
+
+= 0.4.2 =
+
+* Improved: MCP tool descriptions say when to use each tool and which tool to use instead.
 
 = 0.4.1 =
 

@@ -19,7 +19,7 @@ final class ComponentsList implements AbilityDefinition
     {
         return [
             'label' => __('Site components', 'nucleo'),
-            'description' => 'Lists the data sources and actions registered by site plugins (hook nucleo/register_components): names and schemas, never code. Use them in nc/collection (source "component") and nc/native-form (action "component"). Component blocks are registered with nucleo/register_blocks and appear in catalog-get. To write a component: nucleo component new data-source|action|block.',
+            'description' => 'Lists the data sources and actions registered by site plugins (hook nucleo/register_components): names and schemas, never code. Use them in nc/collection (source "component") and nc/native-form (action "component"). Component blocks are registered with nucleo/register_blocks and appear in catalog-get. To write a component: nucleo component new data-source|action|block. These are not documents: Nucleo documents are listed with nucleo/doc-list, blocks with nucleo/catalog-list.',
             'input_schema' => [
                 'type' => 'object',
                 'additionalProperties' => false,

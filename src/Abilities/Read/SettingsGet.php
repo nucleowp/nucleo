@@ -21,7 +21,7 @@ final class SettingsGet implements AbilityDefinition
         return [
             'label' => __('Get settings', 'nucleo'),
             'description' => 'Nucleo settings: editor, performance, CSS purge mode, font subsets, quality rules, '
-                . 'captcha of the native forms (provider, siteKey, secretSet, threshold), onboarding state of the current user, and the detected integrations.',
+                . 'captcha of the native forms (provider, siteKey, secretSet, threshold), onboarding state of the current user, and the detected integrations. These are the settings of the Nucleo plugin, written with nucleo/settings-set. The WordPress site options are not here: nucleo/site-describe returns the site name and the date formats, nucleo/site-options-set writes title, tagline, homepage, formats and icons.',
             'input_schema' => ['type' => 'object', 'additionalProperties' => false],
             'output_schema' => [
                 'type' => 'object',

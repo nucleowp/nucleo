@@ -23,7 +23,7 @@ final class DocValidate implements AbilityDefinition
     {
         return [
             'label' => __('Validate document', 'nucleo'),
-            'description' => 'Validates a document without saving it: schema errors and, if the document is valid, a quality report. A page or post is checked inside the site layouts it will receive (header, footer, single/product layout of postType), as doc-create does: a duplicate h1 in the header counts.',
+            'description' => 'Validates a document without saving it: schema errors and, if the document is valid, a quality report. A page or post is checked inside the site layouts it will receive (header, footer, single/product layout of postType), as doc-create does: a duplicate h1 in the header counts. Use it before doc-create or doc-patch. For a saved document use nucleo/quality-check, which adds the page checks (title, description, slug) and acknowledge; for issues across pages use nucleo/quality-scan; to see the HTML use nucleo/doc-preview.',
             'input_schema' => [
                 'type' => 'object',
                 'required' => ['document'],

@@ -19,7 +19,7 @@ final class LayoutList implements AbilityDefinition
     {
         return [
             'label' => __('Layout list', 'nucleo'),
-            'description' => 'Nucleo layouts with area, conditions and status, plus priority conflicts in the map.',
+            'description' => 'Nucleo layouts with area, conditions and status, plus priority conflicts in the map. To see which layout a URL gets use nucleo/layout-explain. nucleo/doc-list lists all Nucleo documents without conditions.',
             'input_schema' => ['type' => 'object', 'additionalProperties' => false],
             'output_schema' => [
                 'type' => 'object',
