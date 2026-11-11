@@ -139,7 +139,7 @@
 	const el = root.wp && root.wp.element;
 	if ( el ) {
 		const { createElement: h, useState, useEffect } = el;
-		const __ = ( s, d ) => root.wp.i18n.__( s, d || 'nucleo' );
+		const { __ } = ( root.wp && root.wp.i18n ) || { __: ( text ) => text };
 		const UI = root.nucleoUI;
 
 		/** Riga a due colonne: etichetta e spiegazione a sinistra, controllo a destra, con filetto sopra. */

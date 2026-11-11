@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Schema;
 
+defined('ABSPATH') || exit;
+
 /**
  * Validatore JSON Schema minimo (sottoinsieme di draft 2020-12), senza dipendenze.
  * I dati arrivano da json_decode($json, true): una lista è un array JSON, un array

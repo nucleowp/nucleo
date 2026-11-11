@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Schema;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Guide\RuleCodes;
 
 /** One actionable validation problem. $path is a JSON Pointer ("/root/children/0/settings/level"). */

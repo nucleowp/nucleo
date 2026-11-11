@@ -66,7 +66,6 @@
 		footer: __( 'Footer', 'nucleo' ),
 		single: __( 'Single', 'nucleo' ),
 		archive: __( 'Archive', 'nucleo' ),
-		popup: __( 'Popup', 'nucleo' ),
 		'before-content': __( 'Before content', 'nucleo' ),
 		'after-content': __( 'After content', 'nucleo' ),
 	} );
@@ -236,72 +235,6 @@
 					txt( c.fix ) ) ) ) ) );
 	}
 
-	/* ---------- Asset ---------- */
-
-	function AssetsPanel( props ) {
-		const [ st ] = useLoad( () => props.call( 'nucleo/assets-report', {} ), [] );
-		const [ busy, setBusy ] = useState( null );
-		const [ notice, setNotice ] = useState( null );
-
-		if ( ! st.loading && isMissing( st.res ) ) {
-			return h( Notice, { status: 'info', isDismissible: false },
-				__( 'The asset report is not available in the Free edition.', 'nucleo' ) );
-		}
-		if ( st.loading || failed( st.res ) ) {
-			return h( Body, { st }, null );
-		}
-
-		const r = st.res;
-		const assets = r.assets || {};
-		const templates = r.templates || {};
-		const suggestions = r.suggestions || [];
-
-		// Regole attive dal report: la scrittura le sostituisce tutte, quindi si invia l'elenco completo.
-		const current = Array.isArray( r.rules ) ? r.rules : [];
-
-		// Applica il suggerimento: la regola è il suggerimento senza il campo descrittivo reason.
-		const apply = ( s, i ) => {
-			const { reason, ...rule } = s;
-			const key = JSON.stringify( rule );
-			if ( current.some( ( x ) => JSON.stringify( x ) === key ) ) {
-				setNotice( { status: 'info', text: __( 'Rule already present.', 'nucleo' ) } );
-				return;
-			}
-			setBusy( i );
-			setNotice( null );
-			props.call( 'nucleo/assets-rules-set', { rules: [ ...current, rule ] } ).then( ( res ) => {
-				setBusy( null );
-				setNotice( failed( res )
-					? { status: 'error', text: errText( res ) }
-					: { status: 'success', text: __( 'Rule applied.', 'nucleo' ) } );
-			} );
-		};
-
-		const templateRows = Object.keys( templates ).map( ( name ) => {
-			const handles = Array.isArray( templates[ name ] ) ? templates[ name ] : [];
-			return h( 'div', { key: name },
-				h( 'h4', null, name ),
-				h( 'ul', null, handles.map( ( handle ) => {
-					const a = assets[ handle ];
-					const size = a && typeof a.size === 'number' ? ( a.size / 1024 ).toFixed( 1 ) + ' KB' : '';
-					return h( 'li', { key: handle }, handle, ' ', size );
-				} ) ) );
-		} );
-
-		// I suggerimenti "review" non sono regole applicabili: si mostrano solo come testo.
-		const suggestionRows = suggestions.map( ( s, i ) => h( 'li', { key: i },
-			h( 'strong', null, s.action + ' · ' + s.handle ),
-			' ', txt( s.reason ), ' ',
-			s.action !== 'review' && h( Button, { variant: 'secondary', isBusy: busy === i, disabled: busy !== null, onClick: () => apply( s, i ) },
-				__( 'Apply', 'nucleo' ) ) ) );
-
-		return h( 'div', { className: 'nucleo-panel nucleo-panel-assets' },
-			h( 'h3', null, __( 'Template', 'nucleo' ) ),
-			templateRows.length > 0 ? templateRows : h( 'p', null, __( 'No audited templates.', 'nucleo' ) ),
-			h( 'h3', null, __( 'Suggestions', 'nucleo' ) ),
-			suggestionRows.length > 0 ? h( 'ul', null, suggestionRows ) : h( 'p', null, __( 'No suggestions.', 'nucleo' ) ),
-			notice && h( Notice, { status: notice.status, isDismissible: false }, notice.text ) );
-	}
 
 	/* ---------- Registrazione ---------- */
 
@@ -309,6 +242,5 @@
 		{ id: 'layout', title: __( 'Layout', 'nucleo' ), render: ( props ) => h( LayoutPanel, props ) },
 		{ id: 'design', title: __( 'Design system', 'nucleo' ), render: ( props ) => h( DesignPanel, props ) },
 		{ id: 'stato', title: __( 'Status', 'nucleo' ), render: ( props ) => h( StatusPanel, props ) },
-		{ id: 'asset', title: __( 'Asset', 'nucleo' ), render: ( props ) => h( AssetsPanel, props ) }
 	);
 } )();

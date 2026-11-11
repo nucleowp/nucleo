@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Runtime;
 
+defined('ABSPATH') || exit;
+
 /**
  * Riempie i marcatori "<!--nc:s N-->...<!--/nc:s-->" con il blocco dello slot N.
  * Scansione con strpos: nessuna regex.

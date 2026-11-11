@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Runtime\Collection;
 
+defined('ABSPATH') || exit;
+
 /** Versione dei contenuti (opzione nucleo_content_version, autoload): cresce a ogni modifica di post, meta o termini. */
 final class ContentVersion
 {

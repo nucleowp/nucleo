@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Integrations\Forms;
 
+defined('ABSPATH') || exit;
+
 /**
  * Handle degli asset dei plugin di moduli e regole di dequeue, da collegare a RulesPublisher.
  */

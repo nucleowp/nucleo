@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Content;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Services;
 use Nucleo\Site\SiteExporter;
 use WP_Post;

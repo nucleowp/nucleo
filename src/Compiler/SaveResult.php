@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Compiler;
 
+defined('ABSPATH') || exit;
+
 /**
  * Outcome of DocumentService. toArray() is what abilities return:
  * {ok, postId, revision, errors: list<ValidationError array>, quality: QualityReport::toArray()+{blocking}, error?: {code,message}, previewUrl?, diff?}

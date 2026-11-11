@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Abilities\Write;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Abilities\AbilityDefinition;
 use Nucleo\Compiler\SaveOptions;
 use Nucleo\Services;
@@ -21,7 +23,8 @@ final class DocCreate implements AbilityDefinition
     {
         return [
             'label' => __('Create document', 'nucleo'),
-            'description' => 'Creates a page, post, layout or section from a Nucleo document; without postType the type follows document.kind (layout and popup: nucleo_layout, section: nucleo_section). With postId it attaches the document to an existing content without a Nucleo document; on a published content an OAuth token also needs the scope nucleo:publish. The slug comes from slug, document.wp.slug or document.meta.slug, then from the title, also for drafts; a taken slug gets a suffix and a warning. Quality is checked on the page composed with the site layouts it will receive (header, footer, single or product layout), also for a new content: an h1 in the header counts. With publish true it publishes, but blocking quality issues require acknowledge. With dryRun true it does not save. Returns postId, revision and slug. A content item without Nucleo blocks (plain HTML body), and the fields and terms of any item, go through nucleo/content-upsert.',
+            'description' => 'Creates a page, post, layout or section from a Nucleo document; without postType the type follows document.kind (layout: nucleo_layout, section: nucleo_section'
+                . '). With postId it attaches the document to an existing content without a Nucleo document; on a published content an OAuth token also needs the scope nucleo:publish. The slug comes from slug, document.wp.slug or document.meta.slug, then from the title, also for drafts; a taken slug gets a suffix and a warning. Quality is checked on the page composed with the site layouts it will receive (header, footer, single or product layout), also for a new content: an h1 in the header counts. With publish true it publishes, but blocking quality issues require acknowledge. With dryRun true it does not save. Returns postId, revision and slug. A content item without Nucleo blocks (plain HTML body), and the fields and terms of any item, go through nucleo/content-upsert.',
             'input_schema' => [
                 'type' => 'object',
                 'required' => ['document'],
@@ -30,7 +33,10 @@ final class DocCreate implements AbilityDefinition
                     'slug' => ['type' => 'string', 'pattern' => '^[a-z0-9]+(?:-[a-z0-9]+)*$', 'description' => 'Slug of the new content (a-z, 0-9, -). Without it the slug comes from document.wp.slug or document.meta.slug (normalized as WordPress does), then from the title. If the slug is taken, a suffix is added: the output slug and a warning say so.'],
                     'postId' => ['type' => 'integer', 'minimum' => 1, 'description' => 'Existing content without a Nucleo document: the document is attached to it. Type, title and status stay as they are.'],
                     'document' => ['type' => 'object', 'description' => 'Nucleo document in compact or full form.'],
-                    'postType' => ['type' => 'string', 'enum' => ['page', 'post', 'nucleo_layout', 'nucleo_section'], 'description' => 'Without it the type comes from document.kind: layout and popup create a nucleo_layout, section a nucleo_section, any other kind a page. page and post refuse the kinds layout, popup and section.'],
+                    'postType' => ['type' => 'string', 'enum' => ['page', 'post', 'nucleo_layout', 'nucleo_section'], 'description' => 'Without it the type comes from document.kind: layout creates a nucleo_layout, section a nucleo_section'
+                        . ', any other kind a page. page and post refuse the kinds layout'
+                        . ' and section.',
+                    ],
                     'publish' => ['type' => 'boolean', 'default' => false],
                     'dryRun' => ['type' => 'boolean', 'default' => false],
                     'acknowledge' => [

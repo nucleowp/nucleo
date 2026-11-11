@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Blocks\Core;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Blocks\CardRules;
 use Nucleo\Blocks\Node;
 use Nucleo\Blocks\NodeValidator;

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Runtime;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Bindings\BindingResolver;
 use Nucleo\Bindings\BindSlot;
 use Nucleo\Blocks\DynamicRenderer;

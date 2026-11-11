@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Quality;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Integrations\SeoBridge;
 
 /** Controlli SEO del documento: title, meta description, noindex, canonical e link interni, letti dal plugin SEO attivo e dal post. */

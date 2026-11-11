@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Support;
 
+defined('ABSPATH') || exit;
+
 /**
  * Accesso diretto al disco per la cache di Nucleo, con l'API di WordPress.
  * WP_Filesystem() può chiedere credenziali FTP: la classe Direct scrive sempre con i permessi di PHP.

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Abilities;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Support\AtomicCounter;
 
 /** Limite a finestra fissa su un contatore atomico: le richieste in parallelo non lo superano. */

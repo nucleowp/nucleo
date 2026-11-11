@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Layout;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Content\ModelRegistrar;
 
 /** Tipi di contenuto dei layout e delle sezioni globali. Registrazione idempotente. */

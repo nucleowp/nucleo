@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Blocks\Core;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Blocks\Node;
 use Nucleo\Blocks\NodeValidator;
 use Nucleo\Blocks\Renderer;
@@ -88,10 +90,10 @@ final class EmbedRenderer implements Renderer, NodeValidator
         if ($this->target($url) === null) {
             return [new ValidationError(
                 $at,
-                __('youtube or vimeo address without a valid video id', 'nucleo'),
+                __('youtube or vimeo address without a valid video id, or a host that is not an oEmbed provider known to WordPress', 'nucleo'),
                 $url,
                 [],
-                __('use the address of a single video', 'nucleo'),
+                __('use the address of a single video, or of a provider such as Spotify or SoundCloud; the nucleo/embed_hosts filter adds other hosts', 'nucleo'),
                 'invalid_url',
             )];
         }
@@ -102,7 +104,7 @@ final class EmbedRenderer implements Renderer, NodeValidator
     /**
      * Provider riconosciuto dall'host e sorgente dell'iframe.
      *
-     * @return array{provider: string, id: string, src: string}|null null se l'url non è https o non è valido
+     * @return array{provider: string, id: string, src: string}|null null se l'url non è https, non è valido o viene da un host non ammesso
      */
     private function target(string $url): ?array
     {
@@ -144,6 +146,14 @@ final class EmbedRenderer implements Renderer, NodeValidator
 
         if ($host === 'maps.google.com' || ($host === 'google.com' && str_starts_with($path, '/maps'))) {
             return ['provider' => 'maps', 'id' => '', 'src' => $url];
+        }
+
+        // Embed generico solo da un provider oEmbed noto a WordPress, come il blocco Embed di core: nessun iframe da
+        // un dominio qualsiasi. Il filtro nucleo/embed_hosts aggiunge altri host.
+        $hosts = apply_filters('nucleo/embed_hosts', []);
+        $allowed = is_array($hosts) && in_array($host, $hosts, true);
+        if (!$allowed && _wp_oembed_get_object()->get_provider($url, ['discover' => false]) === false) {
+            return null;
         }
 
         return ['provider' => 'generic', 'id' => '', 'src' => $url];

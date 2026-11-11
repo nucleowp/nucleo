@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Runtime;
 
+defined('ABSPATH') || exit;
+
 /**
  * Voce corrente dei menu nc/menu, calcolata a ogni richiesta: l'HTML compilato è lo stesso per tutte le pagine.
  * I link delle voci portano data-nc-mi (id della voce), data-nc-mt ("post:<id>" o "term:<id>") e data-nc-ma

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\OAuth;
 
+defined('ABSPATH') || exit;
+
 /**
  * Autenticazione delle richieste con "Authorization: Bearer nca_…".
  * Un token non valido lascia l'utente invariato e non imposta CurrentToken.

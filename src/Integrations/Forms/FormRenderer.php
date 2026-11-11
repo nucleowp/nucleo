@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Integrations\Forms;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Blocks\DynamicRenderer;
 use Nucleo\Blocks\Node;
 use Nucleo\Blocks\Renderer;
@@ -27,7 +29,8 @@ final class FormRenderer implements Renderer, DynamicRenderer
     public function renderSlot(array $data): string
     {
         $plugin = is_string($data['plugin'] ?? null) ? $data['plugin'] : '';
-        $id = is_string($data['id'] ?? null) ? $data['id'] : '';
+        // Id del modulo del plugin: solo lettere, cifre, trattino e trattino basso, così non esce dallo shortcode.
+        $id = is_string($data['id'] ?? null) && preg_match('/^[A-Za-z0-9_-]{1,64}$/', $data['id']) === 1 ? $data['id'] : '';
         $class = is_string($data['class'] ?? null) ? $data['class'] : '';
 
         $shortcode = match ($plugin) {

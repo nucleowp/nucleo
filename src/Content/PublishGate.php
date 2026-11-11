@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Content;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Compiler\DocumentService;
 use Nucleo\Compiler\SaveOptions;
 use Nucleo\Services;

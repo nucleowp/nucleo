@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Abilities;
 
+defined('ABSPATH') || exit;
+
 /** One nucleo/* ability. AbilityRegistrar passes args() to wp_register_ability(name(), ...). */
 interface AbilityDefinition
 {

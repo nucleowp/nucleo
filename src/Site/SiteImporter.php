@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Site;
 
+defined('ABSPATH') || exit;
+
 use InvalidArgumentException;
 use JsonException;
 use Nucleo\Assets\RulesPublisher;
@@ -13,6 +15,7 @@ use Nucleo\Compiler\TokensPublisher;
 use Nucleo\Content\ContentWriter;
 use Nucleo\Content\TermItems;
 use Nucleo\Guide\RuleCodes;
+use Nucleo\Layout\LayoutConditions;
 use Nucleo\OAuth\CurrentToken;
 use Nucleo\OAuth\Scopes;
 use Nucleo\Sections\SectionExpander;
@@ -1064,6 +1067,19 @@ final class SiteImporter
             status: $draftStatus,
             baseRevision: $this->forced($file) ? null : $baseRevision,
         );
+
+        // Senza rilevamento della lingua (Free) una condizione language nuova non avrebbe effetto: si toglie con un avviso.
+        // Quelle già salvate sul layout restano.
+        if ($postType === 'nucleo_layout' && !LayoutConditions::detectsLanguage()) {
+            $stored = $existing !== null ? (Services::documents()->get($existing)['document'] ?? null) : null;
+            [$doc, $removed] = LayoutConditions::withoutNewLanguage(
+                LayoutConditions::normalize($doc),
+                is_array($stored) ? LayoutConditions::languageConditions(LayoutConditions::normalize($stored)) : [],
+            );
+            if ($removed > 0) {
+                $this->warn($file, __('Language conditions removed: this site has no language detection (Nucleo Pro with WPML or Polylang), so they would have no effect.', 'nucleo'));
+            }
+        }
 
         // Dry-run: stessa validazione del salvataggio (schema e qualità bloccante), senza scrivere.
         // Un documento che cita un altro creato in questo stesso import si conta soltanto: il riferimento non esiste ancora.

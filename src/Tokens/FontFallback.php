@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Tokens;
 
+defined('ABSPATH') || exit;
+
 /**
  * Font di ripiego locali (Arial, Times New Roman, Courier New) con size-adjust e override
  * calcolati dalle metriche di data/font-metrics.json. Il file si legge solo all'import, mai sul frontend.

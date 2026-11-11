@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Guide;
 
+defined('ABSPATH') || exit;
+
 /**
  * Collega segnalazioni ed errori alle regole della guida a fasi (docs/16-guida-a-fasi.md).
  * Le risposte espongono il codice nel campo "guide": "rule" resta l'id della regola di qualità.

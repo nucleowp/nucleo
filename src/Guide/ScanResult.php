@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Guide;
 
+defined('ABSPATH') || exit;
+
 /**
  * Conteggi della lettura dei documenti per la guida. samples: per contatore, fino a 3 posizioni "page:home#a12".
  */

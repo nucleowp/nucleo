@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Tokens;
 
+defined('ABSPATH') || exit;
+
 interface TokenResolver
 {
     /** "$color.primary" → "var(--nc-color-primary)". Non-token strings return unchanged. Unknown token → null. */

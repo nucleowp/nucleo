@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Layout;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Schema\ValidationError;
 
 /**
@@ -14,6 +16,12 @@ final class LayoutConditions
 {
     /** Codice stabile degli errori di formato delle condizioni. */
     public const ERROR_CODE = 'layout_condition';
+
+    /** Modulo del Pro che rileva la lingua della richiesta (WPML, Polylang). Nei Free manca. */
+    private const MULTILINGUAL = 'Nucleo\\Integrations\\Multilingual';
+
+    /** Solo per i test: forza la presenza o l'assenza del rilevamento della lingua. */
+    public static ?bool $languageDetection = null;
 
     /**
      * Tipo → chiavi ammesse oltre "type". Tipo del valore: id (intero ≥ 1), string (non vuota), bool.
@@ -110,6 +118,68 @@ final class LayoutConditions
         return self::validate($meta['conditions']);
     }
 
+    /** true se il sito rileva la lingua della richiesta, quindi una condizione language ha effetto. */
+    public static function detectsLanguage(): bool
+    {
+        return self::$languageDetection ?? class_exists(self::MULTILINGUAL);
+    }
+
+    /** true se l'errore è il rifiuto di una condizione language per mancanza del rilevamento della lingua. */
+    public static function isLanguageError(ValidationError $error): bool
+    {
+        return $error->code === self::ERROR_CODE && is_array($error->got) && ($error->got['type'] ?? null) === 'language';
+    }
+
+    /**
+     * Condizioni language di meta.conditions (include ed exclude).
+     * @param array<string,mixed> $doc
+     * @return list<array<string,mixed>>
+     */
+    public static function languageConditions(array $doc): array
+    {
+        $found = [];
+        $conditions = is_array($doc['meta'] ?? null) && is_array($doc['meta']['conditions'] ?? null) ? $doc['meta']['conditions'] : [];
+        foreach (['include', 'exclude'] as $list) {
+            foreach (is_array($conditions[$list] ?? null) ? $conditions[$list] : [] as $condition) {
+                if (is_array($condition) && ($condition['type'] ?? null) === 'language') {
+                    $found[] = $condition;
+                }
+            }
+        }
+
+        return $found;
+    }
+
+    /**
+     * Documento senza le condizioni language che non sono in $keep; restituisce anche quante ne ha tolte.
+     * @param array<string,mixed> $doc
+     * @param list<array<string,mixed>> $keep condizioni già salvate, che restano
+     * @return array{0: array<string,mixed>, 1: int}
+     */
+    public static function withoutNewLanguage(array $doc, array $keep): array
+    {
+        $removed = 0;
+        if (!is_array($doc['meta'] ?? null) || !is_array($doc['meta']['conditions'] ?? null)) {
+            return [$doc, 0];
+        }
+        foreach (['include', 'exclude'] as $list) {
+            if (!is_array($doc['meta']['conditions'][$list] ?? null) || !array_is_list($doc['meta']['conditions'][$list])) {
+                continue;
+            }
+            $kept = [];
+            foreach ($doc['meta']['conditions'][$list] as $condition) {
+                if (is_array($condition) && ($condition['type'] ?? null) === 'language' && !in_array($condition, $keep, false)) {
+                    $removed++;
+                    continue;
+                }
+                $kept[] = $condition;
+            }
+            $doc['meta']['conditions'][$list] = $kept;
+        }
+
+        return [$doc, $removed];
+    }
+
     /**
      * Documento con gli ID scritti come stringa numerica ("12") convertiti in intero, nelle condizioni dei tipi con ID.
      * Il resto resta com'è: la validazione segnala gli altri errori.
@@ -151,7 +221,7 @@ final class LayoutConditions
         foreach (self::TYPES[$type] as $key => $kind) {
             $example[rtrim((string) $key, '?')] = self::PLACEHOLDERS[$kind];
         }
-        $json = json_encode($example, JSON_UNESCAPED_SLASHES);
+        $json = wp_json_encode($example, JSON_UNESCAPED_SLASHES);
         return $json === false ? null : $json;
     }
 
@@ -183,6 +253,18 @@ final class LayoutConditions
                 $condition['type'] ?? null,
                 array_map('strval', array_keys(self::TYPES)),
                 __('use one of the allowed types; catalog-get topic layouts shows the format of each type', 'nucleo'),
+            );
+            return;
+        }
+
+        // Senza rilevamento della lingua la condizione non limiterebbe nulla: il layout varrebbe in ogni lingua.
+        if ($type === 'language' && !self::detectsLanguage()) {
+            $errors[] = self::error(
+                "$path/type",
+                __('the language condition needs the language detection of Nucleo Pro with WPML or Polylang, which this site does not have', 'nucleo'),
+                $condition,
+                [],
+                __('remove the language condition', 'nucleo'),
             );
             return;
         }

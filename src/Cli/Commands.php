@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Cli;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Mcp\StdioTransport;
 
 /**

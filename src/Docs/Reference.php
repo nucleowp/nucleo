@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Docs;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Css\Breakpoints;
 use Nucleo\Css\Motion;
 use Nucleo\Css\PropertyMap;
@@ -17,7 +19,9 @@ use Nucleo\Tokens\TokenSet;
  */
 final class Reference
 {
-    public const TOPICS = ['documents', 'tokens', 'styles', 'bindings', 'visibility', 'data', 'theme', 'site-files', 'acknowledge', 'components', 'model', 'layouts', 'woocommerce'];
+    public const TOPICS = [
+        'documents', 'tokens', 'styles', 'bindings', 'visibility', 'data', 'theme', 'site-files', 'acknowledge', 'components', 'model', 'layouts',
+    ];
 
     /**
      * @param array<string,array<int|string,mixed>> $tokens token correnti del sito (TokenSet::toArray)
@@ -40,7 +44,6 @@ final class Reference
             'components' => self::components(),
             'model' => ModelTopic::topic(),
             'layouts' => LayoutsTopic::topic(),
-            'woocommerce' => WooTopic::topic(),
             default => null,
         };
     }
@@ -146,7 +149,8 @@ final class Reference
             'topic' => 'documents',
             'summary' => 'Document format: {"schema": 1, "kind", "root", "meta"?, "params"?} with a tree of nodes. doc-validate checks a document without saving it.',
             'rules' => [
-                'kind: page, layout (header, footer, templates), section (reusable section with params) or popup. root is one node, usually nc/section for a page.',
+                'kind: page, layout (header, footer, templates) or section (reusable section with params). '
+                    . 'root is one node, usually nc/section for a page.',
                 'Node: {"id", "type", "content"?, "settings"?, "style"?, "bind"?, "visibility"?, "children"?, "guide"?}. guide {"distinct": "<reason>"} marks a block that looks like another one but differs on purpose: nucleo guide no longer counts it as a repeated block (R1.5). The schema also accepts the legacy "ref" ("section:<id>", without children): use nc/section-ref instead. Any other key is rejected. At document level, "blocks" ({"<block>": version}) records block versions and is written by Nucleo.',
                 'id: ^[a-z0-9]{1,12}$ (lowercase letters and digits, no dash or underscore), unique in the document. Keep ids stable: patches, acknowledgements and translations point to them.',
                 'type: a registered block (catalog-list). content holds texts (translatable), settings the options, style the CSS keys of the groups of the block (topic styles). Keys that the manifest does not declare are rejected.',
@@ -158,7 +162,9 @@ final class Reference
                 'bind with other sources reads post, term, author, site or model fields (topic bindings). visibility hides by breakpoint or condition (topic visibility).',
             ],
             'data' => [
-                'kinds' => ['page', 'layout', 'section', 'popup'],
+                'kinds' => [
+                    'page', 'layout', 'section',
+                ],
                 'nodeKeys' => ['id', 'type', 'content', 'settings', 'style', 'bind', 'visibility', 'children', 'guide'],
                 'idPattern' => '^[a-z0-9]{1,12}$',
                 'paramTypes' => ParamTypes::TYPES,
@@ -204,7 +210,7 @@ final class Reference
                 'Values equal to a token must use the token ($space.4): push reports the literal as an error.',
                 'Keys with a selector style an inner element of the block (for example the links of nc/menu).',
                 'style.parts.<part>: styles an inner element declared in the parts of the block manifest (catalog-get name). Inside a part use the normal style keys of the groups size, spacing, typography, color, border, effects, layout and motion, with breakpoints and states: parts {"label": {"fontWeight": 600}, "placeholder": {"color": "$color.muted"}, "check": {"width": "22px", "accentColor": "$color.primary"}}.',
-                'style.custom: last resort for CSS no key covers. Selector starting with & (the node) → CSS property → value: custom {"& legend::before": {"content": "counter(g, upper-alpha)"}}. Tokens work; url(), { } ; and @ do not. Report each use with nucleo-gap-report.',
+                'style.custom: last resort for what no key covers. A list of up to 20 rules; Nucleo builds the selector from closed lists: when (state of the node), target (an HTML element or a .nc- class inside the node), child (true: direct child), nth (first, last, odd, even, a number or an+b), state (state of the target), pseudo (before, after, marker, placeholder, first-letter, first-line, selection, backdrop); css: standard CSS property or --variable → value. Example: custom [{"target": "legend", "pseudo": "before", "css": {"content": "counter(g, upper-alpha)"}}]. States: ' . implode(', ', array_keys(\Nucleo\Css\CustomRules::STATES)) . '. Tokens work; url(), { } ; and @ do not. Report each use with nucleo-gap-report.',
                 'State keys: <key>Hover styles the node on mouse hover and on keyboard focus inside it; <key>Current styles it while it has the class is-current (the entry of the visible section in nc/toc). Keys: color, background, border and its sides, boxShadow, opacity, filter, fontWeight, textDecoration. Same group and values as the base key. Example, logo grey then colored on hover: filter "grayscale(1)", filterHover "grayscale(0)", transition "filter 200ms".',
                 'data.blocks: block → accepted style groups. data.groups: group → keys. A key works on a block only if its group is in the list of the block.',
                 'In a reusable section a color parameter can be a whole style value: "background": "$param.<name>" (topic documents).',
@@ -313,9 +319,12 @@ final class Reference
             'summary' => 'Files of site-export, site-import and nucleo pull/push: relative path → JSON text.',
             'rules' => [
                 'Folders: sections/<slug>.json, pages/<slug>.json, posts/<slug>.json, layouts/<slug>.json, menus/<slug>.json, media/manifest.json, rules/assets.json, site.json. Content items and terms (content/<type>/<slug>.json, terms/<taxonomy>.json) go through content-upsert and terms-set (nucleo push does it). Their files carry their own "base" (the hash read by nucleo pull), not the base of site.json: a conflict on them is solved with nucleo pull (pull --only does not take content/ and terms/) or nucleo push --force <file>.',
-                'Document file: {"schema": 1, "kind": "page"|"layout"|"section"|"popup", "meta": {...}, "params"?: {...} (sections), "root": {node}, "wp": {...}}.',
+                'Document file: {"schema": 1, "kind": "page"|"layout"|"section"'
+                    . ', "meta": {...}, "params"?: {...} (sections), "root": {node}, "wp": {...}}.',
                 'wp block (required): slug, postType (page, post, nucleo_layout, nucleo_section), title, status ("publish" publishes, anything else is a draft); optional lang and translations {lang: path}. Pages: parent, the slug or path of the parent page ("azienda", "chi-siamo/azienda"), null for a top-level page (export writes it); without the key the parent stays as it is. The parent file is imported before its children; a parent neither on the site nor in pages/ (same language) gives an error, so does a cycle; a published child of an unpublished parent gives a warning. Menus, links and layout conditions then use the path ("page:azienda/controllo-qualita").',
-                'meta keys read by Nucleo: layouts area (header, footer, before-content, after-content, single, archive, search, notfound, popup; with WooCommerce also product and product-archive) and conditions {include, exclude, priority} (condition types and format: topic layouts); popups trigger and frequency. Other keys are kept and ignored: meta.layout has no effect. A page always gets the header and footer layouts whose conditions match it; to remove them on one page, exclude the page in the layout conditions.',
+                'meta keys read by Nucleo: layouts area (header, footer, before-content, after-content, single, archive, search, notfound'
+                    . '; with WooCommerce also product and product-archive) and conditions {include, exclude, priority} (condition types and format: topic layouts)'
+                    . '. Other keys are kept and ignored: meta.layout has no effect. A page always gets the header and footer layouts whose conditions match it; to remove them on one page, exclude the page in the layout conditions.',
                 'meta.seo {title, description, image, noindex} sets the SEO of a document. It is ignored when Yoast or Rank Math is active.',
                 'meta.seo.schema: list of schema.org nodes of the page (Service, Product, ContactPage...), each with @type. The string "@business" in a node points to the business of the site (nucleo-site-options-set business), which is also printed on the homepage. A BreadcrumbList from the page parents is added to every page except the homepage; meta.seo.breadcrumbs false turns it off, and a page with nc/breadcrumbs keeps the one of the block. Pages with noindex leave the WordPress sitemap. All of this is off when Yoast or Rank Math is active.',
                 'Import order: site.json (tokens, then site options at the end), media/manifest.json, menus (created empty), sections (a section inserted in another first), pages, posts, layouts, then menu items, rules/assets.json, languages, site options. A page created in the same import resolves page:<slug> in the next files and in the menu items.',
@@ -363,7 +372,6 @@ final class Reference
                 'Action (component new action): runs when an nc/native-form is submitted.',
                 'Block (component new block): its renderer runs when the document is saved and returns static HTML. It is not called on each request and does not see the current post, so it cannot render per-post data. For per-post data use binds, nc/repeater, nc/query with relatedTo, nc/post-meta, or a data source with nc/collection.',
                 'Component code never travels through MCP, REST or push: nucleo component deploy copies it locally; on other environments a person deploys it.',
-                'Free and Pro use the same folder, plugins/nucleo: install only one of the two.',
                 'No mu-plugins, no code in functions.php or in the theme, no snippet plugins, no CSS or scripts printed in wp_head or wp_footer. They escape push, pull, quality checks and the asset optimizer, and theme updates overwrite them. When Nucleo cannot do something, tell the user it is a Nucleo gap, propose the closest native way (style keys, Hover and Current states, nc/toc, site icons, meta.seo.schema) and write a component only with their consent.',
             ],
             'data' => [],

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Guide;
 
+defined('ABSPATH') || exit;
+
 /**
  * Catalogo delle fasi della guida (docs/16-guida-a-fasi.md): titolo, regole e condizioni di uscita.
  */
@@ -50,7 +52,7 @@ final class GuideRules
                 ),
                 self::rule(
                     'R0.2',
-                    __('Document types: page and post (content), layout (header, footer, templates with conditions), section (reusable block with parameters), popup.', 'nucleo'),
+                    __('Document types: page and post (content), layout (header, footer, templates with conditions), section (reusable block with parameters).', 'nucleo')
                 ),
                 self::rule(
                     'R0.3',
@@ -99,8 +101,11 @@ final class GuideRules
                 ),
                 self::rule(
                     'R1.4',
-                    __('Before creating, read the existing sections (section-list: parameters and uses), then catalog-list and kit-list. An acknowledge given when saving a section covers only the section: each page or layout that inserts it needs its own acknowledge, with the id of its nc/section-ref node.', 'nucleo'),
-                    ['nucleo/section-list', 'nucleo/catalog-list', 'nucleo/kit-list'],
+                    __('Before creating, read the existing sections (section-list: parameters and uses), then catalog-list.', 'nucleo')
+                        . ' ' . __('An acknowledge given when saving a section covers only the section: each page or layout that inserts it needs its own acknowledge, with the id of its nc/section-ref node.', 'nucleo'),
+                    [
+                        'nucleo/section-list', 'nucleo/catalog-list',
+                    ],
                 ),
                 self::rule(
                     'R1.5',
@@ -233,11 +238,6 @@ final class GuideRules
                 self::rule(
                     'R4.6',
                     __('No mu-plugins, no code in functions.php or in the theme, no snippets, no CSS or scripts printed in wp_head or wp_footer: they escape push, pull and the quality checks, and theme updates overwrite them. When Nucleo cannot do something: first style.parts and the style keys; then style.custom on the node for the CSS left; report every gap with nucleo-gap-report, also when style.custom covers it. For PHP behavior write a component (R4.2) only with the user\'s consent.', 'nucleo'),
-                ),
-                self::rule(
-                    'R4.7',
-                    __('With WooCommerce the shop is built with woo/* blocks: product page and archives are layouts of the areas product and product-archive; cart and checkout are the WooCommerce pages with woo/cart and woo/checkout. catalog-get {topic: woocommerce} gives the recipe of each page. Extra checkout fields → woo-checkout-fields-set; order note, terms, coupon, company, phone and address 2 → woo-checkout-parts-set. Never PHP or snippets for these.', 'nucleo'),
-                    ['nucleo/catalog-get', 'nucleo/woo-checkout-fields-set', 'nucleo/woo-checkout-parts-set'],
                 ),
             ],
             'exit' => [

@@ -8,7 +8,7 @@
 	'use strict';
 
 	const root = typeof window !== 'undefined' ? window : {};
-	const __ = ( s, domain ) => ( root.wp && root.wp.i18n ? root.wp.i18n.__( s, domain ) : s );
+	const { __ } = ( root.wp && root.wp.i18n ) || { __: ( text ) => text };
 
 	/* ---------- Funzioni pure ---------- */
 

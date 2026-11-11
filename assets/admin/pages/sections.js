@@ -59,7 +59,7 @@
 	const el = root.wp && root.wp.element;
 	if ( el ) {
 		const { createElement: h, useState } = el;
-		const __ = ( s, d ) => root.wp.i18n.__( s, d || 'nucleo' );
+		const { __ } = ( root.wp && root.wp.i18n ) || { __: ( text ) => text };
 
 		/** Etichetta leggibile dello stato di un documento. */
 		function statusLabel( status ) {

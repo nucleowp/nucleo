@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Forms;
 
+defined('ABSPATH') || exit;
+
 /**
  * Captcha dei moduli nc/native-form: un provider per sito, chiavi nell'opzione nucleo_captcha.
  * Il segreto è in sola scrittura: settings() dice solo se è impostato.

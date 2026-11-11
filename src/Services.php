@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo;
 
+defined('ABSPATH') || exit;
+
 use InvalidArgumentException;
 use Nucleo\Blocks\Registry;
 use Nucleo\Compiler\Compiler;

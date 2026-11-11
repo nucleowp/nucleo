@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Site;
 
+defined('ABSPATH') || exit;
+
 use WP_Error;
 
 /** Lacune segnalate dagli agenti (cosa il design chiede e Nucleo non sa fare), nell'opzione nucleo_gaps. */

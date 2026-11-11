@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Schema;
 
+defined('ABSPATH') || exit;
+
 /**
  * Applica operazioni semantiche (per id) e JSON Patch (RFC 6902, path RFC 6901) a un documento.
  * È atomica: lavora su una copia, e su errore lancia PatchException lasciando intatto il documento di partenza.

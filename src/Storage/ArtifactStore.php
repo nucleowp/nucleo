@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Storage;
 
+defined('ABSPATH') || exit;
+
 /**
  * Stores precomputed PHP arrays ("artifacts") that the runtime reads on every request.
  * Keys match /^[a-z0-9][a-z0-9_-]{0,63}$/. Values are arrays of scalars, nulls and nested arrays only.

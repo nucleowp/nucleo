@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Admin;
 
+defined('ABSPATH') || exit;
+
 /**
  * Fonte unica di menu, schede e opzioni dell'area Nucleo (docs/ui/design/31-dipendenze-contratto.dc.html).
  * Menu, dati di avvio (nav) e pagine React leggono queste regole; Access le risolve.

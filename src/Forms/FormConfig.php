@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Forms;
 
+defined('ABSPATH') || exit;
+
 /**
  * Configurazione di un nc/native-form (docs/15-dati-dinamici.md, livello 3), normalizzata.
  * Campo: {name, type, label, required, help, step, maxLength, min, max, decimals, placeholder, options, value, from, width, group}.

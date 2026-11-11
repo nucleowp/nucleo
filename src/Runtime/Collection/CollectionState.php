@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Runtime\Collection;
 
+defined('ABSPATH') || exit;
+
 /**
  * Stato richiesto dal visitatore: solo filtri dichiarati, valori sanificati.
  * values[key]: list<string> per i filtri a opzioni, i preset di data e search (un solo testo);
@@ -25,7 +27,36 @@ final class CollectionState
     ) {
     }
 
-    /** @param array<string,mixed> $params $_GET o parametri REST, non sanificati */
+    /**
+     * Legge da una sorgente ($_GET o parametri REST) solo i parametri della lista: filtri, estremi dei range,
+     * ordinamento e pagina. Ogni valore è testo sanificato, oppure una lista di testi sanificati.
+     * @param array<string,mixed> $source
+     * @return array<string,string|list<string>>
+     */
+    public static function pickParams(CollectionConfig $config, array $source): array
+    {
+        $names = [$config->param('sort'), $config->param('page')];
+        foreach ($config->filters as $filter) {
+            $names[] = $config->param($filter['key']);
+            if ($filter['ui'] === 'range') {
+                $names[] = $config->param($filter['key'] . '_min');
+                $names[] = $config->param($filter['key'] . '_max');
+            }
+        }
+        $params = [];
+        foreach (array_unique($names) as $name) {
+            $raw = $source[$name] ?? null;
+            if (is_string($raw)) {
+                $params[$name] = sanitize_text_field(wp_unslash($raw));
+            } elseif (is_array($raw)) {
+                $params[$name] = array_values(array_map(static fn (string $item): string => sanitize_text_field(wp_unslash($item)), array_filter($raw, 'is_string')));
+            }
+        }
+
+        return $params;
+    }
+
+    /** @param array<string,mixed> $params $_GET o parametri REST, già letti con pickParams */
     public static function fromRequest(CollectionConfig $config, array $params): self
     {
         $values = [];
@@ -74,7 +105,7 @@ final class CollectionState
             }
         }
 
-        return (string) json_encode(['values' => $values, 'sort' => $this->sort, 'page' => $this->page]);
+        return (string) wp_json_encode(['values' => $values, 'sort' => $this->sort, 'page' => $this->page]);
     }
 
     /** Stato senza un filtro (per i conteggi delle faccette). */

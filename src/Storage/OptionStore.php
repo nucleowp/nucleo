@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Storage;
 
+defined('ABSPATH') || exit;
+
 use InvalidArgumentException;
 
 /**

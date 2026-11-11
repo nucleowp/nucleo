@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Admin;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Abilities\Preview;
 use Nucleo\Css\PropertyMap;
 use Nucleo\Services;
@@ -161,12 +163,9 @@ final class Editor
     {
         $out = [];
         foreach (Services::registry()->all() as $manifest) {
-            $out[$manifest->name] = [
-                // phpcs:ignore WordPress.WP.I18n.LowLevelTranslationFunction, WordPress.WP.I18n.NonSingularStringLiteralText -- testi dei manifest, estratti nel catalogo da bin/i18n.
-                'title' => translate($manifest->title, 'nucleo'),
-                // phpcs:ignore WordPress.WP.I18n.LowLevelTranslationFunction, WordPress.WP.I18n.NonSingularStringLiteralText -- come sopra.
-                'description' => translate($manifest->description, 'nucleo'),
-            ];
+            // Blocchi del plugin: testi tradotti da BlockTexts. Blocchi dei componenti: testi del manifest.
+            $out[$manifest->name] = BlockTexts::get($manifest->name)
+                ?? ['title' => $manifest->title, 'description' => $manifest->description];
         }
 
         return $out;
@@ -246,7 +245,7 @@ final class Editor
             wp_die(esc_html__('You do not have permission to edit this page.', 'nucleo'), '', ['response' => 403]);
         }
         // Sprite di pagina (gradienti) e dei blocchi: icone dello schema e dell'inserter.
-        echo Icons::sprite() . Icons::blockSprite(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG statici del plugin.
+        echo wp_kses(Icons::sprite() . Icons::blockSprite(), \Nucleo\Support\AllowedHtml::svg());
         printf('<div id="nucleo-editor" class="nucleo-admin" data-post="%s"></div>', esc_attr((string) $postId));
     }
 

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Runtime\Collection;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Abilities\RateLimiter;
 use Nucleo\Support\ClientIp;
 
@@ -14,12 +16,21 @@ final class CollectionRest
     private const ROUTE = '/collection/(?P<doc>\d+)/(?P<node>[a-z0-9]+)';
     private const CACHE_CONTROL = 'public, max-age=60';
 
+    /**
+     * Lista pubblica in sola lettura: restituisce solo contenuti pubblicati della collezione del documento, con un
+     * limite di frequenza per IP.
+     */
+    public static function publicReadEndpoint(): bool
+    {
+        return true;
+    }
+
     public static function register(): void
     {
         register_rest_route(self::NAMESPACE, self::ROUTE, [
             'methods' => 'GET',
             'callback' => [self::class, 'handle'],
-            'permission_callback' => '__return_true',
+            'permission_callback' => [self::class, 'publicReadEndpoint'],
         ]);
     }
 
@@ -49,11 +60,12 @@ final class CollectionRest
             return self::notFound();
         }
 
-        $params = wp_unslash($request->get_query_params());
+        $query = $request->get_query_params();
+        $params = CollectionState::pickParams($config, $query);
         $state = CollectionState::fromRequest($config, $params);
         $template = is_array($data['template'] ?? null) ? $data['template'] : [];
         $page = CollectionCache::page($doc, $config, $state, $template);
-        $append = ($params['append'] ?? null) === '1';
+        $append = ($query['append'] ?? null) === '1';
 
         $response = new \WP_REST_Response([
             'ok' => true,

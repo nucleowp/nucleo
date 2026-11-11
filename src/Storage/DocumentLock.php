@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Storage;
 
+defined('ABSPATH') || exit;
+
 /**
  * Lock di un documento per la durata di un salvataggio: due scritture sulla stessa base non passano entrambe.
  * Usa GET_LOCK di MySQL, legato alla connessione: si libera anche se PHP si interrompe.

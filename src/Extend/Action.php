@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Extend;
 
+defined('ABSPATH') || exit;
+
 /**
  * Azione scritta dallo sviluppatore in un plugin del sito (livello 4).
  * nc/native-form la usa con { "type": "component", "name": "<vendor>/<nome>" }.

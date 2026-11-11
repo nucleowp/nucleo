@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Compiler;
 
+defined('ABSPATH') || exit;
+
 use InvalidArgumentException;
 use Nucleo\Bindings\BindingSource;
 use Nucleo\Blocks\Node;
@@ -40,7 +42,7 @@ final class Compiler
         // Layout, sezioni e popup stanno nella stessa pagina: un prefisso per documento evita classi uguali (.nc-n1).
         $scope = ($doc['kind'] ?? 'page') === 'page'
             ? ''
-            : substr(sha1((string) json_encode([$doc['kind'] ?? '', $doc['meta'] ?? [], $rawRoot])), 0, 4) . '-';
+            : substr(sha1((string) wp_json_encode([$doc['kind'] ?? '', $doc['meta'] ?? [], $rawRoot])), 0, 4) . '-';
         $css = (new StyleCompiler($this->tokens, $this->breakpoints, $this->registry->partSelectors()))->compile($root, $scope);
 
         $ctx = new CompileContext($this->registry, $this->tokens, $css, $bindings, $markIds, $placeholders, $this->breakpoints->minWidths);

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Content;
 
+defined('ABSPATH') || exit;
+
 /**
  * Riferimenti simbolici dei campi image e relation (docs/contracts/content-items.md).
  * Scrittura: simbolo → ID. Lettura: ID → simbolo. Gli errori sono array { code, path, message }, aggiunti per riferimento.

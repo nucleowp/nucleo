@@ -65,7 +65,7 @@
 	const el = root.wp && root.wp.element;
 	if ( el ) {
 		const { createElement: h, useEffect, useState } = el;
-		const __ = ( s, d ) => root.wp.i18n.__( s, d || 'nucleo' );
+		const { __ } = ( root.wp && root.wp.i18n ) || { __: ( text ) => text };
 		const msg = ( res, fallback ) => ( res && res.error && res.error.message ) || fallback;
 		const SANS_FONT = "system-ui, -apple-system, 'Segoe UI', sans-serif";
 		const WIDE_QUERY = '(min-width: 1100px)';

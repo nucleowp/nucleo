@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Seo;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Integrations\SeoBridge;
 
 /**
@@ -46,27 +48,24 @@ final class HeadMeta
             $title = get_the_title($id);
         }
         $description = self::text($seo['description'] ?? null);
-        $image = esc_url(self::text($seo['image'] ?? null));
+        $image = self::text($seo['image'] ?? null);
 
-        $tags = [];
+        // Ogni valore si escapa nel momento in cui viene stampato.
         if ($description !== '') {
-            $tags[] = '<meta name="description" content="' . esc_attr($description) . '">';
+            printf('<meta name="description" content="%s">' . "\n", esc_attr($description));
         }
-        $tags[] = '<meta property="og:title" content="' . esc_attr($title) . '">';
+        printf('<meta property="og:title" content="%s">' . "\n", esc_attr($title));
         if ($description !== '') {
-            $tags[] = '<meta property="og:description" content="' . esc_attr($description) . '">';
+            printf('<meta property="og:description" content="%s">' . "\n", esc_attr($description));
         }
-        $tags[] = '<meta property="og:url" content="' . esc_url((string) get_permalink($id)) . '">';
-        $tags[] = '<meta property="og:type" content="website">';
-        if ($image !== '') {
-            $tags[] = '<meta property="og:image" content="' . $image . '">';
+        printf('<meta property="og:url" content="%s">' . "\n", esc_url((string) get_permalink($id)));
+        echo '<meta property="og:type" content="website">' . "\n";
+        if (esc_url($image) !== '') {
+            printf('<meta property="og:image" content="%s">' . "\n", esc_url($image));
         }
         if (($seo['noindex'] ?? false) === true) {
-            $tags[] = '<meta name="robots" content="noindex">';
+            echo '<meta name="robots" content="noindex">' . "\n";
         }
-
-        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- ogni valore è escapato quando entra in $tags.
-        echo implode("\n", $tags) . "\n";
     }
 
     private static function text(mixed $value): string

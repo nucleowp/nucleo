@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Support;
 
+defined('ABSPATH') || exit;
+
 /** Runs on plugin activation: tables, roles, first artifacts. Each step is skipped if its module is missing. */
 final class Activation
 {

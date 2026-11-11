@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Seo;
 
+defined('ABSPATH') || exit;
+
 use JsonException;
 use Nucleo\Integrations\SeoBridge;
 
@@ -131,17 +133,13 @@ final class StructuredData
             return;
         }
 
-        // JSON_HEX_TAG rende "</script>" nei titoli innocuo dentro lo script.
-        $json = json_encode(
-            ['@context' => 'https://schema.org', '@graph' => $graph],
-            JSON_HEX_TAG | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
-        );
+        // Senza flag wp_json_encode escapa "/": "</script>" in un titolo diventa "<\/script>".
+        $json = wp_json_encode(['@context' => 'https://schema.org', '@graph' => $graph]);
         if ($json === false) {
             return;
         }
 
-        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON con JSON_HEX_TAG: nessun < o > nel testo.
-        echo '<script type="application/ld+json">' . $json . "</script>\n";
+        wp_print_inline_script_tag($json, ['type' => 'application/ld+json']);
     }
 
     /** Senza SEO plugin attivo: il sitemap dei post non include quelli con meta noindex. */

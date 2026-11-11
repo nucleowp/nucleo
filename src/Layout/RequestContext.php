@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Layout;
 
+defined('ABSPATH') || exit;
+
 /**
  * Contesto della richiesta per LayoutResolver: dalla query principale, o da un URL.
  * Usa solo dati già in cache: nessuna query nuova per la richiesta corrente.
@@ -14,13 +16,6 @@ final class RequestContext
     public static function current(): array
     {
         $context = self::detect();
-        // Pro edition only. Loaded only with WPML, Polylang or a nucleo/current_language filter: two files less otherwise.
-        $language = function_exists('pll_current_language') || defined('ICL_SITEPRESS_VERSION') || has_filter('nucleo/current_language')
-            ? \Nucleo\Support\Optional::call('Nucleo\\Integrations\\Multilingual', 'current')
-            : null;
-        if (is_string($language) && $language !== '') {
-            $context['language'] = $language;
-        }
 
         return $context;
     }
@@ -63,11 +58,6 @@ final class RequestContext
         }
 
         $context = self::singular($post, $id === $frontId);
-        // Fuori dalla richiesta la lingua viene dal post: senza, layout-explain sceglie il layout di un'altra lingua.
-        $language = \Nucleo\Support\Optional::call('Nucleo\\Integrations\\Multilingual', 'postLanguage', $id);
-        if (is_string($language) && $language !== '') {
-            $context['language'] = $language;
-        }
 
         return $context;
     }

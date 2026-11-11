@@ -8,7 +8,7 @@
 
 	const root = typeof window !== 'undefined' ? window : {};
 	// Nel browser wp.i18n traduce; in node (test) è identità.
-	const __ = ( s, d ) => ( root.wp && root.wp.i18n ? root.wp.i18n.__( s, d || 'nucleo' ) : s );
+	const { __ } = ( root.wp && root.wp.i18n ) || { __: ( text ) => text };
 
 	/** Le 19 regole della tabella in 4.7. Gravità tipica dalla specifica; testi come in assets/editor/labels.js. */
 	const RULES = [

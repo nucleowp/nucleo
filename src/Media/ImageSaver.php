@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Media;
 
+defined('ABSPATH') || exit;
+
 /** Salva un'immagine nella libreria media: limite di dimensione, tipo reale del contenuto, testo alternativo. */
 final class ImageSaver
 {

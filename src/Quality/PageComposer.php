@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Quality;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Blocks\Registry;
 use Nucleo\Compiler\BlockBundle;
 use Nucleo\Forms\ConsequentialActions;
@@ -76,7 +78,7 @@ final class PageComposer
                     'doc' => $doc,
                     'id' => is_string($root['id'] ?? null) ? $root['id'] : '',
                     'area' => $meta['area'],
-                    'conditions' => (string) json_encode($meta['conditions'] ?? null),
+                    'conditions' => (string) wp_json_encode($meta['conditions'] ?? null),
                 ];
             }
 

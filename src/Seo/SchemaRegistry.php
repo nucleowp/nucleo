@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Seo;
 
+defined('ABSPATH') || exit;
+
 use JsonException;
 use Nucleo\Integrations\SeoBridge;
 

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\OAuth;
 
+defined('ABSPATH') || exit;
+
 /** PKCE (RFC 7636): solo il metodo S256. */
 final class Pkce
 {

@@ -21,7 +21,7 @@
     parent.insertBefore(link, before);
   });
 
-  var list = window.ncLazy || [];
+  var list = window.nucleoLazy || [];
   var loaded = {};
 
   // Carica una volta sola ogni src; done (opzionale) parte al load.
@@ -39,7 +39,7 @@
   }
 
   // Tutte le istanze .nc-<parte> della pagina, con la parte dopo "/" del type (nc/video -> .nc-video).
-  // La voce di ncLazy vale per tipo: il bundle si carica una volta sola, al primo segnale di una qualsiasi istanza.
+  // La voce di nucleoLazy vale per tipo: il bundle si carica una volta sola, al primo segnale di una qualsiasi istanza.
   function targets(entry) {
     return Array.prototype.slice.call(document.querySelectorAll('.nc-' + entry.type.split('/').pop()));
   }

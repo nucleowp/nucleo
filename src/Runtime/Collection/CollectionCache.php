@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Runtime\Collection;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Extend\Components;
 
 /** Cache delle pagine di risultati in transient, invalidata da ContentVersion. */

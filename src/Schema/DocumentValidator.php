@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace Nucleo\Schema;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Blocks\Core\IconRenderer;
 use Nucleo\Blocks\Manifest;
 use Nucleo\Blocks\NodeValidator;
 use Nucleo\Blocks\Registry;
 use Nucleo\Compiler\LinkRefs;
 use Nucleo\Css\Motion;
+use Nucleo\Css\CustomRules;
 use Nucleo\Css\PropertyMap;
 use Nucleo\Site\SiteIcons;
 use Nucleo\Tokens\TokenResolver;
@@ -43,11 +46,7 @@ final class DocumentValidator
     /** Figli citati al massimo nel suggerimento di una chiave di stile da spostare. */
     private const MOVE_IDS_MAX = 4;
 
-    /** Selettore di style.custom: inizia con & e usa solo questi caratteri (niente { } ; @ < / *). Stessa regola di @custom-rules. */
-    private const CUSTOM_SELECTOR = '/^&[a-zA-Z0-9_ .:>#()+~*,="\'\[\]-]*$/D';
 
-    /** Proprietà CSS di style.custom. */
-    private const CUSTOM_PROPERTY = '/^-{0,2}[a-z][a-z0-9-]{0,60}$/D';
 
 
     /** @var array<string,mixed>|null */
@@ -530,49 +529,24 @@ final class DocumentValidator
     }
 
     /**
-     * style.custom: selettore → proprietà → valore. Il selettore inizia con & (diventa la classe del nodo); un errore per selettore, proprietà o valore.
+     * style.custom: lista di regole strutturate (CustomRules); un errore per struttura, proprietà o valore.
      *
      * @param list<ValidationError> $errors
      */
     private function checkCustom(mixed $custom, string $path, array &$errors): void
     {
         $base = "$path/style/custom";
-        if (!is_array($custom)) {
-            $errors[] = new ValidationError($base, __('style.custom must be an object of selector to property', 'nucleo'), $custom, [], __('use {"&": {"property": "value"}}', 'nucleo'));
+        // Struttura, selettore e nomi delle proprietà: liste chiuse di CustomRules. Qui si controllano i valori.
+        $structure = CustomRules::errors($custom, $base);
+        if ($structure !== [] || !is_array($custom)) {
+            array_push($errors, ...$structure);
             return;
         }
 
-        foreach ($custom as $selector => $rules) {
-            $selector = (string) $selector;
-            $selectorAt = "$base/$selector";
-            if (preg_match(self::CUSTOM_SELECTOR, $selector) !== 1) {
-                $errors[] = new ValidationError(
-                    $selectorAt,
-                    sprintf(/* translators: %s: custom selector */ __('custom selector not allowed: %s', 'nucleo'), $selector),
-                    $selector,
-                    [],
-                    __('start the selector with & and use only letters, digits and selector characters', 'nucleo'),
-                );
-                continue;
-            }
-            if (!is_array($rules)) {
-                $errors[] = new ValidationError($selectorAt, sprintf(/* translators: %s: custom selector */ __('custom rules must be an object of property to value: %s', 'nucleo'), $selector), $rules, [], __('use {"property": "value"}', 'nucleo'));
-                continue;
-            }
-
-            foreach ($rules as $property => $value) {
+        foreach ($custom as $i => $rule) {
+            foreach ($rule['css'] as $property => $value) {
                 $property = (string) $property;
-                $at = "$selectorAt/$property";
-                if (preg_match(self::CUSTOM_PROPERTY, $property) !== 1) {
-                    $errors[] = new ValidationError(
-                        $at,
-                        sprintf(/* translators: %s: custom property name */ __('custom property not allowed: %s', 'nucleo'), $property),
-                        $property,
-                        [],
-                        __('use a CSS property name in lowercase, for example padding', 'nucleo'),
-                    );
-                    continue;
-                }
+                $at = "$base/$i/css/$property";
                 if (!is_string($value) && !is_int($value) && !is_float($value)) {
                     $errors[] = new ValidationError(
                         $at,

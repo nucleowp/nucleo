@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Extend;
 
+defined('ABSPATH') || exit;
+
 /** Una pagina di elementi restituita da una DataSource. */
 final class DataPage
 {

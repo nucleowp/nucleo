@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Abilities\Write;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Abilities\AbilityDefinition;
 use Nucleo\Blocks\Core\IconRenderer;
 use Nucleo\Site\SiteIcons;

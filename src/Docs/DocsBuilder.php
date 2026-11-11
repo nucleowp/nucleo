@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Docs;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Blocks\Manifest;
 use Nucleo\OAuth\Scopes;
 use Nucleo\Services;
@@ -185,7 +187,7 @@ final class DocsBuilder
             return $value ? 'yes' : 'no';
         }
 
-        $text = is_string($value) ? $value : json_encode($value, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
+        $text = is_string($value) ? $value : (string) wp_json_encode($value, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
 
         return str_replace(['|', "\n"], ['\|', ' '], $text);
     }

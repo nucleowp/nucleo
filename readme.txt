@@ -4,7 +4,7 @@ Tags: blocks, page builder, layout, mcp, ai
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 0.4.2
+Stable tag: 0.4.4
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -45,7 +45,7 @@ No. The compiler works on save. The frontend receives ready-made HTML and CSS. I
 
 = What is the difference with the Pro version? =
 
-The Pro version adds WooCommerce, multilingual sites, popups, the CSS purger, the asset audit and starter kits. Pro updates come from the Nucleo Pro server.
+The Pro version adds WooCommerce, multilingual sites, popups, the CSS purger, the asset audit and starter kits.
 
 == External services ==
 
@@ -55,7 +55,7 @@ Nucleo works without external services. The services below are used only when yo
 
 Used only when you choose a captcha provider in Nucleo > Settings > Captcha and a page contains a Nucleo native form.
 
-* When the page with the form loads, the visitor's browser loads the provider's widget script and the provider receives the visitor's IP address and browser data. Friendly Captcha is the exception: its widget script ships with the plugin, and the widget contacts Friendly Captcha from the browser to solve the puzzle.
+* When the page with the form loads, the visitor's browser loads the provider's widget script and the provider receives the visitor's IP address and browser data. Friendly Captcha is the exception: its widget script ships with the plugin, and the widget contacts Friendly Captcha from the browser to solve the puzzle (global.frcapi.com or eu.frcapi.com, with the fallback hosts global0, global1, eu0 and eu1 on the same domain).
 * When the visitor submits the form, your server sends the captcha token and your secret key to the provider's verification endpoint, once per submission:
   * Google reCAPTCHA: www.google.com/recaptcha/api/siteverify, with the visitor's IP address too;
   * hCaptcha: api.hcaptcha.com/siteverify, with your site key too;
@@ -102,9 +102,29 @@ These features contact only the address that you or a connected AI agent provide
 
 == Source code ==
 
-All PHP and JavaScript of Nucleo ships unminified. The only minified files are the Friendly Captcha widget scripts in assets/lib/friendlycaptcha (version 0.1.37, MPL-2.0). Their source is at https://github.com/FriendlyCaptcha/friendly-captcha-sdk and on npm as @friendlycaptcha/sdk.
+All PHP and JavaScript of Nucleo ships unminified. The only minified files are the Friendly Captcha widget scripts in assets/lib/friendlycaptcha (version 1.1.3, MPL-2.0). Their source is at https://github.com/FriendlyCaptcha/friendly-captcha-sdk and on npm as @friendlycaptcha/sdk.
+
+The font metrics in data/font-metrics.json come from @capsizecss/metrics 3.7.0 (MIT, https://github.com/seek-oss/capsize). The license is in data/LICENSE-capsize-metrics.
 
 == Changelog ==
+
+= 0.4.4 =
+
+* Security: OAuth endpoints, native forms and custom fields read only the keys they expect and sanitize each value by type.
+* Security: The document title goes through kses for users without unfiltered_html.
+* Security: CSS values in styles, style.custom and tokens must follow a closed grammar: numbers with units, colors, keywords, quoted names and a fixed list of CSS functions.
+* Action needed: A generic nc/embed accepts only oEmbed providers known to WordPress. The nucleo/embed_hosts filter adds other hosts.
+* Improved: The cache conflict notice has a Dismiss link and stays closed until the conflicts change.
+* Improved: Every PHP file checks ABSPATH, and block titles and condition labels are translatable.
+* Improved: The Friendly Captcha widget is updated to 1.1.3.
+* Action needed: doc-create, doc-patch and layout-conditions-set refuse a new or changed language condition, because this package does not detect the language of the request. Site import and push remove it and return a warning. Conditions saved earlier stay.
+* Fixed: The agent guide no longer points to kit-list or to the woo/* blocks, which this package does not contain.
+
+= 0.4.3 =
+
+* Action needed: style.custom is a list of structured rules; Nucleo builds the selector from closed lists (state, inner element, position, pseudo-element). Documents in the previous format are converted on load.
+* Action needed: critical-set uses the CSS it receives as a list of selectors and saves the matching rules of the local stylesheets; the others are dropped.
+* Security: SVG icons, preview and SEO meta tags go through wp_kses or esc_* where they are printed; JSON-LD uses wp_json_encode.
 
 = 0.4.2 =
 
@@ -163,7 +183,6 @@ All PHP and JavaScript of Nucleo ships unminified. The only minified files are t
 = 0.3.3 =
 
 * Improved: Admin links to nucleowp.dev use the new site addresses for documentation, pricing, customer area and feedback.
-* Fixed: The plan comparison link opens the pricing section of the Pro page. The renewal link opens the licenses in the customer area.
 * Fixed: The feedback link opens the board in the user's language.
 
 = 0.3.2 =
@@ -178,7 +197,6 @@ All PHP and JavaScript of Nucleo ships unminified. The only minified files are t
 
 * Action needed: The theme is now Nucleo Canvas (folder nucleo-canvas). Sites with nucleo-theme get Nucleo Canvas as an update, and WordPress activates it in place of the old theme.
 * Improved: Nucleo Canvas keeps the logo, menu locations and options of the old theme. After the update you can delete nucleo-theme.
-* New: The Free plugin downloaded from nucleowp.dev updates from updates.nucleowp.dev. The Free plugin from WordPress.org updates from the directory.
 * New: The theme adds comments, pagination and entry templates, and works without the plugin.
 
 = 0.3.0 =
@@ -196,10 +214,7 @@ All PHP and JavaScript of Nucleo ships unminified. The only minified files are t
 
 = 0.2.0 =
 
-* Pro: Nucleo Pro and the theme update from the updates.nucleowp.dev server.
-* Pro: Pro receives updates with a license active on the site.
-* Action needed: The theme updates without a license, only after the plugin: it requires at least the Nucleo version it ships with.
-* Action needed: The license, update and store domain moves to nucleowp.dev.
+* Improved: Internal changes for the Pro edition, which is distributed separately.
 
 = 0.1.12 =
 

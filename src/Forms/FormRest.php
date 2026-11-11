@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Forms;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Abilities\RateLimiter;
 use Nucleo\Compiler\LinkRefs;
 use Nucleo\Compiler\LinkTargets;
@@ -23,17 +25,26 @@ final class FormRest
     /** Durata del cookie del ticket a passo: copre ttl massimo (30 minuti) e prova verificata (30 minuti). */
     private const STEP_COOKIE_TTL = 3600;
 
+    /**
+     * Invio di un modulo dai visitatori del sito, anche non collegati. Il controllo è nell'handler: nonce HMAC del
+     * modulo, honeypot, limite di frequenza per IP e captcha se attivo.
+     */
+    public static function publicFormEndpoint(): bool
+    {
+        return true;
+    }
+
     public static function register(): void
     {
         register_rest_route(self::NAMESPACE, self::ROUTE, [
             'methods' => 'POST',
             'callback' => [self::class, 'handle'],
-            'permission_callback' => '__return_true',
+            'permission_callback' => [self::class, 'publicFormEndpoint'],
         ]);
         register_rest_route(self::NAMESPACE, self::ROUTE . '/nonce', [
             'methods' => 'GET',
             'callback' => [self::class, 'handleNonce'],
-            'permission_callback' => '__return_true',
+            'permission_callback' => [self::class, 'publicFormEndpoint'],
         ]);
     }
 
@@ -93,7 +104,7 @@ final class FormRest
             return self::notFound();
         }
 
-        $params = wp_unslash($request->get_body_params());
+        $params = self::params($request, $config);
         $ip = ClientIp::get();
 
         // Honeypot: il bot riceve un successo, nessuna azione.
@@ -535,6 +546,38 @@ final class FormRest
         }
 
         return $local . substr($address, $at);
+    }
+
+    /** @param array<string,mixed> $params */
+    /** Chiavi di controllo del modulo, testo semplice; _nc_back è l'indirizzo della pagina, quindi un URL. */
+    private const CONTROL_KEYS = ['_nc_hp', '_nc_nonce', '_nc_otp', '_nc_ctx', '_nc_ticket', '_nc_proof', '_nc_code'];
+    private const CAPTCHA_KEYS = ['g-recaptcha-response', 'h-captcha-response', 'cf-turnstile-response', 'frc-captcha-response'];
+
+    /**
+     * Legge dal corpo della richiesta solo le chiavi note: quelle di controllo e del captcha, sanificate qui, e i
+     * campi dichiarati dal modulo, che FormValidator sanifica e valida per tipo.
+     * @return array<string,mixed>
+     */
+    private static function params(\WP_REST_Request $request, FormConfig $config): array
+    {
+        $body = $request->get_body_params();
+        $params = [];
+        foreach (array_merge(self::CONTROL_KEYS, self::CAPTCHA_KEYS) as $key) {
+            if (is_string($body[$key] ?? null)) {
+                $params[$key] = sanitize_text_field(wp_unslash($body[$key]));
+            }
+        }
+        if (is_string($body['_nc_back'] ?? null)) {
+            $params['_nc_back'] = sanitize_url(wp_unslash($body['_nc_back']));
+        }
+        foreach ($config->fields as $field) {
+            $name = (string) $field['name'];
+            if (array_key_exists($name, $body)) {
+                $params[$name] = wp_unslash($body[$name]);
+            }
+        }
+
+        return $params;
     }
 
     /** @param array<string,mixed> $params */

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Assets;
 
+defined('ABSPATH') || exit;
+
 /**
  * Mappa l'URL di un asset al file locale (solo se sta sotto il sito) e alla sua origine.
  */

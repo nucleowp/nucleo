@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Runtime;
 
+defined('ABSPATH') || exit;
+
 /** Hook del frontend: solo due callback, il resto si carica quando serve. */
 final class Bootstrap
 {

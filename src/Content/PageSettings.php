@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Content;
 
+defined('ABSPATH') || exit;
+
 /** Impostazioni della pagina nel meta _nucleo_page: layout per area, titolo nascosto, larghezza e classi del body. */
 final class PageSettings
 {

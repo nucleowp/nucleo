@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Quality;
 
+defined('ABSPATH') || exit;
+
 enum Severity: string
 {
     case Error = 'error';

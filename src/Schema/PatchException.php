@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Schema;
 
+defined('ABSPATH') || exit;
+
 /** Raised when a patch cannot apply. $index is the failing operation, $code one of: invalid_op, not_found, conflict, forbidden. */
 final class PatchException extends \RuntimeException
 {

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Admin;
 
+defined('ABSPATH') || exit;
+
 /**
  * Icone dell'area Nucleo: sprite SVG condiviso (assets/admin/icons.svg) e tessera delle pagine.
  */

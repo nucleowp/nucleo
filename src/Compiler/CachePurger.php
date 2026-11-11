@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Compiler;
 
+defined('ABSPATH') || exit;
+
 /**
  * Svuota le cache di pagina dei plugin di caching presenti. Ogni plugin è chiamato solo se esiste.
  */

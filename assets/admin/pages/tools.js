@@ -215,7 +215,7 @@
 	if ( root.wp && root.wp.element && root.nucleoUI ) {
 		const { createElement: h, useState } = root.wp.element;
 		const { Page, Card, Notice, Table, Confirm, Skeleton, Empty, ErrorBox, useLoad, call } = root.nucleoUI;
-		const __ = ( s, d ) => root.wp.i18n.__( s, d || 'nucleo' );
+		const { __ } = ( root.wp && root.wp.i18n ) || { __: ( text ) => text };
 		const fmt = ( s, ...args ) => root.wp.i18n.sprintf( s, ...args );
 
 		const failed = ( res ) => ! res || res.ok === false;

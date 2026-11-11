@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Blocks;
 
+defined('ABSPATH') || exit;
+
 /** Contesto che conosce le colonne in cui sta il nodo in compilazione: serve a nc/image per sizes. */
 interface ColumnAware
 {

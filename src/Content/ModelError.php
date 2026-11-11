@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Content;
 
+defined('ABSPATH') || exit;
+
 /** Errore di validazione del modello dei contenuti. Gli errori dello schema JSON hanno code "schema". */
 final class ModelError
 {

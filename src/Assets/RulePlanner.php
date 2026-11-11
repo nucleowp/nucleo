@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Assets;
 
+defined('ABSPATH') || exit;
+
 /**
  * Applica la tabella delle regole alla coda degli script di una pagina.
  */

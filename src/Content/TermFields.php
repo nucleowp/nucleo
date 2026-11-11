@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Content;
 
+defined('ABSPATH') || exit;
+
 /** Campi dei termini nelle schermate di aggiunta e modifica delle tassonomie con gruppi (docs/contracts/content-model.md, fase 2). */
 final class TermFields
 {
@@ -55,7 +57,7 @@ final class TermFields
             return;
         }
 
-        $values = FieldsMetaBox::pick(FieldValues::fields('term', $termId), FieldsMetaBox::input());
+        $values = FieldsMetaBox::input(FieldValues::fields('term', $termId));
         if ($values === []) {
             return;
         }

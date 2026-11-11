@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Sections;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Schema\ValidationError;
 
 /** Esito dell'espansione dei blocchi nc/section-ref di un documento. */

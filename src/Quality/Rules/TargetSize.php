@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Quality\Rules;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Quality\ComposedPage;
 use Nucleo\Quality\Issue;
 use Nucleo\Quality\Rule;

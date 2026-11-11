@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Admin;
 
+defined('ABSPATH') || exit;
+
 /**
  * Guide di collegamento degli agenti per la pagina Agenti: per ogni client passi, snippet, callback e note.
  * Testi in inglese come nel codice; la fonte è docs/contracts/agent-guides.md.

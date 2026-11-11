@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Docs;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Layout\LayoutConditions;
 
 /** Topic "layouts" di nucleo/catalog-get: aree, condizioni e scelta del layout (docs/contracts/layout-keys.md). */
@@ -33,23 +35,32 @@ final class LayoutsTopic
         $types = [];
         foreach (array_keys(LayoutConditions::TYPES) as $type) {
             $type = (string) $type;
+            // Senza rilevamento della lingua la condizione language si rifiuta: non si propone agli agenti.
+            if ($type === 'language' && !LayoutConditions::detectsLanguage()) {
+                continue;
+            }
             $types[$type] = ['format' => (string) LayoutConditions::example($type), 'selects' => self::MEANING[$type] ?? ''];
         }
 
         return [
             'topic' => 'layouts',
-            'summary' => 'Layout documents (kind layout or popup): meta.area and meta.conditions decide where a layout applies. layout-explain shows which layout a URL gets and why.',
+            'summary' => 'Layout documents (kind layout'
+                . '): meta.area and meta.conditions decide where a layout applies. layout-explain shows which layout a URL gets and why.',
             'rules' => [
-                'meta: {"area": "header"|"footer"|"before-content"|"after-content"|"single"|"archive"|"search"|"notfound"|"popup"|"product"|"product-archive", "conditions": {"include": [...], "exclude"?: [...], "priority"?: 0}}.',
+                'meta: {"area": "header"|"footer"|"before-content"|"after-content"|"single"|"archive"|"search"|"notfound"'
+                    . '|"product"|"product-archive", "conditions": {"include": [...], "exclude"?: [...], "priority"?: 0}}.',
                 'A condition is {"type": "<type>", ...keys of the type}. The value always goes in "value" (and "taxonomy" for term types): {"type": "post_type", "value": "prodotto"}, not "postType". Unknown types, unknown keys and missing keys in new or changed conditions are refused with code layout_condition and the expected format (data.types). A layout saved earlier with invalid conditions can still be edited and recompiled; site-describe lists it in warnings. IDs written as numeric strings ("12") are stored as integers.',
                 'IDs (post, parent, author, term) are integers in doc-create, doc-patch and layout-conditions-set. In site files (layouts/*.json) write symbols instead: "page:<path>", "post:<slug>", "<post-type>:<slug>", "term:<taxonomy>/<slug>", "author:<login>"; push turns them into IDs.',
                 'Choice: the most specific key wins (front, post, term, author, post type, entire site, in this order for a single item); with the same key, the highest priority, then the newest layout. A layout excluded for any key of the request is skipped. Same area, key and priority = conflict, reported by layout-list.',
                 'A page always gets the header and footer whose conditions match it; to remove them on one page, add {"type": "post", "value": <ID>} to exclude.',
                 'layout-conditions-set replaces include, exclude and priority of a layout and keeps the rest of the document. After a change, check a URL with layout-explain.',
-                'Areas product and product-archive exist only with WooCommerce active: product is the single product page, product-archive the Shop and the product categories and tags. On those pages they win over single and archive (search also wins over archive): put the woo/* blocks of the product page in a product layout, not in a single layout, which also applies to posts. layout-explain marks the losing area with superseded and lists in applied what the page prints. Recipes: catalog-get {topic: woocommerce}.',
+                'Areas product and product-archive exist only with WooCommerce active: product is the single product page, product-archive the Shop and the product categories and tags. On those pages they win over single and archive (search also wins over archive).'
+                    . ' layout-explain marks the losing area with superseded and lists in applied what the page prints.',
             ],
             'data' => [
-                'areas' => ['header', 'footer', 'before-content', 'after-content', 'single', 'archive', 'search', 'notfound', 'popup', 'product', 'product-archive'],
+                'areas' => [
+                    'header', 'footer', 'before-content', 'after-content', 'single', 'archive', 'search', 'notfound', 'product', 'product-archive',
+                ],
                 'types' => $types,
             ],
         ];

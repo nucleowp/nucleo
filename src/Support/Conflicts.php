@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Support;
 
+defined('ABSPATH') || exit;
+
 /**
  * Plugin di minify e unione CSS e JS che rigenerano file diversi per pagina
  * e annullano le varianti CSS per template di Nucleo.
@@ -118,11 +120,20 @@ final class Conflicts
         return $found;
     }
 
+    /** User meta con l'impronta dei conflitti già chiusi dall'utente. */
+    private const DISMISSED = 'nucleo_conflicts_dismissed';
+    private const DISMISS_ACTION = 'nucleo_dismiss_conflicts';
+
     public static function register(): void
     {
         add_action('admin_notices', [self::class, 'renderNotice']);
+        add_action('admin_post_' . self::DISMISS_ACTION, [self::class, 'dismiss']);
     }
 
+    /**
+     * Avviso dei conflitti per gli amministratori. Si chiude con il link "Dismiss" e resta chiuso finché l'elenco
+     * dei conflitti non cambia; sparisce da solo quando i plugin in conflitto non sono più attivi.
+     */
     public static function renderNotice(): void
     {
         if (!current_user_can('manage_options')) {
@@ -130,15 +141,34 @@ final class Conflicts
         }
 
         $found = self::detect();
-        if ($found === []) {
+        if ($found === [] || get_user_meta(get_current_user_id(), self::DISMISSED, true) === self::fingerprint($found)) {
             return;
         }
 
+        $dismiss = wp_nonce_url(admin_url('admin-post.php?action=' . self::DISMISS_ACTION), self::DISMISS_ACTION);
         echo '<div class="notice notice-warning"><p><strong>' . esc_html__('Nucleo: cache conflicts detected', 'nucleo') . '</strong></p><ul>';
         foreach ($found as $row) {
             echo '<li>' . esc_html($row['issue']) . ' ' . esc_html($row['fix']) . '</li>';
         }
-        echo '</ul></div>';
+        echo '</ul><p><a href="' . esc_url($dismiss) . '">' . esc_html__('Dismiss', 'nucleo') . '</a></p></div>';
+    }
+
+    /** Chiude l'avviso per l'utente corrente e torna alla pagina di prima. */
+    public static function dismiss(): void
+    {
+        if (!current_user_can('manage_options')) {
+            wp_die(esc_html__('You are not allowed to do this.', 'nucleo'), '', ['response' => 403]);
+        }
+        check_admin_referer(self::DISMISS_ACTION);
+        update_user_meta(get_current_user_id(), self::DISMISSED, self::fingerprint(self::detect()));
+        wp_safe_redirect(wp_get_referer() ?: admin_url());
+        exit;
+    }
+
+    /** @param list<array{plugin:string,issue:string,fix:string}> $found */
+    private static function fingerprint(array $found): string
+    {
+        return md5((string) wp_json_encode(array_column($found, 'issue')));
     }
 
     /** @return array{plugin:string,issue:string,fix:string} */

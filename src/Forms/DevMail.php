@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Forms;
 
+defined('ABSPATH') || exit;
+
 /**
  * Email inviate da Nucleo (codici OTP, azioni email dei moduli) ed esito degli invii.
  *

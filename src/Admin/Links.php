@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Admin;
 
+defined('ABSPATH') || exit;
+
 /**
  * Fonte unica degli URL del sito di vendita: acquisto, account, documentazione, changelog.
  * Il sito è bilingue: italiano alla radice, inglese sotto /en/. La lingua segue l'utente collegato.

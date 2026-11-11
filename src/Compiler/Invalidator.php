@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Compiler;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Runtime\Collection\ContentVersion;
 use WP_Post;
 
@@ -131,7 +133,14 @@ final class Invalidator
             return null;
         }
 
-        return ContentLocale::run($locale, static fn (): string => translate($format, 'default')); // phpcs:ignore WordPress.WP.I18n -- stringa di WordPress, dominio default.
+        // Formato di WordPress, già tradotto nel catalogo di core (dominio default): lo si legge dal catalogo, il
+        // plugin non traduce stringhe di altri domini. Come translate(): catalogo di core più il filtro gettext.
+        return ContentLocale::run($locale, static fn (): string => (string) apply_filters(
+            'gettext',
+            get_translations_for_domain('default')->translate($format),
+            $format,
+            'default'
+        ));
     }
 
     /** @return list<int> id dei post con la dipendenza indicata */

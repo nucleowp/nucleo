@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Sections;
 
+defined('ABSPATH') || exit;
+
 /** Tipi dei parametri di sezione (@types): nome del parametro e valore ammesso per ciascun tipo. */
 final class ParamTypes
 {

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Extend;
 
+defined('ABSPATH') || exit;
+
 /**
  * Registro delle sorgenti dati e delle azioni dei plugin del sito.
  * La prima chiamata a instance() esegue l'hook nucleo/register_components.

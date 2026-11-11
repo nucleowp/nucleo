@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Runtime;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Blocks\DynamicRenderer;
 
 /**
@@ -45,21 +47,6 @@ final class Slots
         'nc/native-form' => 'Nucleo\\Forms\\NativeFormSlot',
         'nc/repeater' => 'Nucleo\\Blocks\\Core\\RepeaterRenderer',
         'nc/query' => 'Nucleo\\Blocks\\Core\\QueryRenderer',
-        // WooCommerce (classes exist only in that integration).
-        'woo/price' => 'Nucleo\\Integrations\\Woo\\PriceRenderer',
-        'woo/stock' => 'Nucleo\\Integrations\\Woo\\StockRenderer',
-        'woo/add-to-cart' => 'Nucleo\\Integrations\\Woo\\AddToCartRenderer',
-        'woo/gallery' => 'Nucleo\\Integrations\\Woo\\GalleryRenderer',
-        'woo/short-description' => 'Nucleo\\Integrations\\Woo\\ShortDescriptionRenderer',
-        'woo/attributes' => 'Nucleo\\Integrations\\Woo\\AttributesRenderer',
-        'woo/related' => 'Nucleo\\Integrations\\Woo\\RelatedRenderer',
-        'woo/mini-cart' => 'Nucleo\\Integrations\\Woo\\MiniCartRenderer',
-        'woo/notices' => 'Nucleo\\Integrations\\Woo\\NoticesRenderer',
-        'woo/tabs' => 'Nucleo\\Integrations\\Woo\\ProductTabsRenderer',
-        'woo/upsell' => 'Nucleo\\Integrations\\Woo\\UpsellRenderer',
-        'woo/cart' => 'Nucleo\\Integrations\\Woo\\CartRenderer',
-        'woo/checkout' => 'Nucleo\\Integrations\\Woo\\CheckoutRenderer',
-        'woo/account' => 'Nucleo\\Integrations\\Woo\\AccountRenderer',
         // Phase 1 names, kept for documents compiled before Phase 2.
         'post.title' => 'Nucleo\\Blocks\\Core\\PostTitleRenderer',
         'post.date' => 'Nucleo\\Blocks\\Core\\PostMetaRenderer',

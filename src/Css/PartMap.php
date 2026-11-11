@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Css;
 
+defined('ABSPATH') || exit;
+
 /**
  * Chiavi di stile per le parti interne dei blocchi interattivi. Ogni chiave scrive una variabile CSS sul nodo;
  * il CSS del blocco la legge sui suoi elementi, con un valore di riserva preso dai token del sito, e la azzera

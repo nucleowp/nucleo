@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Compiler;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Bindings\WpBindingSource;
 use Nucleo\Blocks\Registry;
 use Nucleo\Layout\LayoutConditions;
@@ -432,8 +434,16 @@ final class DocumentService
         }
         $stored = $this->repository->find($postId)['document'] ?? null;
         $before = is_array($stored) ? (LayoutConditions::normalize($stored)['meta']['conditions'] ?? null) : null;
+        if ($before !== null && $before == ($doc['meta']['conditions'] ?? null)) {
+            return [];
+        }
+        // Una condizione language già salvata resta ammessa anche senza rilevamento della lingua: si rifiutano solo le nuove.
+        $kept = is_array($stored) ? LayoutConditions::languageConditions(LayoutConditions::normalize($stored)) : [];
 
-        return $before !== null && $before == ($doc['meta']['conditions'] ?? null) ? [] : $errors;
+        return array_values(array_filter(
+            $errors,
+            static fn (ValidationError $e): bool => !LayoutConditions::isLanguageError($e) || !in_array($e->got, $kept, false),
+        ));
     }
 
     /**
@@ -757,6 +767,15 @@ final class DocumentService
     }
 
     /**
+     * Titolo del post: kses è spento per l'HTML dei renderer, quindi il titolo passa qui dal filtro che WordPress
+     * applica di solito (title_save_pre), salvo per chi ha unfiltered_html.
+     */
+    private static function title(string $title): string
+    {
+        return current_user_can('unfiltered_html') ? $title : wp_kses_data($title);
+    }
+
+    /**
      * Scrive il post con kses disattivato: l'HTML arriva dai renderer, già sanificato. wp_insert_post() e
      * wp_update_post() tolgono le barre rovesciate: HTML e titolo passano con wp_slash(), altrimenti un JSON in un
      * attributo («\u00c5land») o un testo con «\» arriva rotto.
@@ -768,7 +787,7 @@ final class DocumentService
         try {
             if ($postId === 0) {
                 $data = [
-                    'post_title' => wp_slash($o->title),
+                    'post_title' => wp_slash(self::title($o->title)),
                     'post_type' => $o->postType,
                     'post_status' => $o->publish ? 'publish' : ($o->status !== '' ? $o->status : 'draft'),
                     'post_content' => $html,
@@ -786,7 +805,7 @@ final class DocumentService
             } else {
                 $data = ['ID' => $postId, 'post_content' => $html];
                 if ($o->title !== '') {
-                    $data['post_title'] = wp_slash($o->title);
+                    $data['post_title'] = wp_slash(self::title($o->title));
                 }
                 if ($o->publish) {
                     $data['post_status'] = 'publish';

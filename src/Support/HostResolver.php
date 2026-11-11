@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Support;
 
+defined('ABSPATH') || exit;
+
 /**
  * Unico punto di risoluzione degli host del plugin. Il filtro nucleo/resolve_host, se restituisce un elenco,
  * sostituisce il DNS reale: i test usano così una risoluzione finta e non dipendono dalla rete.

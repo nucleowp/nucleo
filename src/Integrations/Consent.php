@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Integrations;
 
+defined('ABSPATH') || exit;
+
 /**
  * Rileva il plugin di consenso cookie e restituisce gli attributi per sbloccare un iframe.
  */

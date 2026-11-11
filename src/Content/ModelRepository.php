@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Content;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Services;
 
 /** Modello dei contenuti salvato: opzione nucleo_content_model e artefatto content-model (docs/contracts/content-model.md). */

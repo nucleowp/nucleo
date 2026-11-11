@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Abilities\Read;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Abilities\AbilityDefinition;
 use Nucleo\Layout\LayoutResolver;
 use Nucleo\Layout\RequestContext;
@@ -13,7 +15,9 @@ use Nucleo\Services;
 /** nucleo/layout-explain: per un URL, il layout scelto in ciascuna area e la chiave che lo ha fatto scegliere. */
 final class LayoutExplain implements AbilityDefinition
 {
-    private const AREAS = ['header', 'before-content', 'after-content', 'footer', 'single', 'archive', 'search', 'notfound', 'popup', 'product', 'product-archive'];
+    private const AREAS = [
+        'header', 'before-content', 'after-content', 'footer', 'single', 'archive', 'search', 'notfound', 'product', 'product-archive',
+    ];
     /** Aree di WooCommerce: valgono solo dove le applica il runtime (pagina prodotto, Shop e archivi dei prodotti). */
     private const WOO_AREAS = ['product', 'product-archive'];
 

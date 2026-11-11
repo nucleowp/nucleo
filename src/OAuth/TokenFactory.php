@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\OAuth;
 
+defined('ABSPATH') || exit;
+
 /** Token OAuth opachi. Il token in chiaro non si salva: si salva solo hash(). */
 final class TokenFactory
 {

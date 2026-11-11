@@ -6,72 +6,74 @@
 	'use strict';
 
 	const root = typeof window !== 'undefined' ? window : {};
-	const AREAS = [ 'header', 'footer', 'single', 'archive', 'popup' ];
+	const { __ } = ( root.wp && root.wp.i18n ) || { __: ( text ) => text };
+	const AREAS = [
+		'header', 'footer', 'single', 'archive',
+	];
 
 	/** I 14 tipi di condizione. value: 'none' nessun valore, 'post' id, 'term' tassonomia + id, 'user' id, 'type' slug, 'lang' codice lingua. */
 	const CONDITION_TYPES = [
-		{ type: 'entire_site', label: 'Entire site', value: 'none' },
-		{ type: 'front', label: 'Front page', value: 'none' },
-		{ type: 'blog', label: 'Blog page', value: 'none' },
-		{ type: 'search', label: 'Search results', value: 'none' },
-		{ type: '404', label: 'Not found page', value: 'none' },
-		{ type: 'post', label: 'Specific content', value: 'post' },
-		{ type: 'parent', label: 'Children of a page', value: 'post' },
-		{ type: 'post_type', label: 'All content of a type', value: 'type' },
-		{ type: 'term', label: 'Content with a term', value: 'term' },
-		{ type: 'author', label: 'Content by an author', value: 'user' },
-		{ type: 'term_archive', label: 'Archive of a term', value: 'term' },
-		{ type: 'archive', label: 'Archive of a type', value: 'type' },
-		{ type: 'author_archive', label: 'Archive of an author', value: 'user' },
-		{ type: 'language', label: 'Only in a language', value: 'lang' },
+		{ type: 'entire_site', label: () => __( 'Entire site', 'nucleo' ), value: 'none' },
+		{ type: 'front', label: () => __( 'Front page', 'nucleo' ), value: 'none' },
+		{ type: 'blog', label: () => __( 'Blog page', 'nucleo' ), value: 'none' },
+		{ type: 'search', label: () => __( 'Search results', 'nucleo' ), value: 'none' },
+		{ type: '404', label: () => __( 'Not found page', 'nucleo' ), value: 'none' },
+		{ type: 'post', label: () => __( 'Specific content', 'nucleo' ), value: 'post' },
+		{ type: 'parent', label: () => __( 'Children of a page', 'nucleo' ), value: 'post' },
+		{ type: 'post_type', label: () => __( 'All content of a type', 'nucleo' ), value: 'type' },
+		{ type: 'term', label: () => __( 'Content with a term', 'nucleo' ), value: 'term' },
+		{ type: 'author', label: () => __( 'Content by an author', 'nucleo' ), value: 'user' },
+		{ type: 'term_archive', label: () => __( 'Archive of a term', 'nucleo' ), value: 'term' },
+		{ type: 'archive', label: () => __( 'Archive of a type', 'nucleo' ), value: 'type' },
+		{ type: 'author_archive', label: () => __( 'Archive of an author', 'nucleo' ), value: 'user' },
 	];
 
 	/** Frase di un singolo elemento di include o exclude. */
-	function describe( c, t = ( s ) => s ) {
-		const children = c.children ? ` ${ t( '(with children)' ) }` : '';
+	function describe( c ) {
+		const children = c.children ? ` ${ __( '(with children)', 'nucleo' ) }` : '';
 		switch ( c.type ) {
 			case 'entire_site':
-				return t( 'Entire site' );
+				return __( 'Entire site', 'nucleo' );
 			case 'front':
-				return t( 'Front page' );
+				return __( 'Front page', 'nucleo' );
 			case 'blog':
-				return t( 'Blog page' );
+				return __( 'Blog page', 'nucleo' );
 			case 'search':
-				return t( 'Search results' );
+				return __( 'Search results', 'nucleo' );
 			case '404':
-				return t( 'Not found page' );
+				return __( 'Not found page', 'nucleo' );
 			case 'post':
-				return `${ t( 'Specific content' ) } #${ c.value }`;
+				return `${ __( 'Specific content', 'nucleo' ) } #${ c.value }`;
 			case 'parent':
-				return `${ t( 'Children of page' ) } #${ c.value }`;
+				return `${ __( 'Children of page', 'nucleo' ) } #${ c.value }`;
 			case 'post_type':
-				return `${ t( 'All content of a type' ) }: ${ c.value }`;
+				return `${ __( 'All content of a type', 'nucleo' ) }: ${ c.value }`;
 			case 'term':
-				return `${ t( 'Content with a term' ) }: ${ c.taxonomy } #${ c.value }${ children }`;
+				return `${ __( 'Content with a term', 'nucleo' ) }: ${ c.taxonomy } #${ c.value }${ children }`;
 			case 'author':
-				return `${ t( 'Content by author' ) } #${ c.value }`;
+				return `${ __( 'Content by author', 'nucleo' ) } #${ c.value }`;
 			case 'term_archive':
-				return `${ t( 'Archive of a term' ) }: ${ c.taxonomy } #${ c.value }${ children }`;
+				return `${ __( 'Archive of a term', 'nucleo' ) }: ${ c.taxonomy } #${ c.value }${ children }`;
 			case 'archive':
-				return `${ t( 'Archive of a type' ) }: ${ c.value }`;
+				return `${ __( 'Archive of a type', 'nucleo' ) }: ${ c.value }`;
 			case 'author_archive':
-				return `${ t( 'Archive of author' ) } #${ c.value }`;
+				return `${ __( 'Archive of author', 'nucleo' ) } #${ c.value }`;
 			case 'language':
-				return `${ t( 'Only in language' ) }: ${ c.value }`;
+				return `${ __( 'Only in language', 'nucleo' ) }: ${ c.value }`;
 			default:
 				return String( c.type );
 		}
 	}
 
-	/** Riassunto leggibile delle condizioni: "Entire site, except: Specific content #12". Senza include: "Nowhere". t traduce le etichette (identità di default). */
-	function conditionSummary( conditions, t = ( s ) => s ) {
+	/** Riassunto leggibile delle condizioni: "Entire site, except: Specific content #12". Senza include: "Nowhere". */
+	function conditionSummary( conditions ) {
 		const include = conditions && Array.isArray( conditions.include ) ? conditions.include : [];
 		const exclude = conditions && Array.isArray( conditions.exclude ) ? conditions.exclude : [];
 		if ( include.length === 0 ) {
-			return t( 'Nowhere' );
+			return __( 'Nowhere', 'nucleo' );
 		}
-		const text = include.map( ( c ) => describe( c, t ) ).join( ', ' );
-		return exclude.length > 0 ? `${ text }, ${ t( 'except' ) }: ${ exclude.map( ( c ) => describe( c, t ) ).join( ', ' ) }` : text;
+		const text = include.map( ( c ) => describe( c ) ).join( ', ' );
+		return exclude.length > 0 ? `${ text }, ${ __( 'except', 'nucleo' ) }: ${ exclude.map( ( c ) => describe( c ) ).join( ', ' ) }` : text;
 	}
 
 	/** Conteggio dei layout per area; le aree sconosciute non contano. */
@@ -102,12 +104,12 @@
 	}
 
 	/** Motivo di layout-explain in forma leggibile: 'site' diventa Entire site, 'post:4' diventa Specific content #4. */
-	function readableMatch( m, t = ( s ) => s ) {
+	function readableMatch( m ) {
 		if ( m === 'site' ) {
-			return t( 'Entire site' );
+			return __( 'Entire site', 'nucleo' );
 		}
 		const post = /^post:(\d+)$/.exec( String( m ) );
-		return post ? `${ t( 'Specific content' ) } #${ post[ 1 ] }` : String( m );
+		return post ? `${ __( 'Specific content', 'nucleo' ) } #${ post[ 1 ] }` : String( m );
 	}
 
 	/** Id dei layout di un conflitto. Forma di conflicts[] non documentata: si accetta layouts[] di id o di oggetti con id. */
@@ -156,12 +158,13 @@
 
 	const api = { conditionSummary, CONDITION_TYPES, countByArea, explainRows, isLimited };
 
+
 	/* ---------- Componente (solo con window.wp.element) ---------- */
 
 	const el = root.wp && root.wp.element;
 	if ( el ) {
 		const { createElement: h, useState } = el;
-		const __ = ( s, d ) => root.wp.i18n.__( s, d || 'nucleo' );
+		const { __ } = ( root.wp && root.wp.i18n ) || { __: ( text ) => text };
 
 		const STATUS = {
 			publish: [ 'ok', __( 'Published', 'nucleo' ) ],
@@ -174,7 +177,6 @@
 			footer: __( 'Footer', 'nucleo' ),
 			single: __( 'Single', 'nucleo' ),
 			archive: __( 'Archive', 'nucleo' ),
-			popup: __( 'Popup', 'nucleo' ),
 			search: __( 'Search', 'nucleo' ),
 			notfound: __( 'Not found', 'nucleo' ),
 			'before-content': __( 'Before content', 'nucleo' ),
@@ -294,7 +296,7 @@
 					'aria-label': __( 'Condition type', 'nucleo' ),
 					value: row.type,
 					onChange: ( e ) => onChange( { type: e.target.value, value: undefined, taxonomy: undefined, children: undefined, text: undefined } ),
-				}, CONDITION_TYPES.map( ( t ) => h( 'option', { key: t.type, value: t.type, disabled: t.type === 'language' && !! langLimited }, __( t.label ) ) ) ),
+				}, CONDITION_TYPES.map( ( t ) => h( 'option', { key: t.type, value: t.type, disabled: t.type === 'language' && !! langLimited }, t.label() ) ) ),
 				h( ValueField, { row, onChange } ),
 				h( 'button', { type: 'button', className: 'nc-btn nc-btn--icon nc-btn--tertiary', 'aria-label': __( 'Remove condition', 'nucleo' ), onClick: onRemove }, '✕' ) );
 		}
@@ -319,30 +321,6 @@
 				}, __( '+ Add condition', 'nucleo' ) ) ) );
 		}
 
-		/** Campi del popup: trigger e frequenza non si salvano ancora, quindi il riquadro è disattivato. */
-		function PopupFields() {
-			const triggers = [ 'On load', 'After a delay', 'On scroll', 'On exit', 'On click' ];
-			const frequencies = [ 'Once', 'Per session', 'Always' ];
-			return h( 'fieldset', { className: 'nc-stack', disabled: true },
-				h( 'legend', { className: 'nc-label' }, __( 'Popup only', 'nucleo' ) ),
-				h( 'p', { className: 'nc-muted' }, __( 'Coming soon: the trigger and frequency are not saved yet.', 'nucleo' ) ),
-				h( 'div', { className: 'nc-field' },
-					h( 'label', { className: 'nc-field__label', htmlFor: 'nucleo-popup-trigger' }, __( 'Trigger', 'nucleo' ) ),
-					h( 'select', { id: 'nucleo-popup-trigger', className: 'nc-select' },
-						triggers.map( ( t ) => h( 'option', { key: t }, __( t ) ) ) ) ),
-				h( 'div', { className: 'nc-field' },
-					h( 'label', { className: 'nc-field__label', htmlFor: 'nucleo-popup-seconds' }, __( 'Seconds', 'nucleo' ) ),
-					h( 'input', { id: 'nucleo-popup-seconds', className: 'nc-input', type: 'number', min: 0 } ) ),
-				h( 'div', { className: 'nc-field' },
-					h( 'span', { className: 'nc-field__label' }, __( 'Frequency', 'nucleo' ) ),
-					h( 'div', { className: 'nc-segmented', role: 'group', 'aria-label': __( 'Frequency', 'nucleo' ) },
-						frequencies.map( ( f, i ) => h( 'button', {
-							key: f,
-							type: 'button',
-							className: 'nc-segmented__item',
-							'aria-pressed': String( i === 1 ),
-						}, __( f ) ) ) ) ) );
-		}
 
 		/** Drawer "Condizioni": salva con nucleo/layout-conditions-set. */
 		function ConditionsDrawer( { layout, onClose, onSaved } ) {
@@ -366,10 +344,11 @@
 				}
 				setSaving( true );
 				setError( null );
-				UI.call( 'nucleo/layout-conditions-set', {
+				const input = {
 					postId: layout.id,
 					conditions: { include: include.map( toCondition ), exclude: exclude.map( toCondition ), priority: n },
-				} ).then( ( res ) => {
+				};
+				UI.call( 'nucleo/layout-conditions-set', input ).then( ( res ) => {
 					setSaving( false );
 					if ( res && res.ok === false ) {
 						setError( { code: res.error && res.error.code, message: res.error && res.error.message } );
@@ -379,7 +358,7 @@
 				} );
 			};
 
-			const summary = conditionSummary( { include: include.filter( isComplete ), exclude: exclude.filter( isComplete ) }, __ );
+			const summary = conditionSummary( { include: include.filter( isComplete ), exclude: exclude.filter( isComplete ) } );
 				const language = UI.access( 'nucleo-layouts', 'option', 'language' );
 				const langLimited = isLimited( language );
 
@@ -410,11 +389,6 @@
 			h( 'div', { className: 'nc-stack' },
 				errorNotice,
 				h( UI.Notice, { tone: 'info', title: __( 'In short:', 'nucleo' ) }, summary ),
-				language.access === 'explain' && h( UI.Explain, {
-					reason: __( 'Language requires Polylang or WPML.', 'nucleo' ),
-					href: 'admin.php?page=nucleo-settings&tab=integrations',
-					linkLabel: __( 'See Integrations', 'nucleo' ),
-				} ),
 				h( RuleList, { title: __( 'Show on', 'nucleo' ), rows: include, onChange: setInclude, langLimited } ),
 				h( RuleList, { title: __( 'Hide on', 'nucleo' ), rows: exclude, onChange: setExclude, langLimited } ),
 				h( 'div', { className: 'nc-field' },
@@ -428,7 +402,7 @@
 						onChange: ( e ) => setPriority( e.target.value ),
 					} ),
 					h( 'span', { className: 'nc-field__help' }, __( 'When conditions are equal, the higher priority wins.', 'nucleo' ) ) ),
-				layout.area === 'popup' ? h( PopupFields ) : null ) );
+			) );
 		}
 
 		/** Card di un layout: titolo e stato in testata; riassunto, priorità, Modifica e Condizioni nel corpo. */
@@ -442,7 +416,7 @@
 				actions: h( UI.Pill, { tone: status[ 0 ] }, status[ 1 ] ),
 			},
 			h( 'div', { className: 'nc-stack' },
-				h( 'p', { className: 'nc-muted' }, conditionSummary( layout.conditions, __ ) ),
+				h( 'p', { className: 'nc-muted' }, conditionSummary( layout.conditions ) ),
 				h( 'div', { className: 'nc-row' },
 					h( 'span', { className: 'nc-muted' }, `${ __( 'Priority', 'nucleo' ) } `, h( 'span', { style: MONO }, String( ( layout.conditions && layout.conditions.priority ) ?? 0 ) ) ),
 					conflicted ? h( UI.Pill, { tone: 'warn' }, __( 'Conflict', 'nucleo' ) ) : null ),
@@ -556,7 +530,7 @@
 					area: AREA_NAMES[ r.area ] || r.area,
 					layout: r.layout,
 					excluded: r.excluded,
-					reason: r.excluded ? `${ __( 'Excluded by', 'nucleo' ) } ${ readableMatch( r.matched, __ ) }` : ( r.matched ? `${ __( 'Condition', 'nucleo' ) }: ${ readableMatch( r.matched, __ ) }` : '' ),
+					reason: r.excluded ? `${ __( 'Excluded by', 'nucleo' ) } ${ readableMatch( r.matched ) }` : ( r.matched ? `${ __( 'Condition', 'nucleo' ) }: ${ readableMatch( r.matched ) }` : '' ),
 				} ) );
 				probeBody = h( UI.Table, {
 					columns: [
@@ -584,7 +558,7 @@
 
 			return h( UI.Page, {
 				title: __( 'Layouts', 'nucleo' ),
-				subtitle: __( 'Header, footer, single post templates, archives and popups, and where they apply.', 'nucleo' ),
+				subtitle: __( 'Header, footer, single post templates and archives, and where they apply.', 'nucleo' ),
 				actions: newButton,
 				notice: banner,
 			},

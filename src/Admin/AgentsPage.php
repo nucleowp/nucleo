@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Admin;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Mcp\RestController;
 use Nucleo\OAuth\Server;
 
@@ -185,11 +187,11 @@ final class AgentsPage
         wp_add_inline_script('nucleo-admin-copy', "(function(){var tabs=[].slice.call(document.querySelectorAll('[data-nc-qs]'));var panels=document.querySelectorAll('[data-nc-qs-panel]');function show(tab,focus){var key=tab.getAttribute('data-nc-qs');tabs.forEach(function(t){var on=t===tab;t.setAttribute('aria-selected',on?'true':'false');t.tabIndex=on?0:-1;});panels.forEach(function(p){p.hidden=p.getAttribute('data-nc-qs-panel')!==key;});if(focus){tab.focus();}}tabs.forEach(function(tab,i){tab.addEventListener('click',function(){show(tab,false);});tab.addEventListener('keydown',function(e){var d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(d){e.preventDefault();show(tabs[(i+d+tabs.length)%tabs.length],true);}});});})();");
         ?>
         <div class="wrap nucleo-admin">
-            <?php echo Icons::sprite(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG statico del plugin, nome icona validato da Icons. ?>
+            <?php echo wp_kses(Icons::sprite(), \Nucleo\Support\AllowedHtml::svg()); ?>
             <div class="nc-page">
                 <header class="nc-page__head">
                     <div class="nc-page__intro">
-                        <?php echo Icons::tile('nc-agenti'); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG statico del plugin, nome icona validato da Icons. ?>
+                        <?php echo wp_kses(Icons::tile('nc-agenti'), \Nucleo\Support\AllowedHtml::svg()); ?>
                         <div>
                             <span class="nc-page__kicker">Nucleo</span>
                             <h1 class="nc-page__title"><?php esc_html_e('AI Agents', 'nucleo'); ?></h1>
@@ -614,11 +616,11 @@ final class AgentsPage
             <div class="nc-card__body nc-stack">
                 <div class="nc-tabs" role="tablist" aria-label="<?php esc_attr_e('Agents', 'nucleo'); ?>">
                     <?php foreach ($guides as $i => $guide) : ?>
-                        <button type="button" class="nc-tab" role="tab" id="nucleo-guide-tab-<?php echo esc_attr($guide['key']); ?>" aria-controls="nucleo-guide-<?php echo esc_attr($guide['key']); ?>" aria-selected="<?php echo $i === 0 ? 'true' : 'false'; ?>" tabindex="<?php echo $i === 0 ? '0' : '-1'; ?>" data-nc-qs="<?php echo esc_attr($guide['key']); ?>"><?php echo esc_html($guide['label']); ?></button>
+                        <button type="button" class="nc-tab" role="tab" id="nucleo-guide-tab-<?php echo esc_attr($guide['key']); ?>" aria-controls="nucleo-guide-<?php echo esc_attr($guide['key']); ?>" aria-selected="<?php echo esc_attr($i === 0 ? 'true' : 'false'); ?>" tabindex="<?php echo esc_attr($i === 0 ? '0' : '-1'); ?>" data-nc-qs="<?php echo esc_attr($guide['key']); ?>"><?php echo esc_html($guide['label']); ?></button>
                     <?php endforeach; ?>
                 </div>
                 <?php foreach ($guides as $i => $guide) : ?>
-                    <div class="nc-stack" role="tabpanel" id="nucleo-guide-<?php echo esc_attr($guide['key']); ?>" aria-labelledby="nucleo-guide-tab-<?php echo esc_attr($guide['key']); ?>" data-nc-qs-panel="<?php echo esc_attr($guide['key']); ?>"<?php echo $i === 0 ? '' : ' hidden'; ?>>
+                    <div class="nc-stack" role="tabpanel" id="nucleo-guide-<?php echo esc_attr($guide['key']); ?>" aria-labelledby="nucleo-guide-tab-<?php echo esc_attr($guide['key']); ?>" data-nc-qs-panel="<?php echo esc_attr($guide['key']); ?>"<?php echo esc_attr($i === 0 ? '' : ' hidden'); ?>>
                         <?php if ($guide['cloud'] && !$public) : ?>
                             <div class="nc-notice nc-notice--warn" role="note">
                                 <span class="nc-notice__glyph" aria-hidden="true">▲</span>

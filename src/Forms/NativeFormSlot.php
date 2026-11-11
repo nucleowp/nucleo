@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Forms;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Blocks\DynamicRenderer;
 use Nucleo\Runtime\Slots;
 
@@ -38,19 +40,19 @@ final class NativeFormSlot implements DynamicRenderer
      */
     private static function result(string $node): array
     {
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- esito dell'invio da mostrare dopo il redirect; l'invio stesso è verificato altrove.
-        $query = wp_unslash($_GET);
-        $form = is_array($query) && is_string($query['nc_form'] ?? null) ? sanitize_key($query['nc_form']) : '';
+        // phpcs:disable WordPress.Security.NonceVerification.Recommended -- esito dell'invio da mostrare dopo il redirect; l'invio stesso è verificato altrove.
+        $form = isset($_GET['nc_form']) && is_string($_GET['nc_form']) ? sanitize_key(wp_unslash($_GET['nc_form'])) : '';
         if ($node === '' || $form !== $node) {
             return ['status' => '', 'ticket' => ''];
         }
-        $status = is_string($query['nc_status'] ?? null) ? sanitize_key($query['nc_status']) : '';
+        $status = isset($_GET['nc_status']) && is_string($_GET['nc_status']) ? sanitize_key(wp_unslash($_GET['nc_status'])) : '';
         if (!in_array($status, self::STATUSES, true)) {
             return ['status' => '', 'ticket' => ''];
         }
-        $ticket = $status === 'otp' && is_string($query['nc_ticket'] ?? null)
-            ? sanitize_text_field($query['nc_ticket'])
+        $ticket = $status === 'otp' && isset($_GET['nc_ticket']) && is_string($_GET['nc_ticket'])
+            ? sanitize_text_field(wp_unslash($_GET['nc_ticket']))
             : '';
+        // phpcs:enable WordPress.Security.NonceVerification.Recommended
 
         return ['status' => $status, 'ticket' => $ticket];
     }

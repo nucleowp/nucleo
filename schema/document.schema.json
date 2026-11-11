@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://nucleo.dev/schema/document.schema.json",
   "title": "Documento Nucleo",
-  "description": "Pagina, layout, sezione globale o popup: albero di nodi con content, settings e style separati.",
+  "description": "Pagina, layout o sezione globale: albero di nodi con content, settings e style separati.",
   "type": "object",
   "required": ["schema", "kind", "root"],
   "additionalProperties": false,
@@ -12,7 +12,7 @@
       "minimum": 1
     },
     "kind": {
-      "enum": ["page", "layout", "section", "popup"]
+      "enum": ["page", "layout", "section"]
     },
     "layout": {
       "description": "Solo pagina o articolo: none non stampa nessuna area layout per la richiesta, header e footer compresi.",
@@ -115,11 +115,22 @@
           }
         },
         "custom": {
-          "description": "CSS libero del nodo, per ciò che le chiavi non coprono: selettore che inizia con & → proprietà CSS → valore.",
-          "type": "object",
-          "additionalProperties": {
+          "description": "Regole strutturate per ciò che le chiavi non coprono: il plugin costruisce il selettore da elenchi chiusi (stato, elemento interno, posizione, pseudo-elemento). Elenchi e controlli in Nucleo\\Css\\CustomRules.",
+          "type": "array",
+          "maxItems": 20,
+          "items": {
             "type": "object",
-            "additionalProperties": { "type": ["string", "number"] }
+            "additionalProperties": false,
+            "required": ["css"],
+            "properties": {
+              "when": { "type": "string" },
+              "target": { "type": "string" },
+              "child": { "type": "boolean" },
+              "nth": { "type": "string" },
+              "state": { "type": "string" },
+              "pseudo": { "type": "string" },
+              "css": { "type": "object", "minProperties": 1, "additionalProperties": { "type": ["string", "number"] } }
+            }
           }
         }
       },

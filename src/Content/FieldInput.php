@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Content;
 
+defined('ABSPATH') || exit;
+
 /** Controlli nativi di un campo dei contenuti e dei termini (docs/contracts/content-model.md, fase 2). */
 final class FieldInput
 {
@@ -122,7 +124,7 @@ final class FieldInput
         echo '<fieldset class="nc-field nc-image">';
         echo '<legend class="nc-field__label">' . esc_html(self::label($field)) . '</legend>';
         echo '<input class="nc-image__input" type="hidden" name="' . esc_attr($name) . '" value="' . esc_attr($id > 0 ? (string) $id : '') . '">';
-        echo '<div class="nc-image__preview">' . ($id > 0 ? wp_get_attachment_image($id, 'thumbnail') : '') . '</div>';
+        echo '<div class="nc-image__preview">' . wp_kses_post($id > 0 ? wp_get_attachment_image($id, 'thumbnail') : '') . '</div>';
         echo '<p class="nc-image__actions">';
         echo '<button type="button" class="nc-btn nc-btn--secondary nc-btn--small" data-action="choose">' . esc_html__('Choose', 'nucleo') . '</button> ';
         // Rimuovi compare solo quando c'è un'immagine (fields.js lo mostra e lo nasconde).

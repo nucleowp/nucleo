@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Quality;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Quality\Rules\TokenLiteral;
 use Nucleo\Tokens\TokenMatcher;
 use Nucleo\Tokens\TokenSet;

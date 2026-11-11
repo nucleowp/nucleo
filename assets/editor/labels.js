@@ -7,7 +7,7 @@
 	'use strict';
 
 	/** Traduzione con wp.i18n nel browser; nei test (node) resta l'inglese della sorgente. */
-	const __ = ( s ) => ( typeof wp !== 'undefined' && wp.i18n ? wp.i18n.__( s, 'nucleo' ) : s );
+	const { __ } = ( typeof wp !== 'undefined' && wp.i18n ) || { __: ( text ) => text };
 
 	const FIELDS = {
 		alt: __( 'Alt text', 'nucleo' ), anchor: __( 'Anchor', 'nucleo' ), arrows: __( 'Arrows', 'nucleo' ), category: __( 'Category', 'nucleo' ), consent: __( 'Consent', 'nucleo' ),

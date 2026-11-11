@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Runtime\Collection;
 
+defined('ABSPATH') || exit;
+
 /**
  * Configurazione di una nc/collection, validata e normalizzata (docs/15-dati-dinamici.md, livello 2).
  * Nasce dai settings al salvataggio e viaggia come array nei dati dello slot.

@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.4.4 · 2026-11-10
+
+* Sicurezza: endpoint OAuth, moduli nativi e campi personalizzati leggono solo le chiavi attese e sanificano ogni valore per tipo.
+* Sicurezza: il titolo del documento passa da kses per gli utenti senza unfiltered_html.
+* Sicurezza: i valori CSS di stili, style.custom e token devono seguire una grammatica chiusa: numeri con unità, colori, parole chiave, nomi tra virgolette e un elenco fisso di funzioni CSS.
+* Da sapere: un nc/embed generico accetta solo i provider oEmbed noti a WordPress. Il filtro nucleo/embed_hosts aggiunge altri host.
+* Migliorato: l'avviso dei conflitti con la cache ha il link Chiudi e resta chiuso finché i conflitti non cambiano.
+* Migliorato: ogni file PHP controlla ABSPATH; titoli dei blocchi ed etichette delle condizioni sono traducibili.
+* Migliorato: il widget di Friendly Captcha passa alla versione 1.1.3.
+* Nuovo: nel Pro il pannello Condizioni di un popup salva trigger e frequenza; layout-conditions-set accetta il campo popup.
+* Da sapere: popup, condizione di lingua, guida WooCommerce, critical-request e component-activate escono dal Free del sito: senza i moduli Pro non avevano effetto. Restano nel Pro.
+* Corretto: la guida per gli agenti del Free non rimanda più a kit-list e ai blocchi woo/*, assenti nel pacchetto.
+* Da sapere: nel Free doc-create, doc-patch e layout-conditions-set rifiutano una condizione language nuova o modificata, perché il Free non rileva la lingua; import e push la tolgono con un avviso. Le condizioni già salvate restano.
+* Da sapere: nel Pro senza licenza settings-set non salva URL e chiave del servizio di critical CSS (codice license_required) e salva le altre impostazioni della chiamata.
+
+## 0.4.3 · 2026-11-10
+
+* Da sapere: style.custom è una lista di regole strutturate; Nucleo costruisce il selettore da elenchi chiusi (stato, elemento interno, posizione, pseudo-elemento). I documenti nel formato precedente si convertono al caricamento.
+* Da sapere: critical-set usa il CSS ricevuto come elenco di selettori e salva le regole corrispondenti dei fogli di stile locali; le altre si scartano.
+* Sicurezza: icone SVG, anteprima e meta SEO passano da wp_kses o esc_* nel punto in cui si stampano; il JSON-LD usa wp_json_encode.
+
 ## 0.4.2 · 2026-11-10
 
 * Migliorato: le descrizioni dei tool MCP indicano quando usarli e quale tool usare al loro posto.

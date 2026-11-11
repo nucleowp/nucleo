@@ -13,7 +13,7 @@
 	const TIME_SLACK = 2;
 
 	/** Testo tradotto con wp.i18n quando c'è, altrimenti la stringa inglese. */
-	const __ = ( s, domain ) => ( i18n ? i18n.__( s, domain ) : s );
+	const { __ } = i18n || { __: ( text ) => text };
 
 	/** Come wp.i18n.sprintf con segnaposto posizionali (%1$s, %2$s). */
 	const sprintf = ( tpl, ...args ) => ( i18n

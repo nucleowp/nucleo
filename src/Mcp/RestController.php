@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Mcp;
 
+defined('ABSPATH') || exit;
+
 /**
  * Trasporto HTTP streamable di MCP: POST /wp-json/nucleo/v1/mcp con risposta application/json.
  * Autenticazione: utente loggato (token OAuth via BearerAuth, cookie o application password).
@@ -51,7 +53,14 @@ final class RestController
 
         // Il token Bearer non arriva a PHP se il server toglie l'header Authorization: AgentsPage lo segnala.
         $headers = function_exists('apache_request_headers') ? apache_request_headers() : false;
-        if (get_transient(self::HEADER_MISSING_TRANSIENT) === false && \Nucleo\OAuth\Server::bearerHeaderDropped($_SERVER, is_array($headers) ? $headers : [])) {
+        // Solo i due header di autorizzazione che bearerHeaderDropped controlla, sanificati.
+        $server = [];
+        foreach (['HTTP_AUTHORIZATION', 'REDIRECT_HTTP_AUTHORIZATION'] as $key) {
+            if (isset($_SERVER[$key]) && is_string($_SERVER[$key])) {
+                $server[$key] = sanitize_text_field(wp_unslash($_SERVER[$key]));
+            }
+        }
+        if (get_transient(self::HEADER_MISSING_TRANSIENT) === false && \Nucleo\OAuth\Server::bearerHeaderDropped($server, is_array($headers) ? $headers : [])) {
             set_transient(self::HEADER_MISSING_TRANSIENT, time(), DAY_IN_SECONDS);
         }
 

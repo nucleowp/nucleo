@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Runtime;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Compiler\RebuildQueue;
 use Nucleo\Seo\HeadMeta;
 use Nucleo\Seo\StructuredData;
@@ -352,7 +354,7 @@ final class Frontend
         );
         wp_add_inline_script(
             self::LOADER_HANDLE,
-            'window.ncLazy = (window.ncLazy || []).concat(' . (string) wp_json_encode($entries, JSON_HEX_TAG | JSON_HEX_AMP) . ');',
+            'window.nucleoLazy = (window.nucleoLazy || []).concat(' . (string) wp_json_encode($entries, JSON_HEX_TAG | JSON_HEX_AMP) . ');',
             'before',
         );
     }

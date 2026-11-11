@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\OAuth;
 
+defined('ABSPATH') || exit;
+
 /** Documento di metadati del client (Client ID Metadata Documents): validazione e normalizzazione. */
 final class ClientMetadata
 {

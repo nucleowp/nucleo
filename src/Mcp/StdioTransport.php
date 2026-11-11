@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Mcp;
 
+defined('ABSPATH') || exit;
+
 /** Trasporto STDIO di MCP: una richiesta JSON-RPC per riga in ingresso, una risposta per riga in uscita. */
 final class StdioTransport
 {

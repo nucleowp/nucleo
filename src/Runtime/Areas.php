@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Runtime;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Content\PageSettings;
 use Nucleo\Layout\LayoutResolver;
 use Nucleo\Layout\RequestContext;
@@ -11,13 +13,15 @@ use Nucleo\Storage\ArtifactStore;
 use Nucleo\Storage\ArtifactStoreFactory;
 
 /**
- * Aree del tema (header, before-content, after-content, footer, product, product-archive, single, search, archive, 404, popup) con il layout risolto per la richiesta.
+ * Aree del tema (header, before-content, after-content, footer, product, product-archive, single, search, archive, 404) con il layout risolto per la richiesta.
  * Legge solo gli artefatti layouts e layout-<id>: nessuna query di contenuto, nessun Services.
  */
 final class Areas
 {
     /** Ordine di risoluzione: product prima di single, search prima di archive (che ne è il fallback). */
-    private const AREAS = ['header', 'before-content', 'after-content', 'footer', 'product', 'product-archive', 'single', 'search', 'archive', 'notfound', 'popup'];
+    private const AREAS = [
+        'header', 'before-content', 'after-content', 'footer', 'product', 'product-archive', 'single', 'search', 'archive', 'notfound',
+    ];
     private const ARCHIVE_KINDS = ['term_archive', 'post_type_archive', 'author_archive', 'blog'];
     private const PRODUCT_TERM_ARCHIVES = ['product_cat', 'product_tag'];
 
@@ -62,15 +66,6 @@ final class Areas
             self::enqueue($rt);
             Slots::setDocument((int) $hit['layout']);
             $html = MenuCurrent::apply(self::fill((string) ($layout['html'] ?? ''), $rt));
-            if ($area === 'popup' && !class_exists('Nucleo\\Runtime\\Popup')) {
-                continue; // popups are a Pro feature
-            }
-            if ($area === 'popup') {
-                self::enqueuePopup();
-                $meta = is_array($layout['popup'] ?? null) ? $layout['popup'] : [];
-                $wrapped = \Nucleo\Support\Optional::call('Nucleo\\Runtime\\Popup', 'wrap', $html, $meta, $hit['layout']);
-                $html = is_string($wrapped) ? $wrapped : $html;
-            }
             self::$html[$area] = $html;
             self::$blocks[$area] = array_values(array_unique(array_column(self::slots($rt['slots'] ?? null), 'block')));
         }
@@ -258,12 +253,6 @@ final class Areas
         Frontend::queueLazy(Frontend::lazyEntries($rt['lazy'] ?? null));
     }
 
-    /** Script e stili del popup: accodati solo quando l'area popup ha un layout. */
-    private static function enqueuePopup(): void
-    {
-        wp_enqueue_style('nucleo-popup', plugins_url('assets/popup.css', NUCLEO_FILE), [], NUCLEO_VERSION);
-        wp_enqueue_script('nucleo-popup', plugins_url('assets/popup.js', NUCLEO_FILE), [], NUCLEO_VERSION, ['strategy' => 'defer', 'in_footer' => true]);
-    }
 
     /** @param array<string,mixed> $rt */
     private static function fill(string $html, array $rt): string

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Content;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Admin\Assets;
 use Nucleo\Admin\Editor;
 
@@ -73,7 +75,7 @@ final class FieldsMetaBox
             return;
         }
 
-        $values = self::pick(FieldValues::fields('post', $postId), self::input());
+        $values = self::input(FieldValues::fields('post', $postId));
         if ($values === []) {
             return;
         }
@@ -143,42 +145,70 @@ final class FieldsMetaBox
     }
 
     /**
-     * Campi inviati dal form: senza nonce valido restituisce []. I valori passano da FieldValues::set, che li valida e sanifica per tipo.
+     * Valori dei campi indicati, letti dal POST dopo la verifica del nonce e sanificati per tipo.
+     * La validazione completa è in FieldValues::set.
      *
+     * @param list<array<string,mixed>> $fields
      * @return array<string,mixed>
      */
-    public static function input(): array
+    public static function input(array $fields): array
     {
         $nonce = isset($_POST[self::NONCE_FIELD]) && is_string($_POST[self::NONCE_FIELD])
             ? sanitize_text_field(wp_unslash($_POST[self::NONCE_FIELD]))
             : '';
-        if ($nonce === '' || wp_verify_nonce($nonce, self::NONCE) === false) {
+        if ($nonce === '' || wp_verify_nonce($nonce, self::NONCE) === false || !isset($_POST[self::INPUT]) || !is_array($_POST[self::INPUT])) {
             return [];
         }
 
-        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- il nonce è verificato sopra; FieldValues::set sanifica ogni valore per tipo.
-        $input = isset($_POST[self::INPUT]) ? wp_unslash($_POST[self::INPUT]) : null;
-
-        return is_array($input) ? $input : [];
-    }
-
-    /**
-     * Valori grezzi dei soli campi indicati, presenti nel POST. La validazione è in FieldValues::set.
-     *
-     * @param list<array<string,mixed>> $fields
-     * @param array<string,mixed> $input
-     * @return array<string,mixed>
-     */
-    public static function pick(array $fields, array $input): array
-    {
         $values = [];
         foreach ($fields as $field) {
-            if (array_key_exists($field['key'], $input)) {
-                $values[$field['key']] = $input[$field['key']];
+            $key = (string) $field['key'];
+            if (array_key_exists($key, $_POST[self::INPUT])) {
+                // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanificato per tipo da clean().
+                $values[$key] = self::clean($field, wp_unslash($_POST[self::INPUT][$key]));
             }
         }
 
         return $values;
+    }
+
+    /**
+     * Sanifica un valore secondo il tipo del campo: testo, testo su più righe, URL, email; liste e righe dei
+     * repeater campo per campo.
+     *
+     * @param array<string,mixed> $field
+     */
+    private static function clean(array $field, mixed $raw): mixed
+    {
+        if (is_array($raw)) {
+            if (($field['type'] ?? '') !== 'repeater') {
+                return array_map(static fn (mixed $item): mixed => self::clean(['type' => $field['type'] ?? ''], $item), $raw);
+            }
+            $subs = array_column(is_array($field['fields'] ?? null) ? $field['fields'] : [], null, 'key');
+            $rows = [];
+            foreach ($raw as $i => $row) {
+                $cells = null;
+                if (is_array($row)) {
+                    $cells = [];
+                    foreach ($row as $key => $cell) {
+                        $cells[$key] = self::clean($subs[$key] ?? ['type' => 'text'], $cell);
+                    }
+                }
+                $rows[$i] = $cells;
+            }
+
+            return $rows;
+        }
+        if (!is_string($raw)) {
+            return is_scalar($raw) ? $raw : null;
+        }
+
+        return match ($field['type'] ?? '') {
+            'textarea' => sanitize_textarea_field($raw),
+            'url' => sanitize_url($raw),
+            'email' => sanitize_email($raw),
+            default => sanitize_text_field($raw),
+        };
     }
 
     /** @param list<array{code:string,path:string,message:string}> $errors */

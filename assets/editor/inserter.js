@@ -78,7 +78,7 @@
 	}
 
 	// Traduzione dei testi di partenza: wp.i18n nel browser, testo invariato nei test. Si chiama __ perché make-pot la trovi.
-	const __ = ( s, domain ) => ( typeof window !== 'undefined' && window.wp && window.wp.i18n ? window.wp.i18n.__( s, domain ) : s );
+	const { __ } = ( typeof window !== 'undefined' && window.wp && window.wp.i18n ) || { __: ( text ) => text };
 
 	/**
 	 * Valori di partenza dei blocchi che con i soli default non sarebbero validi o non si vedrebbero.

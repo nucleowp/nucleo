@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Forms;
 
+defined('ABSPATH') || exit;
+
 use WP_Post;
 
 /** Un invio validato: valori dei campi (context compresi), post di contesto, documento e nodo. */

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Runtime;
 
+defined('ABSPATH') || exit;
+
 /**
  * Chiave del template e dell'oggetto della richiesta corrente, per il lookup delle regole asset.
  */
@@ -22,12 +24,6 @@ final class TemplateKey
             return 'home';
         }
 
-        // Pro edition only, with WooCommerce active. Direct call instead of Optional: one file less on the frontend.
-        $integration = 'Nucleo\\Integrations\\WooCommerce';
-        $woo = class_exists('WooCommerce', false) && class_exists($integration) ? $integration::templateKey() : null;
-        if (is_string($woo)) {
-            return $woo;
-        }
 
         if (is_singular()) {
             return match ((string) get_post_type()) {

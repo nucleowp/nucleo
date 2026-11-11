@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Integrations;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Services;
 
 /** Legge title, meta description, noindex e canonical dal plugin SEO attivo (Yoast, Rank Math), altrimenti dal post. */

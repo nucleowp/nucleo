@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Support;
 
+defined('ABSPATH') || exit;
+
 /**
  * Fino alla 0.4.0 i transient di raccolte e codici OTP usavano il prefisso nc_. Ora usano nucleo_.
  * All'aggiornamento questo passo cancella quelli vecchi, che altrimenti scadrebbero da soli entro 12 ore.

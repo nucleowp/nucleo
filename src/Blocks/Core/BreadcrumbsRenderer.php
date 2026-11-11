@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Blocks\Core;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Blocks\DynamicRenderer;
 use Nucleo\Blocks\Node;
 use Nucleo\Blocks\Renderer;
@@ -70,10 +72,8 @@ final class BreadcrumbsRenderer implements Renderer, DynamicRenderer
             return '';
         }
 
-        $json = wp_json_encode(
-            ['@context' => 'https://schema.org', '@type' => 'BreadcrumbList', 'itemListElement' => $list],
-            JSON_HEX_TAG | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
-        );
+        // Senza flag wp_json_encode escapa "/": "</script>" nel testo diventa "<\/script>".
+        $json = wp_json_encode(['@context' => 'https://schema.org', '@type' => 'BreadcrumbList', 'itemListElement' => $list]);
 
         return is_string($json) ? '<script type="application/ld+json">' . $json . '</script>' : '';
     }

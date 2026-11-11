@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Tokens;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Css\PartMap;
 use Nucleo\Css\PropertyMap;
 

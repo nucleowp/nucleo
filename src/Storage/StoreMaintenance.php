@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Storage;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Assets\RulesPublisher;
 use Nucleo\Compiler\RebuildQueue;
 use Nucleo\Compiler\TokensPublisher;

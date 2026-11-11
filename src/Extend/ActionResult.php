@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Extend;
 
+defined('ABSPATH') || exit;
+
 /** Esito di un'azione. message è per il visitatore; data resta sul server. */
 final class ActionResult
 {

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Quality\Rules;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Quality\ComposedPage;
 use Nucleo\Quality\Issue;
 use Nucleo\Quality\Rule;
@@ -28,7 +30,7 @@ final class LayoutConflict implements Rule
     {
         $groups = [];
         foreach ($page->layouts as $layout) {
-            $groups[json_encode([$layout['area'], $layout['conditions']])][] = $layout;
+            $groups[wp_json_encode([$layout['area'], $layout['conditions']])][] = $layout;
         }
 
         $issues = [];

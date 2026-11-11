@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Assets;
 
+defined('ABSPATH') || exit;
+
 /**
  * Compila le regole in una tabella: template (o chiave d'oggetto) => handle => voce.
  */

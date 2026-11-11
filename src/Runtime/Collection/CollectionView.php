@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Runtime\Collection;
 
+defined('ABSPATH') || exit;
+
 /**
  * Markup della collezione (docs/15-dati-dinamici.md, "Markup").
  * $data: dati dello slot {node, config, template, empty, count, reset, countClass, resetClass, labels, class}.

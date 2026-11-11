@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Quality;
 
+defined('ABSPATH') || exit;
+
 /**
  * Semantic outline of the page as the visitor sees it: header + layout + content + footer.
  * Built from documents, never from HTML.

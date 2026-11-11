@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Quality;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Integrations\SeoBridge;
 use Nucleo\Seo\SchemaRegistry;
 use Nucleo\Services;

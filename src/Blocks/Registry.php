@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Blocks;
 
+defined('ABSPATH') || exit;
+
 use InvalidArgumentException;
 use JsonException;
 use RuntimeException;

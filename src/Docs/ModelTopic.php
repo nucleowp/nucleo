@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Docs;
 
+defined('ABSPATH') || exit;
+
 /** Topic "model" di nucleo/catalog-get: formato e regole di model-set (docs/contracts/content-model.md). */
 final class ModelTopic
 {

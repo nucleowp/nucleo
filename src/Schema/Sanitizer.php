@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Schema;
 
+defined('ABSPATH') || exit;
+
 /** Controlli sui valori che finiscono in HTML e CSS. Non modificano l'input: accettano o rifiutano. */
 final class Sanitizer
 {
@@ -47,7 +49,7 @@ final class Sanitizer
         return in_array($scheme, self::URL_SCHEMES, true) ? $url : null;
     }
 
-    /** true se il valore CSS è sicuro da mettere in una dichiarazione. Una stringa vuota non lo è. */
+    /** true se il valore CSS è sicuro da mettere in una dichiarazione e segue la grammatica ammessa. Una stringa vuota non lo è. */
     public static function cssValue(string $v): bool
     {
         if (trim($v) === '' || preg_match(self::CSS_UNSAFE, $v) === 1) {
@@ -61,7 +63,8 @@ final class Sanitizer
             }
         }
 
-        return self::balanced($v);
+        // Oltre ai divieti, il valore deve rispettare la grammatica chiusa dei valori CSS (CssValueGrammar).
+        return self::balanced($v) && CssValueGrammar::accepts($v);
     }
 
     /**

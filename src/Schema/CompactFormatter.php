@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Schema;
 
+defined('ABSPATH') || exit;
+
 /**
  * Forma compatta del documento per l'AI: toglie le chiavi vuote e i settings uguali al default del blocco.
  * Con $nodeId restituisce solo quel sottoalbero. Con $depth i nodi a profondità >= $depth perdono children

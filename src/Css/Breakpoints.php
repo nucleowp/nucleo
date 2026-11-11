@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Css;
 
+defined('ABSPATH') || exit;
+
 /** Mobile-first breakpoints. Keys are the document keys; values are min-width in px. */
 final class Breakpoints
 {

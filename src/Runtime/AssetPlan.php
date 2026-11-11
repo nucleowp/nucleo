@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Runtime;
 
+defined('ABSPATH') || exit;
+
 /**
  * Unisce gli asset delle parti in ordine: stili e script senza duplicati per src,
  * con la prima occorrenza vinta. Gli script "eager" finiscono in eager (solo src),

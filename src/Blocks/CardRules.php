@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Blocks;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Schema\ValidationError;
 
 /** Regole della scheda (nc/query, nc/collection): blocchi che dipendono dalla pagina o ripetono query non sono ammessi. */

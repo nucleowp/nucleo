@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Content;
 
+defined('ABSPATH') || exit;
+
 /** Differenze tra due modelli dei contenuti e modifiche distruttive (docs/contracts/content-model.md). */
 final class ModelDiff
 {

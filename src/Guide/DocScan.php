@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Guide;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Blocks\Core\ButtonRenderer;
 use Nucleo\Tokens\TokenMatcher;
 

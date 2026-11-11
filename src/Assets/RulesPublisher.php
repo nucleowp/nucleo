@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Assets;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Compiler\Invalidator;
 use Nucleo\Integrations\Forms\FormAssets;
 use Nucleo\Services;

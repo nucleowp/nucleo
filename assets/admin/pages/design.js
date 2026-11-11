@@ -77,7 +77,7 @@
 	const el = root.wp && root.wp.element;
 	if ( el ) {
 		const { createElement: h, useState, useEffect } = el;
-		const __ = ( s, d ) => root.wp.i18n.__( s, d || 'nucleo' );
+		const { __ } = ( root.wp && root.wp.i18n ) || { __: ( text ) => text };
 		const { Card, Pill, Notice, Tabs, Table, Skeleton, ErrorBox, Empty, Page } = root.nucleoUI;
 		const clone = ( v ) => JSON.parse( JSON.stringify( v ) );
 		const GRID_COLORS = { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 400px', gap: 16, alignItems: 'start' };

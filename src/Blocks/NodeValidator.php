@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Blocks;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Schema\ValidationError;
 
 /** Controlli di un blocco oltre il manifest. DocumentValidator li chiama dopo le proprietà e i figli. */

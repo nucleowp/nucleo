@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Cli;
 
+defined('ABSPATH') || exit;
+
 /**
  * Un comando WP-CLI per ogni ability nucleo/*: "nucleo/doc-patch" diventa "wp nucleo doc patch".
  * Esegue e stampa come "ability run". Non sovrascrive i comandi esistenti.

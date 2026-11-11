@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Content\ModelRegistrar;
 use Nucleo\Runtime\Bootstrap;
 use Nucleo\Seo\StructuredData;
@@ -129,23 +131,6 @@ final class Plugin
     {
         add_action('init', [ModelRegistrar::class, 'registerAll']);
         Bootstrap::register();
-        // Il pacchetto Free non contiene src/Integrations/Woo: senza la cartella niente hook (un callback mancante è un errore fatale). is_dir e non class_exists: il front-end non carica la classe.
-        if (is_dir(__DIR__ . '/Integrations/Woo')) {
-            // Campi aggiuntivi del checkout: solo se ne sono salvati. La classe si carica quando WooCommerce si avvia.
-            if (get_option('nucleo_woo_checkout_fields')) {
-                add_action('woocommerce_init', ['Nucleo\\Integrations\\Woo\\CheckoutFields', 'register']);
-            }
-            // phpcs:disable WordPress.Security.NonceVerification -- solo presenza dei parametri: decide quali hook agganciare.
-            // POST classico di «Aggiungi al carrello» (senza JavaScript o prima dello script): variante dagli attributi.
-            if (isset($_REQUEST['add-to-cart'])) {
-                add_action('wp_loaded', ['Nucleo\\Integrations\\Woo\\VariationForm', 'resolveRequest'], 19);
-            }
-            // AJAX del negozio classico di WooCommerce: il contatore del mini-cart arriva tra i frammenti della risposta.
-            if (isset($_GET['wc-ajax'])) {
-                add_filter('woocommerce_add_to_cart_fragments', ['Nucleo\\Integrations\\Woo\\MiniCartRenderer', 'fragments']);
-            }
-            // phpcs:enable WordPress.Security.NonceVerification
-        }
         // Solo le richieste della sitemap: le altre pagine non caricano il modulo né il filtro.
         $uri = isset($_SERVER['REQUEST_URI']) ? sanitize_text_field(wp_unslash((string) $_SERVER['REQUEST_URI'])) : '';
         if (str_contains($uri, 'sitemap')) {
@@ -182,12 +167,6 @@ final class Plugin
         self::call('Nucleo\\Content\\EditorMode');
         // Controllo di qualità anche sulla pubblicazione dall'editor di WordPress.
         self::call('Nucleo\\Content\\PublishGate');
-        self::call('Nucleo\\Kits\\KitPreview');
-        self::call('Nucleo\\Integrations\\Multilingual');
-        // Pro edition only: licence page and updates (the Free package has no such class).
-        self::call('Nucleo\\Pro\\Plugin');
-        // Hooks only; it checks for WooCommerce when they fire (WooCommerce loads after Nucleo).
-        self::call('Nucleo\\Integrations\\WooCommerce');
     }
 
     /** Calls Class::register() when the module exists. */

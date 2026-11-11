@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Support;
 
+defined('ABSPATH') || exit;
+
 /** Decides the request context from WordPress state. Checks are injectable for tests. */
 final class ContextDetector
 {

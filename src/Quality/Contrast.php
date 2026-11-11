@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Quality;
 
+defined('ABSPATH') || exit;
+
 /** Rapporto di contrasto WCAG 2.x tra due colori esadecimali. */
 final class Contrast
 {

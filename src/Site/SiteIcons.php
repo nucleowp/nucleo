@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Site;
 
+defined('ABSPATH') || exit;
+
 use DOMDocument;
 use DOMElement;
 use WP_Error;

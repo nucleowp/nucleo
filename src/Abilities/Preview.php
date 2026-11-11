@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Nucleo\Abilities;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Compiler\ContentLocale;
 use Nucleo\Runtime\SlotRenderer;
 use Nucleo\Runtime\Slots;
 use Nucleo\Schema\ValidationError;
 use Nucleo\Services;
+use Nucleo\Support\AllowedHtml;
 
 /** Compila un documento senza salvarlo (usata da nucleo/doc-preview) e serve l'anteprima firmata. */
 final class Preview
@@ -248,8 +251,9 @@ final class Preview
         wp_enqueue_style(self::STYLE_HANDLE);
         wp_add_inline_style(self::STYLE_HANDLE, str_replace('</', '<\/', $css));
         get_header();
-        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- HTML e CSS del compilatore, che escapa ogni valore nei renderer.
-        echo $html;
+        // L'anteprima non serve ai motori di ricerca: i dati strutturati (script ld+json) restano fuori.
+        $html = (string) preg_replace('#<script type="application/ld\+json">.*?</script>#s', '', $html);
+        echo wp_kses($html, AllowedHtml::compiled());
         get_footer();
         exit;
     }

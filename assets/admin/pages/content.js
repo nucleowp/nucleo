@@ -8,11 +8,15 @@
 
 	const root = typeof window !== 'undefined' ? window : {};
 	const TABS = [ 'postTypes', 'taxonomies', 'fieldGroups', 'json' ];
-	const SECTIONS = { postTypes: 'Post types', taxonomies: 'Taxonomies', fieldGroups: 'Field groups' };
+	const SECTIONS = {
+		postTypes: () => __( 'Post types', 'nucleo' ),
+		taxonomies: () => __( 'Taxonomies', 'nucleo' ),
+		fieldGroups: () => __( 'Field groups', 'nucleo' ),
+	};
 	const SUPPORTS = [ 'title', 'editor', 'thumbnail', 'excerpt' ];
 	const SIMPLE_TYPES = [ 'text', 'textarea', 'number', 'url', 'email', 'image', 'date', 'select', 'boolean' ];
 
-	const __ = ( s ) => ( root.wp && root.wp.i18n ? root.wp.i18n.__( s, 'nucleo' ) : s );
+	const { __ } = ( root.wp && root.wp.i18n ) || { __: ( text ) => text };
 
 	/** Modello vuoto. */
 	function emptyModel() {
@@ -50,7 +54,7 @@
 		let node = model;
 		parts.forEach( ( seg, i ) => {
 			if ( i === 0 && SECTIONS[ seg ] ) {
-				out.push( __( SECTIONS[ seg ] ) );
+				out.push( SECTIONS[ seg ]() );
 				node = model ? model[ seg ] : undefined;
 			} else if ( seg === 'fields' && node && ! Array.isArray( node ) ) {
 				node = node.fields;

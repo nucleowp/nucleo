@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Mcp;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\OAuth\CurrentToken;
 use Nucleo\OAuth\Scopes;
 

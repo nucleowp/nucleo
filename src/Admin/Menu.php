@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Admin;
 
+defined('ABSPATH') || exit;
+
 /**
  * Menu Nucleo di primo livello: una voce per pagina, con il contatore della qualità.
  * Le pagine React le monta AdminApp; Agenti e Licenza restano pagine PHP.

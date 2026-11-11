@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Css;
 
+defined('ABSPATH') || exit;
+
 /**
  * Gruppo di stile "motion": preset di animazione con i loro @keyframes, durate, ritardi e una transizione.
  * Un valore non valido non produce dichiarazioni; accepts() e allowed() servono al validatore per segnalarlo.

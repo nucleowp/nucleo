@@ -47,7 +47,7 @@
 	/** Pagina dei documenti, con schede Pages/Posts, ricerca, filtri, paginazione e azioni per riga. */
 	function DocumentsPage() {
 		const { createElement: h, useState } = root.wp.element;
-		const __ = ( s, d ) => root.wp.i18n.__( s, d || 'nucleo' );
+		const { __ } = ( root.wp && root.wp.i18n ) || { __: ( text ) => text };
 		const UI = root.nucleoUI;
 		const shared = root.nucleoShared || {};
 		const admin = root.nucleoAdmin || {};

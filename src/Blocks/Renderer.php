@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Blocks;
 
+defined('ABSPATH') || exit;
+
 interface Renderer
 {
     /** Static HTML of the node. Called at save time only. Use $ctx->renderChildren() for children. */

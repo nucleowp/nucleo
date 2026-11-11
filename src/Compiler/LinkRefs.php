@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Compiler;
 
+defined('ABSPATH') || exit;
+
 /**
  * Riferimenti interni nei campi link: "home", "page:<slug>", "post:<slug>", "<post-type>:<slug>",
  * "term:<tassonomia>/<slug>", con "#ancora" facoltativa. Il documento salvato conserva il simbolo;

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Content;
 
+defined('ABSPATH') || exit;
+
 /**
  * Valori dei campi dei contenuti e dei termini: normali post meta e term meta (docs/contracts/content-model.md).
  * $kind: 'post' oppure 'term'.

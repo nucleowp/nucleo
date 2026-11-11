@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Nucleo\Schema;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Blocks\Registry;
+use Nucleo\Css\CustomRules;
 use RuntimeException;
 
 /**
@@ -68,6 +71,12 @@ final class Migrator
             if (is_int($from) && $from < $manifest->version) {
                 $node = $this->apply($node, $this->migrationsFor($manifest->dir), $from, $manifest->version);
             }
+        }
+
+        // style.custom nella forma vecchia (selettore → dichiarazioni) diventa la lista di regole strutturate.
+        $custom = is_array($node['style'] ?? null) ? ($node['style']['custom'] ?? null) : null;
+        if (is_array($custom) && $custom !== [] && !array_is_list($custom)) {
+            $node['style']['custom'] = CustomRules::fromLegacy($custom);
         }
 
         if (is_array($node['children'] ?? null)) {

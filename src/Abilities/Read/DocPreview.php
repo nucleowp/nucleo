@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Abilities\Read;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Abilities\AbilityDefinition;
 use Nucleo\Abilities\Preview;
 use Nucleo\Services;

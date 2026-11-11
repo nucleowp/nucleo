@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Blocks;
 
+defined('ABSPATH') || exit;
+
 /** Immutable view of one document node. Arrays keep the document shape (see schema/document.schema.json). */
 final class Node
 {

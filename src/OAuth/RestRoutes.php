@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\OAuth;
 
+defined('ABSPATH') || exit;
+
 /**
  * Endpoint REST OAuth: token, revoca e registrazione dinamica.
  * Gli errori seguono RFC 6749 ({error, error_description}) con status 400, salvo dove indicato.
@@ -18,22 +20,32 @@ final class RestRoutes
         add_action('rest_api_init', [self::class, 'routes']);
     }
 
+    /**
+     * Endpoint OAuth pubblici per definizione (RFC 6749, 7009, 7591): il client non ha ancora un utente WordPress.
+     * Ogni handler autentica il client da sé: segreto o PKCE per il token, token da revocare, registrazione
+     * dinamica solo se attiva e con i domini ammessi. Tutti richiedono HTTPS.
+     */
+    public static function publicOAuthEndpoint(): bool
+    {
+        return true;
+    }
+
     public static function routes(): void
     {
         register_rest_route(self::NAMESPACE, '/oauth/token', [
             'methods' => 'POST',
             'callback' => [self::class, 'handleToken'],
-            'permission_callback' => '__return_true',
+            'permission_callback' => [self::class, 'publicOAuthEndpoint'],
         ]);
         register_rest_route(self::NAMESPACE, '/oauth/revoke', [
             'methods' => 'POST',
             'callback' => [self::class, 'handleRevoke'],
-            'permission_callback' => '__return_true',
+            'permission_callback' => [self::class, 'publicOAuthEndpoint'],
         ]);
         register_rest_route(self::NAMESPACE, '/oauth/register', [
             'methods' => 'POST',
             'callback' => [self::class, 'handleRegister'],
-            'permission_callback' => '__return_true',
+            'permission_callback' => [self::class, 'publicOAuthEndpoint'],
         ]);
     }
 
@@ -122,8 +134,10 @@ final class RestRoutes
 
         try {
             $client = (new Server())->registerClient([
-                'client_name' => $body['client_name'] ?? '',
-                'redirect_uris' => $body['redirect_uris'] ?? null,
+                'client_name' => is_string($body['client_name'] ?? null) ? sanitize_text_field($body['client_name']) : '',
+                'redirect_uris' => is_array($body['redirect_uris'] ?? null)
+                    ? array_map(static fn ($uri): string => is_string($uri) ? sanitize_url($uri) : '', $body['redirect_uris'])
+                    : null,
             ], 'dcr');
         } catch (\InvalidArgumentException $e) {
             return self::error('invalid_client_metadata', $e->getMessage());
@@ -181,11 +195,15 @@ final class RestRoutes
         return $out;
     }
 
+    /** Parametro OAuth sanificato all'ingresso: redirect_uri come URL, gli altri come testo semplice. */
     private static function param(\WP_REST_Request $request, string $key): string
     {
         $value = $request->get_param($key);
+        if (!is_string($value)) {
+            return '';
+        }
 
-        return is_string($value) ? $value : '';
+        return $key === 'redirect_uri' ? sanitize_url($value) : sanitize_text_field($value);
     }
 
     private static function error(int|string $code, string $description, int $status = 400): \WP_REST_Response

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Blocks;
 
+defined('ABSPATH') || exit;
+
 /** Parsed block.nucleo.json (see schema/block.schema.json). */
 final class Manifest
 {

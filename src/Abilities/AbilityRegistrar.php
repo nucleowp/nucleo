@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Abilities;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Abilities\Read\CatalogGet;
 use Nucleo\Abilities\Read\CatalogList;
 use Nucleo\Abilities\Read\DocGet;
@@ -40,8 +42,7 @@ final class AbilityRegistrar
             'Write\\MediaUpload', 'Read\\MenuList', 'Write\\MenuSet', 'Write\\SiteOptionsSet', 'Write\\IconsSet', 'Write\\GapReport', 'Write\\MediaFormats', 'Read\\GapList', 'Read\\ComponentsList',
             'Read\\ContentList', 'Read\\ContentGet', 'Write\\ContentUpsert', 'Read\\TermsGet', 'Write\\TermsSet',
             'Read\\Guide', 'Write\\WooCheckoutFieldsSet', 'Write\\WooCheckoutPartsSet'];
-        // Il pacchetto per WordPress.org non contiene queste ability: niente attivazione di plugin da remoto
-        // e niente servizio esterno di critical CSS.
+        // Solo Pro: attivazione di plugin da remoto e servizio esterno di critical CSS. I due Free non le contengono.
 
         return $classes;
     }

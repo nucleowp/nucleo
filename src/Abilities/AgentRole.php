@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Abilities;
 
+defined('ABSPATH') || exit;
+
 /** Ruolo per gli utenti dedicati agli agenti AI: modifica documenti e media, non pubblica e non tocca le opzioni. */
 final class AgentRole
 {

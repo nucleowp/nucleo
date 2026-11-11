@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Compiler;
 
+defined('ABSPATH') || exit;
+
 /**
  * Lingua dell'HTML salvato. Il compilatore scrive nell'HTML etichette tradotte (slider, video, menu).
  * Il salvataggio avviene nella lingua di chi salva: un utente in italiano su un sito in inglese

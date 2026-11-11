@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Abilities\Write;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Abilities\AbilityDefinition;
 use Nucleo\Compiler\SaveOptions;
 use Nucleo\Services;
@@ -21,7 +23,8 @@ final class LayoutConditionsSet implements AbilityDefinition
     {
         return [
             'label' => __('Edit layout conditions', 'nucleo'),
-            'description' => 'Replaces the include, exclude and priority conditions of a layout. The rest of the document does not change. Each condition is {"type", ...keys of the type}, e.g. {"type": "post_type", "value": "prodotto"} or {"type": "post", "value": 12}; unknown types or keys are refused with code layout_condition and the expected format. All types: nucleo/catalog-get topic layouts. baseRevision, if provided, must match the current revision, otherwise it returns conflict. On a published layout an OAuth token also needs the scope nucleo:publish, besides nucleo:design.',
+            'description' => 'Replaces the include, exclude and priority conditions of a layout.'
+                . ' The rest of the document does not change. Each condition is {"type", ...keys of the type}, e.g. {"type": "post_type", "value": "prodotto"} or {"type": "post", "value": 12}; unknown types or keys are refused with code layout_condition and the expected format. All types: nucleo/catalog-get topic layouts. baseRevision, if provided, must match the current revision, otherwise it returns conflict. On a published layout an OAuth token also needs the scope nucleo:publish, besides nucleo:design.',
             'input_schema' => [
                 'type' => 'object',
                 'required' => ['postId', 'conditions'],
@@ -106,6 +109,7 @@ final class LayoutConditionsSet implements AbilityDefinition
 
         return $result->toArray();
     }
+
 
     public function permitted(array $input): bool
     {

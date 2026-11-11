@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Extend;
 
+defined('ABSPATH') || exit;
+
 /**
  * Sorgente dati scritta dallo sviluppatore in un plugin del sito (livello 4).
  * I documenti la usano per nome in nc/collection ("source": "component"); l'MCP vede solo nome e schema.

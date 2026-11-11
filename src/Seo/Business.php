@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Seo;
 
+defined('ABSPATH') || exit;
+
 use WP_Error;
 
 /**

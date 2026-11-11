@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Integrations;
 
+defined('ABSPATH') || exit;
+
 /** Esclude dalla RUCSS e dalla CSS exclusion di WP Rocket il CSS compilato di Nucleo in uploads/nucleo/css. */
 final class CacheCompat
 {

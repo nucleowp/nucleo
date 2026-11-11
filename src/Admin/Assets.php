@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Admin;
 
+defined('ABSPATH') || exit;
+
 /**
  * Risorse condivise dell'area Nucleo e della schermata di modifica, registrate una sola volta per richiesta.
  */

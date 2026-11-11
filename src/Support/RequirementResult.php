@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Support;
 
+defined('ABSPATH') || exit;
+
 /** One environment check. $blocking=true means the plugin must not boot. */
 final class RequirementResult
 {

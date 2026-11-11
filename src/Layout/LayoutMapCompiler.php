@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Layout;
 
+defined('ABSPATH') || exit;
+
 /**
  * Compiles layout documents into a lookup map (area → key → layouts) and an exclusion map.
  * Keys follow docs/contracts/layout-keys.md. Unknown conditions are ignored.

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Blocks\Core;
 
+defined('ABSPATH') || exit;
+
 /** Avvolge un <img> in <picture> con le sorgenti dei formati moderni; senza sorgenti restituisce l'<img> com'è. */
 final class Picture
 {

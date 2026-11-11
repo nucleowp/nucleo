@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Compiler;
 
+defined('ABSPATH') || exit;
+
 use InvalidArgumentException;
 use Nucleo\Bindings\BindingSource;
 use Nucleo\Blocks\Node;

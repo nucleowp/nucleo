@@ -3,7 +3,7 @@
   "version": 1,
   "title": "Embed",
   "category": "media",
-  "description": "YouTube, Vimeo, Google Maps or generic https embed with a static facade; the iframe loads only on click.",
+  "description": "YouTube, Vimeo, Google Maps or another oEmbed provider known to WordPress, with a static facade; the iframe loads only on click.",
   "aiHints": "Always set a descriptive title: it becomes the iframe title and the accessible name of the button. The url must be https.",
   "content": {
     "title": { "type": "string", "translatable": true, "required": true },

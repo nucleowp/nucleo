@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Compiler;
 
+defined('ABSPATH') || exit;
+
 /**
  * Lookup su WordPress dei riferimenti di LinkRefs: solo contenuti pubblicati di tipi visibili e termini di tassonomie visibili.
  * Un riferimento già risolto tiene il suo bersaglio per id: il link segue il contenuto anche dopo un cambio di slug.

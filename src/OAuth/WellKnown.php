@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\OAuth;
 
+defined('ABSPATH') || exit;
+
 /** Metadati RFC 9728 (risorsa protetta) e RFC 8414 (authorization server), serviti su parse_request. */
 final class WellKnown
 {

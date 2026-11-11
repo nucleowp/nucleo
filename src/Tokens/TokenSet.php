@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Tokens;
 
+defined('ABSPATH') || exit;
+
 use InvalidArgumentException;
 use Nucleo\Schema\Sanitizer;
 

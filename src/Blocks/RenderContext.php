@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Blocks;
 
+defined('ABSPATH') || exit;
+
 /** Services a Renderer may use while compiling. */
 interface RenderContext
 {

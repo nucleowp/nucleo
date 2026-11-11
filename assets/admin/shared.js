@@ -15,7 +15,9 @@
 		return area === 'header' || area === 'footer' ? area : 'main';
 	}
 
-	const LAYOUT_AREAS = [ 'header', 'footer', 'single', 'archive', 'popup' ];
+	const LAYOUT_AREAS = [
+		'header', 'footer', 'single', 'archive',
+	];
 
 	/**
 	 * Documento minimo. Per i layout (kind 'layout') l'area va nei meta; il popup ha kind 'popup'.
@@ -56,7 +58,7 @@
 	const el = root.wp && root.wp.element;
 	if ( el ) {
 		const { createElement: h, useState } = el;
-		const __ = ( s, d ) => root.wp.i18n.__( s, d || 'nucleo' );
+		const { __ } = ( root.wp && root.wp.i18n ) || { __: ( text ) => text };
 
 		/** Link all'editor di un documento. urls.editor è la pagina dell'editor senza il parametro post. */
 		function editorUrl( postId ) {

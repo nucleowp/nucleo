@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Support;
 
+defined('ABSPATH') || exit;
+
 /**
  * IP del visitatore per i limiti di frequenza. Predefinito: REMOTE_ADDR.
  * Dietro un reverse proxy il filtro nucleo/trusted_proxies elenca gli IP dei proxy: solo se la richiesta arriva

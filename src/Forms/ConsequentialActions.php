@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Forms;
 
+defined('ABSPATH') || exit;
+
 /**
  * Azioni dei moduli con effetti fuori dal sito (regola R4.4 della guida): webhook, email a terzi,
  * creazione di contenuti e azioni dei componenti. Chi pubblica il modulo chiede prima il consenso all'utente.

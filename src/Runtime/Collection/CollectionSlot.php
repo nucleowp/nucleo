@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Runtime\Collection;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Blocks\DynamicRenderer;
 use Nucleo\Runtime\Slots;
 
@@ -18,8 +20,8 @@ final class CollectionSlot implements DynamicRenderer
             return '';
         }
 
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- filtri e paginazione pubblici della lista, in sola lettura e validati da CollectionState.
-        $state = CollectionState::fromRequest($config, wp_unslash($_GET));
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- filtri e paginazione pubblici della lista, in sola lettura: pickParams legge e sanifica solo i parametri della lista.
+        $state = CollectionState::fromRequest($config, CollectionState::pickParams($config, $_GET));
         $doc = Slots::document();
         $template = is_array($data['template'] ?? null) ? $data['template'] : [];
         $page = CollectionCache::page($doc, $config, $state, $template);

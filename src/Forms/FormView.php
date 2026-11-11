@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Forms;
 
+defined('ABSPATH') || exit;
+
 /** Markup del modulo nativo. Dati dello slot: {node, config: FormConfig::toArray(), class}. */
 final class FormView
 {

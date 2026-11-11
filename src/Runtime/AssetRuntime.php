@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Runtime;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Assets\CriticalCss;
 use Nucleo\Assets\LocalFile;
 use Nucleo\Assets\RulePlanner;
@@ -35,17 +37,6 @@ final class AssetRuntime
     public static function apply(): void
     {
         self::$loaderUrls = [];
-        // Solo pacchetto Pro, solo su pagine prodotto e archivi del negozio: layout Nucleo senza i file classici di WooCommerce.
-        // Prima delle regole: regole e riduzione CSS lavorano sulla coda già alleggerita. La classe si carica solo qui.
-        $woo = 'Nucleo\\Integrations\\Woo\\ProductPageAssets';
-        if (function_exists('is_product') && is_product() && class_exists($woo)) {
-            $woo::apply();
-        } elseif (function_exists('is_shop') && (is_shop() || is_product_taxonomy()) && class_exists($woo)) {
-            $woo::applyArchive();
-        } elseif (function_exists('is_cart') && (is_cart() || is_checkout())) {
-            // Carrello e checkout a blocchi: foglio con i token al posto dei fogli classici. La classe si carica solo qui.
-            \Nucleo\Support\Optional::call('Nucleo\\Integrations\\Woo\\CheckoutAssets', 'enqueue');
-        }
         // Sul frontend normale la classe CssPreview non si carica: il parametro c'è solo nelle anteprime.
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- solo presenza del parametro; CssPreview::mode() verifica manage_options.
         $mode = isset($_GET[self::PREVIEW_PARAM]) ? CssPreview::mode() : null;
@@ -128,7 +119,7 @@ final class AssetRuntime
 
     /**
      * Il loader riceve sempre l'elenco completo: la sua riga 'window.nucleoCss' viene riscritta, non accodata.
-     * Le altre righe 'before' del loader (es. window.ncLazy) restano.
+     * Le altre righe 'before' del loader (es. window.nucleoLazy) restano.
      */
     private static function publishLoader(): void
     {
@@ -205,7 +196,7 @@ final class AssetRuntime
             // Lo stile inline del foglio (wp_add_inline_style) resta nella pagina con un handle senza file.
             $inline = $styles->get_data($handle, 'after');
             if (is_array($inline) && $inline !== []) {
-                $keep = $handle . '-nc-inline';
+                $keep = 'nucleo-inline-' . $handle;
                 wp_register_style($keep, false, [], NUCLEO_VERSION);
                 $styles->add_data($keep, 'after', $inline);
                 wp_enqueue_style($keep);
@@ -220,14 +211,6 @@ final class AssetRuntime
      */
     private static function criticalFor(?string $mode, string $template): ?string
     {
-        if ($mode === 'candidate' || $mode === 'critical') {
-            $css = self::candidateEntry($template)['critical'] ?? null;
-            if (!is_string($css) || $css === '') {
-                return null;
-            }
-            // Come CriticalCss::set: "</style" chiuderebbe il tag inline.
-            return (string) preg_replace('#</style#i', '', $css);
-        }
 
         // CriticalCss si carica solo se esiste un critical salvato: un file in meno sulle richieste comuni.
         return self::store()->get('critical') === null ? null : CriticalCss::get($template);

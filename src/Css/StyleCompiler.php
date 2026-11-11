@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Css;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Blocks\Node;
 use Nucleo\Schema\Sanitizer;
 use Nucleo\Tokens\TokenResolver;
@@ -19,11 +21,7 @@ final class StyleCompiler
     /** Separa il selettore dalla dichiarazione per le chiavi con selettore (PropertyMap::selector). */
     private const SELECTOR_SEP = "\x1F";
 
-    /** Selettore di style.custom: inizia con & e usa solo caratteri sicuri (niente { } ; @ < né commenti). */
-    private const CUSTOM_SELECTOR = '/^&[a-zA-Z0-9_ .:>#()+~*,="\'\[\]-]*$/D';
 
-    /** Proprietà di style.custom: nomi CSS e custom properties (--nome). */
-    private const CUSTOM_PROPERTY = '/^-{0,2}[a-z][a-z0-9-]{0,60}$/D';
 
     /** Nessun caricamento di risorse esterne dai valori di style.custom. */
     private const CUSTOM_URL = '/url\s*\(/i';
@@ -171,8 +169,8 @@ final class StyleCompiler
             $entries[] = [
                 'id' => $node->id,
                 'sig' => self::signature($decls, $inContainer)
-                    . ($hide === [] ? '' : '|hide' . json_encode($hide))
-                    . ($custom === [] ? '' : '|custom' . json_encode($custom)),
+                    . ($hide === [] ? '' : '|hide' . wp_json_encode($hide))
+                    . ($custom === [] ? '' : '|custom' . wp_json_encode($custom)),
                 'container' => $inContainer,
                 'decls' => $decls,
                 'hide' => $hide,
@@ -213,25 +211,21 @@ final class StyleCompiler
     }
 
     /**
-     * style.custom validato: ogni selettore con & e le sue dichiarazioni. Ciò che non è valido si scarta in silenzio.
+     * style.custom validato: ogni regola diventa un selettore costruito da CustomRules, con & al posto della classe del nodo.
+     * Una lista non valida si scarta intera; una dichiarazione con valore non valido si scarta da sola.
      *
      * @return array<string,list<string>> selettore (con &) → dichiarazioni "proprietà:valore"
      */
     private function customRules(mixed $custom): array
     {
-        if (!is_array($custom)) {
+        if (!is_array($custom) || $custom === [] || CustomRules::errors($custom, '') !== []) {
             return [];
         }
 
         $rules = [];
-        foreach ($custom as $selector => $props) {
-            if (!is_string($selector) || preg_match(self::CUSTOM_SELECTOR, $selector) !== 1 || !is_array($props)) {
-                continue;
-            }
-            foreach ($props as $prop => $raw) {
-                if (!is_string($prop) || preg_match(self::CUSTOM_PROPERTY, $prop) !== 1) {
-                    continue;
-                }
+        foreach ($custom as $rule) {
+            $selector = CustomRules::selector($rule, '&');
+            foreach ($rule['css'] as $prop => $raw) {
                 $value = $this->customValue($raw);
                 if ($value !== null) {
                     $rules[$selector][] = $prop . ':' . $value;

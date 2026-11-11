@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\OAuth;
 
+defined('ABSPATH') || exit;
+
 /** Scope OAuth di Nucleo, con il gruppo di ability e la capability WordPress corrispondenti. */
 final class Scopes
 {

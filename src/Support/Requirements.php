@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Support;
 
+defined('ABSPATH') || exit;
+
 /** Environment checks run before the plugin boots. Only "php" and "wp" block. */
 final class Requirements
 {

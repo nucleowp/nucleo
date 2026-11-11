@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Quality;
 
+defined('ABSPATH') || exit;
+
 /** Budget di performance delle regole perf: valore predefinito e filtro per sito. */
 final class Budgets
 {

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Runtime;
 
+defined('ABSPATH') || exit;
+
 /**
  * Anteprima del CSS per gli amministratori: ?nucleo_css=original|candidate|critical|published.
  * Serve alla misura e al controllo dell'ottimizzazione nel browser dell'admin.
@@ -30,7 +32,7 @@ final class CssPreview
             return null;
         }
         // Anteprima in sola lettura: il ruolo è già verificato sopra, il nonce non serve.
-        $mode = sanitize_key($_GET[self::PARAM]); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $mode = sanitize_key(wp_unslash($_GET[self::PARAM])); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
         return in_array($mode, self::MODES, true) ? $mode : null;
     }

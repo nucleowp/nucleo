@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Bindings;
 
+defined('ABSPATH') || exit;
+
 /**
  * Valori fissi di un documento WordPress, letti in compilazione.
  * Solo le pagine hanno valori statici: layout e sezioni dipendono dal contesto di rendering.

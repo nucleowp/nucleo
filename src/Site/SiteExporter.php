@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Site;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Assets\RulesPublisher;
 use Nucleo\Content\ContentReader;
 use Nucleo\Content\TermItems;
@@ -128,7 +130,7 @@ final class SiteExporter
         // blocks lo scrive il salvataggio (versioni dei blocchi): non è contenuto e non deve segnare un cambio.
         unset($doc['blocks']);
 
-        return sha1(json_encode(Services::normalizer()->normalize($doc), JSON_THROW_ON_ERROR));
+        return sha1((string) wp_json_encode(Services::normalizer()->normalize($doc), JSON_THROW_ON_ERROR));
     }
 
     /**
@@ -441,7 +443,7 @@ final class SiteExporter
     /** JSON come content-pull.js: due spazi per livello (PHP ne usa quattro) e a capo finale. */
     private static function contentJson(mixed $data): string
     {
-        $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
+        $json = (string) wp_json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
         // Nel JSON prettificato i rientri sono a inizio riga e le stringhe non contengono a capo: basta dimezzarli.
         $indented = preg_replace_callback('/^(?: {4})+/m', static fn (array $m): string => str_repeat(' ', intdiv(strlen($m[0]), 2)), $json);
 
@@ -451,6 +453,6 @@ final class SiteExporter
     /** @param array<string,mixed>|list<array<string,mixed>> $data */
     private static function json(array $data): string
     {
-        return json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
+        return (string) wp_json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
     }
 }

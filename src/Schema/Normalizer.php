@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Schema;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Blocks\Registry;
 
 /** Completa un documento prima del rendering: schema mancante, default dei settings, riferimenti a sezioni. */

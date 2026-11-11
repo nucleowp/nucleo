@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Runtime\Collection;
 
+defined('ABSPATH') || exit;
+
 /** Una pagina di risultati, già disegnata: è il valore in cache. */
 final class CollectionPage
 {

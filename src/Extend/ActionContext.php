@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Extend;
 
+defined('ABSPATH') || exit;
+
 /** Contesto di un'azione: modulo, documento, post della pagina e IP del visitatore. */
 final class ActionContext
 {

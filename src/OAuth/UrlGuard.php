@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\OAuth;
 
+defined('ABSPATH') || exit;
+
 /**
  * Protezione SSRF per gli URL forniti dai client e verifica dei redirect URI.
  * Il loopback HTTP segue RFC 8252: la porta può variare.

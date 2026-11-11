@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Layout;
 
+defined('ABSPATH') || exit;
+
 /** Picks the layout for a request context, using the maps built by LayoutMapCompiler. */
 final class LayoutResolver
 {

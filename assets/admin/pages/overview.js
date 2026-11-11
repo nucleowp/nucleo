@@ -70,7 +70,7 @@
 		return;
 	}
 	const { createElement: h, useState, Fragment } = el;
-	const __ = ( s, d ) => root.wp.i18n.__( s, d || 'nucleo' );
+	const { __ } = ( root.wp && root.wp.i18n ) || { __: ( text ) => text };
 
 	/** URL di una pagina Nucleo dal menu (nucleoAdmin.pages), con ripiego sul parametro page. */
 	function pageUrl( admin, slug ) {
@@ -366,10 +366,6 @@
 					onClick: dismiss,
 				}, __( "Don't show again", 'nucleo' ) ) ),
 			h( 'div', { className: 'nc-grid' },
-				startCard( 'a', { href: pageUrl( admin, 'nucleo-kits' ) },
-					__( 'Start from a kit', 'nucleo' ),
-					__( 'A complete site with pages, header, footer and design system from a template.', 'nucleo' ),
-					__( 'Choose a kit →', 'nucleo' ) ),
 				startCard( 'a', { href: pageUrl( admin, 'nucleo-agents' ) },
 					__( 'Connect an AI agent', 'nucleo' ),
 					__( 'Connect Claude Desktop, Claude Code or another MCP client and let it build the pages.', 'nucleo' ),

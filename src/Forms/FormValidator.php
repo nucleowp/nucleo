@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Nucleo\Forms;
 
+defined('ABSPATH') || exit;
+
 /** Validazione lato server dei valori inviati. Ignora i campi non dichiarati e i campi context. */
 final class FormValidator
 {
-    private const TEXT_TYPES = ['text', 'textarea', 'email', 'tel', 'url'];
     private const TEL_RE = '/^[0-9 +().-]{5,30}$/D';
     private const NUMBER_RE = '/^-?[0-9]+(\.[0-9]+)?$/D';
     private const DATE_RE = '/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/D';
@@ -50,7 +51,7 @@ final class FormValidator
             if ($type === 'hidden') {
                 $text = (string) $field['value'];
             } else {
-                $text = self::scalar($raw, in_array($type, self::TEXT_TYPES, true));
+                $text = self::scalar($raw, $type);
             }
             if ($text === '') {
                 if ($field['required'] === true) {
@@ -190,7 +191,7 @@ final class FormValidator
             if (!is_string($item) && !is_int($item)) {
                 continue;
             }
-            $text = trim((string) $item);
+            $text = sanitize_text_field((string) $item);
             if ($text !== '') {
                 $out[] = $text;
             }
@@ -199,8 +200,8 @@ final class FormValidator
         return array_values(array_unique($out));
     }
 
-    /** Valore scalare normalizzato: stringa senza tag (se testo) e senza spazi ai bordi. */
-    private static function scalar(mixed $raw, bool $stripTags): string
+    /** Valore scalare sanificato per tipo di campo: email, URL, testo su più righe, testo semplice per gli altri. */
+    private static function scalar(mixed $raw, string $type): string
     {
         if (is_bool($raw)) {
             return $raw ? '1' : '';
@@ -209,10 +210,13 @@ final class FormValidator
             return '';
         }
         $text = (string) $raw;
-        if ($stripTags) {
-            $text = wp_strip_all_tags($text);
-        }
 
-        return trim($text);
+        return trim(match ($type) {
+            // Un indirizzo non valido resta testo: checkText lo segnala come errore invece di scartarlo.
+            'email' => sanitize_email($text) !== '' ? sanitize_email($text) : sanitize_text_field($text),
+            'url' => sanitize_url($text),
+            'textarea' => sanitize_textarea_field($text),
+            default => sanitize_text_field($text),
+        });
     }
 }

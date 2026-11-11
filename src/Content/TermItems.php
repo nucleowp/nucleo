@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Content;
 
+defined('ABSPATH') || exit;
+
 use WP_Error;
 use WP_Taxonomy;
 use WP_Term;

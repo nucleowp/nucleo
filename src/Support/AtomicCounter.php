@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Support;
 
+defined('ABSPATH') || exit;
+
 /**
  * Contatore atomico con scadenza, per limiti di frequenza e tentativi.
  * Con una object cache persistente usa wp_cache_add + wp_cache_incr (atomici su Redis e Memcached);

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Compiler;
 
+defined('ABSPATH') || exit;
+
 use InvalidArgumentException;
 use Nucleo\Services;
 use Nucleo\Tokens\FontFallback;

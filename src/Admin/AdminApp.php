@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Admin;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\OAuth\Authorize;
 use Nucleo\Support\Optional;
 
@@ -16,7 +18,6 @@ final class AdminApp
     private const BREAKPOINTS = ['md' => 768, 'lg' => 1024, 'xl' => 1920];
     private const EDITOR_SLUG = 'nucleo-editor';
     private const AGENTS = 'nucleo-agents';
-    private const JSON_FLAGS = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
 
     public static function register(): void
     {
@@ -31,7 +32,9 @@ final class AdminApp
             wp_die(esc_html__('You do not have permission to access this page.', 'nucleo'), '', ['response' => 403]);
         }
 
-        echo '<div class="wrap nucleo-admin">' . Icons::sprite() . '<div id="nucleo-admin-app" data-page="' . esc_attr($page) . '"></div></div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG statico del plugin, nome icona validato da Icons.
+        echo '<div class="wrap nucleo-admin">';
+        echo wp_kses(Icons::sprite(), \Nucleo\Support\AllowedHtml::svg());
+        printf('<div id="nucleo-admin-app" data-page="%s"></div></div>', esc_attr($page));
     }
 
     /**
@@ -156,7 +159,7 @@ final class AdminApp
         // Prima del primo script (nucleo-ui): le pagine leggono la configurazione già al caricamento.
         wp_add_inline_script(
             'nucleo-ui',
-            'window.nucleoAdmin = ' . (wp_json_encode(self::config(), self::JSON_FLAGS) ?: '{}') . ';',
+            'window.nucleoAdmin = ' . (wp_json_encode(self::config()) ?: '{}') . ';',
             'before'
         );
     }

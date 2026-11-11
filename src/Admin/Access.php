@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Admin;
 
+defined('ABSPATH') || exit;
+
 /**
  * Risolve le regole di Registry per l'utente corrente: ok | hidden | locked | explain | readonly.
  * Ordine: capability → feature → plugin → edizione → scrittura; vince la prima condizione che manca.

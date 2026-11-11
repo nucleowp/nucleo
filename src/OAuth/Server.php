@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\OAuth;
 
+defined('ABSPATH') || exit;
+
 /**
  * Authorization server OAuth 2.1 di Nucleo: client, codici di autorizzazione, token e revoca.
  * Nel database finisce solo l'hash dei token. Il codice è monouso (revoked = 1 significa "usato"),

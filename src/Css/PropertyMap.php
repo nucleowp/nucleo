@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Css;
 
+defined('ABSPATH') || exit;
+
 /**
  * Maps document style keys (camelCase) to CSS properties and supports.style groups.
  * Numbers get "px" unless the key is unitless.

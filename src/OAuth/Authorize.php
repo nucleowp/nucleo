@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\OAuth;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Admin\Icons;
 
 /**
@@ -64,11 +66,7 @@ final class Authorize
         }
 
         $isPost = sanitize_text_field(wp_unslash((string) ($_SERVER['REQUEST_METHOD'] ?? ''))) === 'POST';
-        // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended -- OAuth: la GET è la richiesta del client; la POST verifica il nonce in decide() prima di approvare o negare.
-        $input = wp_unslash($isPost ? $_POST : $_GET);
-        if (!is_array($input)) {
-            $input = [];
-        }
+        $input = self::input($isPost);
 
         if ($isPost) {
             try {
@@ -291,6 +289,43 @@ final class Authorize
         return rest_url('nucleo/v1/mcp');
     }
 
+    /** Parametri OAuth letti dalla richiesta. */
+    private const URL_KEYS = ['redirect_uri', 'resource'];
+    private const TEXT_KEYS = ['client_id', 'code_challenge', 'code_challenge_method', 'response_type', 'scope', 'state', '_wpnonce', 'decision'];
+
+    /**
+     * Legge dalla richiesta solo le chiavi OAuth note, ciascuna sanificata: gli URL con sanitize_url, il resto come
+     * testo, grant come lista di scope.
+     * @return array<string,string|list<string>>
+     */
+    private static function input(bool $isPost): array
+    {
+        // phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended -- OAuth: la GET è la richiesta del client; la POST verifica il nonce in decide() prima di approvare o negare.
+        $input = [];
+        foreach (self::URL_KEYS as $key) {
+            if ($isPost && isset($_POST[$key]) && is_string($_POST[$key])) {
+                $input[$key] = sanitize_url(wp_unslash($_POST[$key]));
+            } elseif (!$isPost && isset($_GET[$key]) && is_string($_GET[$key])) {
+                $input[$key] = sanitize_url(wp_unslash($_GET[$key]));
+            }
+        }
+        foreach (self::TEXT_KEYS as $key) {
+            if ($isPost && isset($_POST[$key]) && is_string($_POST[$key])) {
+                $input[$key] = sanitize_text_field(wp_unslash($_POST[$key]));
+            } elseif (!$isPost && isset($_GET[$key]) && is_string($_GET[$key])) {
+                $input[$key] = sanitize_text_field(wp_unslash($_GET[$key]));
+            }
+        }
+        $grant = $isPost && isset($_POST['grant']) && is_array($_POST['grant'])
+            ? array_map('sanitize_text_field', wp_unslash($_POST['grant']))
+            : [];
+        // sanitize_text_field restituisce '' per un valore che non è testo: le voci vuote si scartano.
+        $input['grant'] = array_values(array_filter($grant, static fn (mixed $scope): bool => is_string($scope) && $scope !== ''));
+        // phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
+
+        return $input;
+    }
+
     /** @param array<string,mixed> $q */
     private static function str(array $q, string $key): string
     {
@@ -358,11 +393,11 @@ final class Authorize
         ));
         ?>
         <div class="wrap nucleo-admin">
-            <?php echo Icons::sprite(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG statico del plugin, nome icona validato da Icons. ?>
+            <?php echo wp_kses(Icons::sprite(), \Nucleo\Support\AllowedHtml::svg()); ?>
             <div class="nc-card" style="max-width: 560px; margin: 0 auto;">
                 <div class="nc-card__head">
                     <div class="nc-page__intro">
-                        <?php echo Icons::tile('nc-accesso'); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- SVG statico del plugin, nome icona validato da Icons. ?>
+                        <?php echo wp_kses(Icons::tile('nc-accesso'), \Nucleo\Support\AllowedHtml::svg()); ?>
                         <div>
                             <span class="nc-page__kicker"><?php esc_html_e('Nucleo · access request', 'nucleo'); ?></span>
                             <h1 tabindex="-1" class="nc-page__title"><?php esc_html_e('Authorize AI agent', 'nucleo'); ?></h1>
@@ -410,7 +445,7 @@ final class Authorize
                             <ul style="list-style: none; margin: 0; padding: 0;">
                                 <?php foreach ($request['scopes'] as $scope) : ?>
                                     <?php $allowed = in_array($scope, $grantable, true); ?>
-                                    <li class="<?php echo $allowed ? '' : 'nc-muted'; ?>" style="padding: 12px 0; border-top: 1px solid var(--nc-border);">
+                                    <li class="<?php echo esc_attr($allowed ? '' : 'nc-muted'); ?>" style="padding: 12px 0; border-top: 1px solid var(--nc-border);">
                                         <label class="nc-check" style="display: flex; gap: 12px; align-items: flex-start;">
                                             <input type="checkbox" name="grant[]" value="<?php echo esc_attr($scope); ?>"
                                                 <?php checked($allowed); ?> <?php disabled(!$allowed); ?>>

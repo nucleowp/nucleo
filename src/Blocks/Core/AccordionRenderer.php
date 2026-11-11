@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Blocks\Core;
 
+defined('ABSPATH') || exit;
+
 use Nucleo\Blocks\Node;
 use Nucleo\Blocks\Renderer;
 use Nucleo\Blocks\RenderContext;
@@ -77,11 +79,9 @@ final class AccordionRenderer implements Renderer
             return '';
         }
 
-        $json = wp_json_encode(
-            ['@context' => 'https://schema.org', '@type' => 'FAQPage', 'mainEntity' => $entities],
-            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_THROW_ON_ERROR,
-        );
+        // Senza flag wp_json_encode escapa "/": "</script>" nel testo diventa "<\/script>".
+        $json = wp_json_encode(['@context' => 'https://schema.org', '@type' => 'FAQPage', 'mainEntity' => $entities]);
 
-        return '<script type="application/ld+json">' . $json . '</script>';
+        return is_string($json) ? '<script type="application/ld+json">' . $json . '</script>' : '';
     }
 }
