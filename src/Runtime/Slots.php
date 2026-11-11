@@ -47,6 +47,7 @@ final class Slots
         'nc/native-form' => 'Nucleo\\Forms\\NativeFormSlot',
         'nc/repeater' => 'Nucleo\\Blocks\\Core\\RepeaterRenderer',
         'nc/query' => 'Nucleo\\Blocks\\Core\\QueryRenderer',
+        // Solo Pro: senza il modulo multilingua il selettore non mostra nulla. I due Free non lo contengono.
         // Phase 1 names, kept for documents compiled before Phase 2.
         'post.title' => 'Nucleo\\Blocks\\Core\\PostTitleRenderer',
         'post.date' => 'Nucleo\\Blocks\\Core\\PostMetaRenderer',

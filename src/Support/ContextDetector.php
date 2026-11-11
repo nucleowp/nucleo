@@ -25,6 +25,21 @@ final class ContextDetector
         $this->isAdmin = $isAdmin ?? static fn (): bool => function_exists('is_admin') && is_admin();
     }
 
+    /**
+     * Vero se la richiesta va al server REST. Pura: si usa prima di rest_api_init, quando REST_REQUEST non c'è ancora.
+     * Con rest_route decide quello; altrimenti il percorso contiene /<prefisso>/ (anche dopo una directory di lingua).
+     */
+    public static function isRestPath(string $uri, ?string $restRoute, string $restPrefix): bool
+    {
+        if ($restRoute !== null) {
+            return true;
+        }
+        $prefix = trim($restPrefix, '/');
+        $path = wp_parse_url($uri, PHP_URL_PATH);
+
+        return $prefix !== '' && is_string($path) && str_contains($path . '/', '/' . $prefix . '/');
+    }
+
     public function detect(): Context
     {
         if (($this->isCli)()) {

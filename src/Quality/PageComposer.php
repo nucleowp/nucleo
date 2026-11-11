@@ -138,6 +138,7 @@ final class PageComposer
         $resolver = new LayoutResolver(
             is_array($artifact['map'] ?? null) ? $artifact['map'] : [],
             is_array($artifact['exclude'] ?? null) ? $artifact['exclude'] : [],
+            is_array($artifact['translations'] ?? null) ? $artifact['translations'] : [],
         );
 
         // Stesse regole del frontend: layout "none", scelte della pagina, product al posto di single.

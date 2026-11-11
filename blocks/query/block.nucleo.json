@@ -13,7 +13,7 @@
     "term": { "type": "string", "default": "" },
     "relatedTo": { "type": "string", "default": "" },
     "orderby": { "type": "string", "enum": ["date", "title"], "default": "date" },
-    "empty": { "type": "string", "default": "No content" }
+    "empty": { "type": "string", "translatable": true, "default": "No content" }
   },
   "supports": {
     "style": ["spacing", "layout", "typography", "color", "position", "motion"],

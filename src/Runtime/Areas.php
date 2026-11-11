@@ -52,6 +52,7 @@ final class Areas
         $resolver = new LayoutResolver(
             is_array($artifact['map'] ?? null) ? $artifact['map'] : [],
             is_array($artifact['exclude'] ?? null) ? $artifact['exclude'] : [],
+            is_array($artifact['translations'] ?? null) ? $artifact['translations'] : [],
         );
         $post = get_queried_object();
         $postId = is_singular() && $post instanceof \WP_Post ? $post->ID : 0;
@@ -228,6 +229,8 @@ final class Areas
             }
             $hit = self::pageOverride($area, $postId) ?? $resolver->resolve($area, $context);
             if (is_array($hit)) {
+                // Un layout tradotto non entra nella mappa: si serve la traduzione del layout scelto.
+                $hit['layout'] = $resolver->localized($hit['layout'], $context);
                 $plan[$area] = $hit;
             }
         }

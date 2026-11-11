@@ -11,7 +11,7 @@
     "responsiveMode": { "type": "string", "enum": ["media", "container"] },
     "anchor": { "type": "string" },
     "href": { "type": "string" },
-    "label": { "type": "string" }
+    "label": { "type": "string", "translatable": true }
   },
   "supports": {
     "style": ["spacing", "size", "color", "border", "effects", "layout", "position", "motion"],

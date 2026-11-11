@@ -8,7 +8,7 @@
   "content": {},
   "settings": {
     "homeLabel": {
-      "type": "string",
+      "type": "string", "translatable": true,
       "default": "Home"
     },
     "archive": {

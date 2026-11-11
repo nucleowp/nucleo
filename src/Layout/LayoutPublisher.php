@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Layout;
 
+use Nucleo\Compiler\Translated;
+
 defined('ABSPATH') || exit;
 
 use Nucleo\Services;
@@ -160,7 +162,14 @@ final class LayoutPublisher
         $store = Services::store();
 
         $layouts = [];
+        $translations = [];
         foreach (self::publishedIds() as $id) {
+            // Una traduzione segue le condizioni del suo originale: resta fuori dalla mappa.
+            $source = Translated::source($id);
+            if ($source !== null) {
+                $translations[$source['id']][$source['lang']] = $id;
+                continue;
+            }
             $layout = self::describe($id);
             if ($layout !== null) {
                 $layouts[] = $layout;
@@ -168,7 +177,7 @@ final class LayoutPublisher
         }
 
         $compiled = (new LayoutMapCompiler())->compile($layouts, self::descendants(...));
-        $store->put('layouts', $compiled);
+        $store->put('layouts', $compiled + ['translations' => $translations]);
 
         $unpublished = get_posts([
             'post_type' => self::POST_TYPE,

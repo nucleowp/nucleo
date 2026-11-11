@@ -12,9 +12,22 @@ final class LayoutResolver
     /**
      * @param array<string, array<string, list<array{0:int,1:int}|array{0:int,1:int,2:list<string>}>>> $map
      * @param array<string, array<string, list<int>>> $exclude
+     * @param array<int|string, array<string, int>> $translations id del layout originale → lingua → id della traduzione
      */
-    public function __construct(private readonly array $map, private readonly array $exclude)
+    public function __construct(private readonly array $map, private readonly array $exclude, private readonly array $translations = [])
     {
+    }
+
+    /**
+     * Traduzione del layout nella lingua del contesto; il layout stesso se la traduzione non c'è.
+     * @param array<string, mixed> $context
+     */
+    public function localized(int $layout, array $context): int
+    {
+        $language = $context['language'] ?? null;
+        $translated = is_string($language) ? ($this->translations[$layout][$language] ?? null) : null;
+
+        return is_int($translated) && $translated > 0 ? $translated : $layout;
     }
 
     /**

@@ -112,6 +112,17 @@ final class FontImporter
         return $entries;
     }
 
+    /**
+     * URL relativo alla radice se l'host è quello del sito: il CSS servito dal dominio di una lingua (WPML)
+     * carica i font dallo stesso dominio, senza CORS. Un host diverso (CDN) resta assoluto.
+     */
+    private static function sameSiteRelative(string $url): string
+    {
+        $host = wp_parse_url($url, PHP_URL_HOST);
+
+        return is_string($host) && $host === wp_parse_url(home_url(), PHP_URL_HOST) ? wp_make_link_relative($url) : $url;
+    }
+
     /** @font-face locali con font-display:swap, una per file installato. */
     public static function fontFaceCss(): string
     {
@@ -123,7 +134,7 @@ final class FontImporter
                 $face['family'],
                 $face['style'],
                 $face['weight'],
-                $face['url'],
+                self::sameSiteRelative($face['url']),
                 $face['range'] !== '' ? 'unicode-range:' . $face['range'] . ';' : '',
             );
         }
@@ -149,11 +160,12 @@ final class FontImporter
      */
     public static function preloads(): array
     {
-        return self::preloadUrls(
+        // Stesso dominio del font in @font-face: un precaricamento da un altro dominio scarica il file due volte.
+        return array_map([self::class, 'sameSiteRelative'], self::preloadUrls(
             self::installed(),
             Services::tokens()->raw('$font.body') ?? '',
             Services::tokens()->raw('$font.heading') ?? '',
-        );
+        ));
     }
 
     /**

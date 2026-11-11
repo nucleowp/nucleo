@@ -9,6 +9,7 @@ defined('ABSPATH') || exit;
 use Nucleo\Blocks\Node;
 use Nucleo\Blocks\Renderer;
 use Nucleo\Blocks\RenderContext;
+use Nucleo\Compiler\Translated;
 
 /**
  * Markup (contratto tra renderer, style.css e view.js):
@@ -38,6 +39,8 @@ final class MenuRenderer implements Renderer
             return '';
         }
 
+        // In una traduzione si usa il menu tradotto, se esiste.
+        $menuId = Translated::id($menuId, 'nav_menu');
         $menu = wp_get_nav_menu_object($menuId);
         if (!$menu) {
             return '';

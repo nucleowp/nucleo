@@ -59,6 +59,9 @@ final class DocumentService
 
     private static bool $writing = false;
 
+    /** Vero durante recompile(): la scrittura rigenera l'uscita dello stesso documento, senza modificarlo. */
+    private static bool $recompiling = false;
+
     /**
      * Sezioni del dry-run in corso (push --dry-run), per slug: i documenti successivi dello stesso dry-run
      * le espandono come nel push vero, anche se il post non esiste ancora. Null fuori da planning().
@@ -134,6 +137,11 @@ final class DocumentService
     public static function writing(): bool
     {
         return self::$writing;
+    }
+
+    public static function recompiling(): bool
+    {
+        return self::$recompiling;
     }
 
     /** @param array<string,mixed> $doc */
@@ -273,6 +281,17 @@ final class DocumentService
     /** Ricompila il documento corrente: niente nuova revisione né voce di storico. */
     public function recompile(int $postId): SaveResult
     {
+        $previous = self::$recompiling;
+        self::$recompiling = true;
+        try {
+            return $this->recompileLocked($postId);
+        } finally {
+            self::$recompiling = $previous;
+        }
+    }
+
+    private function recompileLocked(int $postId): SaveResult
+    {
         return $this->locked($postId, false, fn (): SaveResult => self::scoped(function () use ($postId): SaveResult {
             $found = $this->repository->find($postId);
             if ($found === null || $found['document'] === null) {
@@ -291,7 +310,7 @@ final class DocumentService
                 return $this->failure($postId, $found['revision'], 'invalid_document', __('Invalid document after a section change: the previous version stays online.', 'nucleo'), $list);
             }
             // Una sezione cambiata può introdurre problemi bloccanti: su un post pubblicato resta la versione precedente.
-            $compiled = ContentLocale::run(ContentLocale::forPost($postId), fn () => $this->compiler->compile($doc, $this->bindingsFor($postId, $doc)));
+            $compiled = ContentLocale::runForPost($postId, fn () => $this->compiler->compile($doc, $this->bindingsFor($postId, $doc)));
             $report = $this->qualityOf($postId, $doc, $expansion, $this->storedAcks($postId, $doc), strlen($compiled->css));
             if ($report->blocking() && self::isPublished($postId)) {
                 $quality = $report->toArray()['quality'];
@@ -390,7 +409,7 @@ final class DocumentService
         }
 
         // Si compila prima della qualità: il peso CSS valutato è quello del documento che si salva, non il file precedente.
-        $compiled = ContentLocale::run(ContentLocale::forPost($postId), fn () => $this->compiler->compile($doc, $this->bindingsFor($postId, $doc)));
+        $compiled = ContentLocale::runForPost($postId, fn () => $this->compiler->compile($doc, $this->bindingsFor($postId, $doc)));
         $acks = self::mergeAcks($this->storedAcks($postId, $doc), $o->acknowledge);
         $report = $this->qualityOf($postId, $doc, $expansion, $acks, strlen($compiled->css), $o->postType);
         $quality = $report->toArray()['quality'];
@@ -910,6 +929,13 @@ final class DocumentService
      */
     public function prepare(array $doc, int $postId = 0, ?string $self = null): Expansion
     {
+        // Sezioni e link si cercano nella lingua del post: in una traduzione puntano alle versioni tradotte.
+        return ContentLocale::runForPost($postId, fn (): Expansion => $this->expand($doc, $postId, $self));
+    }
+
+    /** @param array<string,mixed> $doc */
+    private function expand(array $doc, int $postId, ?string $self): Expansion
+    {
         $doc = $this->normalizer->normalize($doc, fn (string $ref): ?array => $this->resolveRef($ref));
         if ($self === null && $postId > 0 && get_post_type($postId) === PostTypes::SECTION) {
             $self = (string) get_post_field('post_name', $postId);
@@ -995,6 +1021,8 @@ final class DocumentService
             'fields' => 'ids',
         ]);
         $id = (int) ($ids[0] ?? 0);
+        // La sezione si cerca per slug in tutte le lingue: si usa la sua traduzione nella lingua della compilazione.
+        $id = $id > 0 ? Translated::id($id, PostTypes::SECTION) : 0;
         $found = $id > 0 ? $this->repository->find($id) : null;
         if ($found === null || $found['document'] === null) {
             return null;

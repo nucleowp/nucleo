@@ -9,7 +9,7 @@
   "settings": {
     "field": { "type": "string", "default": "" },
     "tag": { "type": "string", "enum": ["div", "ul", "ol"], "default": "div" },
-    "empty": { "type": "string", "default": "" }
+    "empty": { "type": "string", "translatable": true, "default": "" }
   },
   "supports": {
     "style": ["spacing", "layout", "typography", "color", "motion"],

@@ -41,7 +41,7 @@ final class AbilityRegistrar
             'Read\\CssStatus', 'Write\\CssOptimize', 'Write\\CssOptimizeApply', 'Write\\CssOptimizeOff',
             'Write\\MediaUpload', 'Read\\MenuList', 'Write\\MenuSet', 'Write\\SiteOptionsSet', 'Write\\IconsSet', 'Write\\GapReport', 'Write\\MediaFormats', 'Read\\GapList', 'Read\\ComponentsList',
             'Read\\ContentList', 'Read\\ContentGet', 'Write\\ContentUpsert', 'Read\\TermsGet', 'Write\\TermsSet',
-            'Read\\Guide', 'Write\\WooCheckoutFieldsSet', 'Write\\WooCheckoutPartsSet'];
+            'Read\\Guide', 'Read\\WpmlCheck', 'Write\\WooCheckoutFieldsSet', 'Write\\WooCheckoutPartsSet'];
         // Solo Pro: attivazione di plugin da remoto e servizio esterno di critical CSS. I due Free non le contengono.
 
         return $classes;

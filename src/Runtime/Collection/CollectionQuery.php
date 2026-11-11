@@ -688,6 +688,19 @@ final class CollectionQuery
     }
 
     /**
+     * Etichetta di un'opzione del modello nella lingua corrente. Il filtro nucleo/model_text la legge da una mappa
+     * già pronta (ModelTexts del plugin multilingua): nessuna query.
+     * @param array<string,mixed>|null $field
+     */
+    private static function modelText(?array $field, string $value, string $label): string
+    {
+        $key = is_string($field['key'] ?? null) ? $field['key'] : '';
+        $translated = $key === '' ? $label : apply_filters('nucleo/model_text', $label, 'field:' . $key . ':option:' . $value);
+
+        return is_string($translated) && $translated !== '' ? $translated : $label;
+    }
+
+    /**
      * Opzioni del campo select del modello: voci stringa, oppure {value, label}.
      * @param array<string,mixed>|null $field
      * @return list<array{value:string,label:string}>
@@ -697,9 +710,10 @@ final class CollectionQuery
         $options = [];
         foreach ($field['options'] ?? [] as $option) {
             if (is_string($option)) {
-                $options[] = ['value' => $option, 'label' => $option];
+                $options[] = ['value' => $option, 'label' => self::modelText($field, $option, $option)];
             } elseif (is_array($option) && is_string($option['value'] ?? null)) {
-                $options[] = ['value' => $option['value'], 'label' => is_string($option['label'] ?? null) ? $option['label'] : $option['value']];
+                $label = is_string($option['label'] ?? null) ? $option['label'] : $option['value'];
+                $options[] = ['value' => $option['value'], 'label' => self::modelText($field, $option['value'], $label)];
             }
         }
 

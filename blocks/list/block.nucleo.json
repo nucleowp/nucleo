@@ -6,7 +6,7 @@
   "description": "Bulleted list, optionally with an icon per item.",
   "aiHints": "Its parts for style.parts are item and icon (the svg of each item), for example style.parts.icon.color, applied to the icons.",
   "content": {
-    "items": { "type": "array", "items": { "type": "string" }, "required": true }
+    "items": { "type": "array", "translatable": true, "items": { "type": "string" }, "required": true }
   },
   "settings": {
     "icon": { "type": "string" }

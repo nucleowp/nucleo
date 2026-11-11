@@ -42,6 +42,7 @@ final class ModelRepository
     {
         update_option(self::OPTION, $model, false);
         Services::store()->put(self::ARTIFACT, $model);
+        do_action('nucleo/model_saved', $model);
     }
 
     /** Riscrive l'artefatto dal database (StoreMaintenance::rebuild). Senza modello salvato cancella l'artefatto. */

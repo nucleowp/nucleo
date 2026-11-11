@@ -7,6 +7,7 @@ namespace Nucleo\Runtime\Collection;
 defined('ABSPATH') || exit;
 
 use Nucleo\Abilities\RateLimiter;
+use Nucleo\Compiler\ContentLocale;
 use Nucleo\Support\ClientIp;
 
 /** GET nucleo/v1/collection/<doc>/<node>: frammento HTML dei risultati e conteggi. */
@@ -64,18 +65,24 @@ final class CollectionRest
         $params = CollectionState::pickParams($config, $query);
         $state = CollectionState::fromRequest($config, $params);
         $template = is_array($data['template'] ?? null) ? $data['template'] : [];
-        $page = CollectionCache::page($doc, $config, $state, $template);
         $append = ($query['append'] ?? null) === '1';
 
-        $response = new \WP_REST_Response([
-            'ok' => true,
-            'html' => CollectionView::results($data, $config, $state, $page, $append),
-            'count' => $page->total,
-            'page' => $page->page,
-            'pages' => $page->pages,
-            'counts' => $page->counts,
-            'status' => CollectionView::countText($data, $page->total),
-        ]);
+        // Query e schede nella lingua del documento: con un plugin multilingua il documento è la traduzione di una lingua.
+        // La cache distingue già per documento.
+        $body = ContentLocale::runForPost($post->ID, static function () use ($doc, $config, $state, $template, $data, $append): array {
+            $page = CollectionCache::page($doc, $config, $state, $template);
+
+            return [
+                'ok' => true,
+                'html' => CollectionView::results($data, $config, $state, $page, $append),
+                'count' => $page->total,
+                'page' => $page->page,
+                'pages' => $page->pages,
+                'counts' => $page->counts,
+                'status' => CollectionView::countText($data, $page->total),
+            ];
+        });
+        $response = new \WP_REST_Response($body);
         $response->header('Cache-Control', self::CACHE_CONTROL);
 
         return $response;

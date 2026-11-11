@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.5.0 · 2026-11-11
+
+* Pro: integrazione con WPML. I testi di ogni pagina Nucleo vanno a WPML come pacchetto di stringhe; quando la traduzione è pronta Nucleo compila la pagina tradotta, con HTML, CSS e runtime della sua lingua.
+* Pro: layout, sezioni, menu, logo e campi collegati seguono la lingua della pagina. Tipi, tassonomie e campi del modello di contenuto si dichiarano a WPML da soli.
+* Pro: i link interni portano alla traduzione della pagina collegata nei tre modi di URL di WPML; un cambio di slug o di modo ricompila le pagine interessate.
+* Pro: se cambia un testo dell'originale, WPML segna la traduzione da aggiornare e la pagina tradotta mantiene la traduzione precedente; i cambi di sola struttura arrivano alle traduzioni da soli.
+* Pro: blocco Selettore di lingua (nc/language-switcher) per WPML e Polylang.
+* Pro: ability nucleo/wpml-check e regole wpml.* nel controllo di qualità del sito: modo dell'integrazione, versione di WPML, traduzioni non ricostruite o non aggiornate.
+* Da sapere: integrazione provata con WPML 5.3.0; con una versione successiva il controllo di qualità mostra un avviso.
+
 ## 0.4.4 · 2026-11-10
 
 * Sicurezza: endpoint OAuth, moduli nativi e campi personalizzati leggono solo le chiavi attese e sanificano ogni valore per tipo.

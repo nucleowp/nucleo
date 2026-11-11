@@ -84,6 +84,7 @@ final class Scopes
         'terms-set' => self::WRITE,
         'guide' => self::READ,
         'mail-log' => self::ADMIN,
+        'wpml-check' => self::ADMIN,
     ];
 
     private const CAPABILITIES = [

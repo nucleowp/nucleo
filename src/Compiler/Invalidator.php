@@ -191,6 +191,11 @@ final class Invalidator
     {
         $slug = preg_replace('/__trashed$/', '', (string) get_post_field('post_name', $postId));
         $ids = self::dependents('section:' . $postId);
+        // Traduzione di una sezione: le pagine compilate prima che esistesse dipendono dall'originale.
+        $source = Translated::source($postId);
+        if ($source !== null) {
+            $ids = array_merge($ids, self::dependents('section:' . $source['id']));
+        }
         if ($slug !== '' && $slug !== null) {
             $ids = array_merge($ids, self::dependents('section-slug:' . $slug));
         }
@@ -251,9 +256,26 @@ final class Invalidator
         RebuildQueue::enqueue(array_values(array_map('intval', $ids)));
     }
 
+    /** Menu modificato: anche le pagine delle altre lingue, che dipendono dall'ID del menu originale. */
     public static function onMenuChanged(int $menuId): void
     {
-        RebuildQueue::enqueue(self::dependents('menu:' . $menuId));
+        $ids = [];
+        foreach (Translated::siblings($menuId, 'nav_menu') as $id) {
+            $ids = array_merge($ids, self::dependents('menu:' . $id));
+        }
+        RebuildQueue::enqueue(array_values(array_unique($ids)));
+    }
+
+    /**
+     * Traduzione collegata o scollegata da un plugin multilingua: i link verso il contenuto cambiano bersaglio
+     * nelle pagine delle altre lingue.
+     */
+    public static function onTranslationLinked(int $postId): void
+    {
+        $post = get_post($postId);
+        if ($post instanceof WP_Post) {
+            self::rebuildLinks($post);
+        }
     }
 
     public static function onTransition(string $newStatus, string $oldStatus, WP_Post $post): void
@@ -319,7 +341,10 @@ final class Invalidator
         $children = $taxonomy !== '' ? get_term_children($termId, $taxonomy) : [];
         $ids = [];
         foreach (array_merge([$termId], is_array($children) ? $children : []) as $id) {
-            $ids = array_merge($ids, self::dependents('link:term:' . (int) $id));
+            // Anche le traduzioni del termine: una pagina compilata prima della traduzione linka l'originale.
+            foreach ($taxonomy !== '' ? Translated::siblings((int) $id, $taxonomy) : [(int) $id] as $sibling) {
+                $ids = array_merge($ids, self::dependents('link:term:' . $sibling));
+            }
         }
         $term = $taxonomy !== '' ? get_term($termId, $taxonomy) : null;
         if ($term instanceof \WP_Term) {
@@ -344,7 +369,10 @@ final class Invalidator
         }
         $ids = [];
         foreach ($posts as $item) {
-            $ids = array_merge($ids, self::dependents('link:post:' . $item->ID));
+            // Anche le traduzioni: una pagina compilata prima che la traduzione esistesse linka l'originale.
+            foreach (Translated::siblings($item->ID, $item->post_type) as $sibling) {
+                $ids = array_merge($ids, self::dependents('link:post:' . $sibling));
+            }
             $slug = (string) preg_replace('/__trashed$/', '', is_post_type_hierarchical($item->post_type) ? (string) get_page_uri($item) : $item->post_name);
             if ($slug !== '') {
                 $ids = array_merge($ids, self::dependents('link-slug:' . $item->post_type . ':' . $slug));

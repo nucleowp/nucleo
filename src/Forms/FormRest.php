@@ -7,6 +7,7 @@ namespace Nucleo\Forms;
 defined('ABSPATH') || exit;
 
 use Nucleo\Abilities\RateLimiter;
+use Nucleo\Compiler\ContentLocale;
 use Nucleo\Compiler\LinkRefs;
 use Nucleo\Compiler\LinkTargets;
 use Nucleo\Support\ClientIp;
@@ -94,7 +95,13 @@ final class FormRest
     }
 
     /** @return \WP_REST_Response|\WP_Error */
+    /** Risposte, errori ed email nella lingua del documento: con un plugin multilingua il modulo sta in una traduzione. */
     public static function handle(\WP_REST_Request $request): \WP_REST_Response|\WP_Error
+    {
+        return ContentLocale::runForPost((int) $request->get_param('doc'), static fn (): \WP_REST_Response|\WP_Error => self::process($request));
+    }
+
+    private static function process(\WP_REST_Request $request): \WP_REST_Response|\WP_Error
     {
         $doc = (int) $request->get_param('doc');
         $node = (string) $request->get_param('node');

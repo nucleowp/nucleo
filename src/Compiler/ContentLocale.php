@@ -23,6 +23,28 @@ final class ContentLocale
     }
 
     /**
+     * Esegue $run nella lingua del post: locale di gettext e, con un plugin multilingua, lingua dei contenuti
+     * (permalink, menu, sezioni, home_url). La lingua dei contenuti arriva dal filtro nucleo/language_scope.
+     *
+     * @template T
+     * @param callable(): T $run
+     * @return T
+     */
+    public static function runForPost(int $postId, callable $run): mixed
+    {
+        $scope = $postId > 0 ? apply_filters('nucleo/language_scope', null, $postId) : null;
+        if (!$scope instanceof LanguageScope) {
+            return self::run(self::forPost($postId), $run);
+        }
+        $scope->enter();
+        try {
+            return self::run(self::forPost($postId), $run);
+        } finally {
+            $scope->leave();
+        }
+    }
+
+    /**
      * Esegue $run nella lingua indicata e ripristina quella della richiesta.
      * Se la lingua non è installata, $run gira nella lingua corrente.
      *

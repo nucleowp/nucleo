@@ -7,7 +7,7 @@
   "aiHints": "Every informative image needs a descriptive alt. Use decorative only for purely aesthetic images. Modern formats (AVIF, WebP) are optional: the original png/jpg stays the fallback, and automatic sources need the site option imageFormats.",
   "content": {
     "src": { "type": "string", "required": true },
-    "alt": { "type": "string" },
+    "alt": { "type": "string", "translatable": true },
     "width": { "type": "integer" },
     "height": { "type": "integer" },
     "srcset": { "type": "string" },

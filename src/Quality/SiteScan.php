@@ -29,6 +29,10 @@ final class SiteScan
         'seo.hreflang.missing' => 'warning',
         'seo.schema.duplicate' => 'error',
         'seo.duplicate.section' => 'warning',
+        'wpml.mode' => 'warning',
+        'wpml.version.untested' => 'warning',
+        'wpml.translation.failed' => 'warning',
+        'wpml.translation.stale' => 'warning',
     ];
 
     /**
@@ -62,6 +66,7 @@ final class SiteScan
             self::hreflang($ids),
             self::schemaDuplicate($index),
             self::duplicateSection($index),
+            self::wpml(),
         );
 
         $batch = array_slice($ids, ($page - 1) * $per, $per);
@@ -206,6 +211,17 @@ final class SiteScan
         }
 
         return $issues;
+    }
+
+    /**
+     * Stato dell'integrazione WPML (solo pacchetto Pro, con WPML attivo).
+     * @return list<array{rule:string,severity:string,message:string,posts:list<int>}>
+     */
+    private static function wpml(): array
+    {
+        $issues = Optional::call('Nucleo\\Integrations\\Wpml\\Diagnosis', 'siteIssues');
+
+        return is_array($issues) ? array_values($issues) : [];
     }
 
     /**

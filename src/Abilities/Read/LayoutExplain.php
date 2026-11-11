@@ -61,6 +61,7 @@ final class LayoutExplain implements AbilityDefinition
         $resolver = new LayoutResolver(
             is_array($artifact['map'] ?? null) ? $artifact['map'] : [],
             is_array($artifact['exclude'] ?? null) ? $artifact['exclude'] : [],
+            is_array($artifact['translations'] ?? null) ? $artifact['translations'] : [],
         );
         $context = RequestContext::fromUrl($url);
 

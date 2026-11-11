@@ -42,7 +42,7 @@
         "required": ["key", "label", "type", "ui"],
         "properties": {
           "key": { "type": "string" },
-          "label": { "type": "string" },
+          "label": { "type": "string", "translatable": true },
           "type": { "type": "string", "enum": ["taxonomy", "field", "date", "search", "param"] },
           "ui": { "type": "string", "enum": ["pills", "select", "checkboxes", "dropdown", "text", "range"] },
           "taxonomy": { "type": "string" },
@@ -62,7 +62,7 @@
         "required": ["key", "label", "orderby", "order"],
         "properties": {
           "key": { "type": "string" },
-          "label": { "type": "string" },
+          "label": { "type": "string", "translatable": true },
           "orderby": { "type": "string" },
           "order": { "type": "string", "enum": ["asc", "desc"] }
         }

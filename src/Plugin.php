@@ -130,9 +130,16 @@ final class Plugin
     public static function frontend(): void
     {
         add_action('init', [ModelRegistrar::class, 'registerAll']);
+        $uri = isset($_SERVER['REQUEST_URI']) ? sanitize_text_field(wp_unslash((string) $_SERVER['REQUEST_URI'])) : '';
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- solo presenza della rotta: decide quali hook agganciare.
+        $route = isset($_GET['rest_route']) && is_string($_GET['rest_route']) ? sanitize_text_field(wp_unslash($_GET['rest_route'])) : null;
+        // WPML legge i page builder supportati a init, prima di rest_api_init. L'editor di traduzione consegna i job
+        // in REST: senza il modulo già agganciato, WPML non avvisa Nucleo delle stringhe tradotte.
+        if (ContextDetector::isRestPath($uri, $route, rest_get_url_prefix())) {
+            self::call('Nucleo\\Integrations\\Wpml\\Packages');
+        }
         Bootstrap::register();
         // Solo le richieste della sitemap: le altre pagine non caricano il modulo né il filtro.
-        $uri = isset($_SERVER['REQUEST_URI']) ? sanitize_text_field(wp_unslash((string) $_SERVER['REQUEST_URI'])) : '';
         if (str_contains($uri, 'sitemap')) {
             StructuredData::registerSitemap();
         }

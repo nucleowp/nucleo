@@ -108,38 +108,67 @@ final class DocTexts implements AbilityDefinition
     }
 
     /**
-     * Percorsi dei campi traducibili di un nodo con i relativi testi: content.campo, oppure content.campo.indice.sotto-campo per le liste.
+     * Percorsi dei campi traducibili di un nodo con i relativi testi: content.campo o settings.campo,
+     * con indici e sotto-campi per le liste (es. settings.fields.0.options.1.label).
+     * Un campo marcato translatable rende traducibili tutti i testi che contiene. Nelle liste in formato JSON Schema
+     * (items.properties) si marcano anche i singoli sotto-campi.
      * @param array<string,mixed> $content
+     * @param array<string,mixed> $settings
      * @return array<string,string> percorso → testo
      */
-    public static function fieldPaths(Manifest $manifest, array $content): array
+    public static function fieldPaths(Manifest $manifest, array $content, array $settings = []): array
     {
         $paths = [];
-        foreach ($manifest->content as $key => $schema) {
-            if (!is_array($schema) || ($schema['translatable'] ?? false) !== true) {
-                continue;
-            }
-            $value = $content[$key] ?? null;
-            if (($schema['type'] ?? null) === 'array' && is_array($schema['item'] ?? null)) {
-                if (!is_array($value)) {
-                    continue;
-                }
-                foreach ($value as $index => $item) {
-                    if (!is_array($item)) {
-                        continue;
-                    }
-                    foreach (array_keys($schema['item']) as $sub) {
-                        if (is_string($item[$sub] ?? null)) {
-                            $paths["content.$key.$index.$sub"] = $item[$sub];
-                        }
-                    }
-                }
-            } elseif (is_string($value)) {
-                $paths["content.$key"] = $value;
-            }
+        foreach (['content' => [$manifest->content, $content], 'settings' => [$manifest->settings, $settings]] as $bucket => [$schemas, $values]) {
+            self::walkProps($schemas, $values, $bucket, false, $paths);
         }
 
         return $paths;
+    }
+
+    /**
+     * @param array<mixed> $schemas nome → schema del campo
+     * @param array<mixed> $values
+     * @param array<string,string> $paths
+     */
+    private static function walkProps(array $schemas, array $values, string $prefix, bool $inherited, array &$paths): void
+    {
+        foreach ($schemas as $key => $schema) {
+            if (is_array($schema) && array_key_exists($key, $values)) {
+                self::walkField($schema, $values[$key], "$prefix.$key", $inherited, $paths);
+            }
+        }
+    }
+
+    /**
+     * @param array<mixed> $schema
+     * @param array<string,string> $paths
+     */
+    private static function walkField(array $schema, mixed $value, string $path, bool $inherited, array &$paths): void
+    {
+        $translatable = $inherited || ($schema['translatable'] ?? false) === true;
+        if (is_string($value)) {
+            if ($translatable) {
+                $paths[$path] = $value;
+            }
+
+            return;
+        }
+        if (!is_array($value)) {
+            return;
+        }
+        // Formato Nucleo: item è la mappa dei sotto-campi. Formato JSON Schema: items è lo schema dell'elemento.
+        $item = is_array($schema['item'] ?? null) ? ['properties' => $schema['item']] : ($schema['items'] ?? null);
+        if (($schema['type'] ?? null) === 'array' && is_array($item)) {
+            foreach ($value as $index => $element) {
+                self::walkField($item, $element, "$path.$index", $translatable, $paths);
+            }
+
+            return;
+        }
+        if (is_array($schema['properties'] ?? null)) {
+            self::walkProps($schema['properties'], $value, $path, $translatable, $paths);
+        }
     }
 
     /**
@@ -153,7 +182,8 @@ final class DocTexts implements AbilityDefinition
         $type = $node['type'] ?? null;
         if (is_string($id) && is_string($type) && isset($manifests[$type])) {
             $content = is_array($node['content'] ?? null) ? $node['content'] : [];
-            foreach (self::fieldPaths($manifests[$type], $content) as $path => $text) {
+            $settings = is_array($node['settings'] ?? null) ? $node['settings'] : [];
+            foreach (self::fieldPaths($manifests[$type], $content, $settings) as $path => $text) {
                 $out[] = ['id' => $id, 'path' => $path, 'text' => $text];
             }
         }

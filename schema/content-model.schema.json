@@ -30,6 +30,7 @@
         "singular": { "$ref": "#/$defs/label" },
         "plural": { "$ref": "#/$defs/label" },
         "public": { "type": "boolean" },
+        "translation": { "enum": ["translate", "fallback", "none"] },
         "hasArchive": { "type": "boolean" },
         "rewrite": { "type": "string", "minLength": 1 },
         "supports": { "type": "array", "items": { "type": "string", "minLength": 1 } },
@@ -46,7 +47,8 @@
         "plural": { "$ref": "#/$defs/label" },
         "postTypes": { "type": "array", "items": { "$ref": "#/$defs/slug" } },
         "hierarchical": { "type": "boolean" },
-        "public": { "type": "boolean" }
+        "public": { "type": "boolean" },
+        "translation": { "enum": ["translate", "fallback", "none"] }
       }
     },
     "location": {
@@ -94,6 +96,7 @@
         "type": { "enum": ["text", "textarea", "number", "url", "email", "image", "date", "select", "boolean", "relation", "repeater"] },
         "label": { "$ref": "#/$defs/label" },
         "required": { "type": "boolean" },
+        "translation": { "enum": ["translate", "copy", "ignore"] },
         "help": { "type": "string" },
         "min": { "type": "number" },
         "max": { "type": "number" },

@@ -36,10 +36,9 @@ final class Preview
         // Anteprima dell'editor: i nodi non validi diventano segnaposto e il resto della pagina resta visibile.
         $invalid = $markIds && $errors !== [] ? self::invalidNodes($doc, $errors) : null;
         $bindings = $postId > 0 ? Services::documents()->bindingsFor($postId, $doc) : null;
-        $locale = ContentLocale::forPost($postId);
         if ($invalid !== null) {
             try {
-                $compiled = ContentLocale::run($locale, static fn () => Services::compiler()->compile($doc, $bindings, true, $invalid));
+                $compiled = ContentLocale::runForPost($postId, static fn () => Services::compiler()->compile($doc, $bindings, true, $invalid));
 
                 return ['ok' => true, 'html' => $compiled->html, 'css' => $compiled->css, 'errors' => array_map(static fn (ValidationError $e): array => $e->toArray(), $errors)];
             } catch (\Throwable) {
@@ -58,7 +57,7 @@ final class Preview
         }
 
         // Come la pagina salvata: etichette nella lingua del sito, non in quella di chi modifica.
-        $compiled = ContentLocale::run($locale, static fn () => Services::compiler()->compile($doc, $bindings, $markIds));
+        $compiled = ContentLocale::runForPost($postId, static fn () => Services::compiler()->compile($doc, $bindings, $markIds));
         $html = $compiled->html;
         if ($contextPostId > 0 && $compiled->slots !== []) {
             $html = self::onPost($contextPostId, static fn (): string => (new SlotRenderer())->fill(

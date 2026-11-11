@@ -32,15 +32,15 @@
         "properties": {
           "name": { "type": "string" },
           "type": { "type": "string", "enum": ["text", "email", "tel", "url", "textarea", "number", "date", "select", "radio", "checkboxes", "checkbox", "consent", "hidden", "context"] },
-          "label": { "type": "string" },
+          "label": { "type": "string", "translatable": true },
           "required": { "type": "boolean" },
-          "help": { "type": "string" },
+          "help": { "type": "string", "translatable": true },
           "step": { "type": "integer", "minimum": 0, "default": 0 },
           "maxLength": { "type": "integer", "minimum": 1 },
           "min": { "type": ["number", "string"] },
           "max": { "type": ["number", "string"] },
           "decimals": { "type": "integer", "minimum": 0 },
-          "placeholder": { "type": "string" },
+          "placeholder": { "type": "string", "translatable": true },
           "options": {
             "type": "array",
             "items": {
@@ -48,7 +48,7 @@
               "required": ["value"],
               "properties": {
                 "value": { "type": ["string", "number"] },
-                "label": { "type": "string" }
+                "label": { "type": "string", "translatable": true }
               }
             }
           },
@@ -66,7 +66,7 @@
         "type": "object",
         "required": ["title"],
         "properties": {
-          "title": { "type": "string" }
+          "title": { "type": "string", "translatable": true }
         }
       }
     },
@@ -79,8 +79,8 @@
         "properties": {
           "type": { "type": "string", "enum": ["otp", "save", "email", "webhook", "create-post", "component"] },
           "field": { "type": "string" },
-          "subject": { "type": "string" },
-          "body": { "type": "string" },
+          "subject": { "type": "string", "translatable": true },
+          "body": { "type": "string", "translatable": true },
           "ttl": { "type": "integer", "minimum": 5, "maximum": 30, "default": 15 },
           "step": { "type": "integer", "minimum": 0 },
           "to": { "type": "string" },
