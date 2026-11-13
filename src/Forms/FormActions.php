@@ -13,6 +13,8 @@ use Nucleo\Extend\Components;
 use Nucleo\OAuth\UrlGuard;
 use Nucleo\Schema\JsonSchemaValidator;
 use Nucleo\Schema\ValidationError;
+use Nucleo\Support\HostResolver;
+use Nucleo\Support\PinnedHttp;
 
 /** Esegue le azioni dichiarate (tranne otp) nell'ordine. Un errore ferma le successive. */
 final class FormActions
@@ -197,10 +199,12 @@ final class FormActions
     private static function webhook(FormSubmission $submission, array $action): ?string
     {
         $url = self::text($action, 'url');
-        if (!(new UrlGuard())->isSafePublicUrl($url)) {
+        $guard = new UrlGuard([HostResolver::class, 'resolve']);
+        if (!$guard->isSafePublicUrl($url)) {
             return 'unsafe webhook URL';
         }
-        $response = wp_safe_remote_post($url, [
+        // IP fissato e nessun redirect: il webhook arriva solo all'host verificato.
+        $response = PinnedHttp::request('POST', $url, [
             'timeout' => 5,
             'headers' => ['Content-Type' => 'application/json'],
             'body' => (string) wp_json_encode([
@@ -208,7 +212,7 @@ final class FormActions
                 'fields' => $submission->values,
                 'context' => $submission->context === null ? null : $submission->context->ID,
             ]),
-        ]);
+        ], $guard);
         if (is_wp_error($response)) {
             return $response->get_error_message();
         }

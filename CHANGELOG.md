@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.5.1 · 2026-11-13
+
+* Sicurezza: i moduli decidono l'esenzione dal captcha dalla loro configurazione, non dai campi della richiesta; un codice OTP sconosciuto riceve un errore 400.
+* Sicurezza: layout e sezioni globali richiedono edit_theme_options; con un token OAuth la scrittura richiede anche lo scope nucleo:design.
+* Sicurezza: una sezione inclusa in una pagina mostra bozze, contenuti privati e protetti solo a chi può modificarli; in pubblicazione e nelle ricompilazioni valgono i permessi dell'autore della pagina.
+* Sicurezza: i parametri di una sezione non riempiono i blocchi di HTML libero e di shortcode, e il validatore rifiuta i binding su quei blocchi.
+* Sicurezza: importazione dei media, webhook dei moduli e client OAuth contattano solo l'indirizzo IP verificato e non seguono redirect non verificati; restano bloccati anche gli intervalli 100.64.0.0/10 e 198.18.0.0/15.
+* Sicurezza: nc/query elenca solo i tipi di contenuto ammessi dalle collezioni; le parti di nc/collection rifiutano le condizioni di visibilità.
+* Sicurezza: nelle schede, le chiavi meta protette richiedono il permesso di modificare il post; doc-preview con contextPostId richiede lo stesso permesso.
+* Sicurezza: nucleo pull scrive solo i percorsi prodotti dall'esportazione del sito.
+* Corretto: le pagine con un blocco di HTML libero si aggiornano anche nelle ricompilazioni da cron.
+
 ## 0.5.0 · 2026-11-11
 
 * Pro: integrazione con WPML. I testi di ogni pagina Nucleo vanno a WPML come pacchetto di stringhe; quando la traduzione è pronta Nucleo compila la pagina tradotta, con HTML, CSS e runtime della sua lingua.

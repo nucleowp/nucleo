@@ -43,7 +43,30 @@ final class UrlGuard
             return false;
         }
         foreach ($ips as $ip) {
-            if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
+            if (!self::isPublicIp($ip)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * IP pubblico: esclude le reti private e riservate di PHP, più 100.64.0.0/10 (CGNAT) e 198.18.0.0/15
+     * (benchmark), che PHP accetta e che alcune versioni di WordPress non bloccano.
+     */
+    public static function isPublicIp(string $ip): bool
+    {
+        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
+            return false;
+        }
+        $long = filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) !== false ? ip2long($ip) : false;
+        if ($long === false) {
+            return true;
+        }
+        foreach ([['100.64.0.0', 10], ['198.18.0.0', 15]] as [$net, $bits]) {
+            $mask = -1 << (32 - $bits);
+            if (($long & $mask) === (ip2long($net) & $mask)) {
                 return false;
             }
         }

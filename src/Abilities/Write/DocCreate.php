@@ -200,7 +200,7 @@ final class DocCreate implements AbilityDefinition
      * nucleo_layout, section in nucleo_section, il resto in page).
      * @param array<string,mixed> $input
      */
-    private static function postType(array $input): mixed
+    public static function postType(array $input): mixed
     {
         if (array_key_exists('postType', $input)) {
             return $input['postType'];

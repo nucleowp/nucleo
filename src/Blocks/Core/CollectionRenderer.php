@@ -410,8 +410,22 @@ final class CollectionRenderer implements Renderer, NodeValidator
         $errors = [];
         $cards = [];
         foreach ($children as $i => $child) {
-            if (is_array($child) && ($child['type'] ?? null) === self::CARD) {
+            if (!is_array($child)) {
+                continue;
+            }
+            if (($child['type'] ?? null) === self::CARD) {
                 $cards[] = $i;
+            }
+            // Le parti della collezione sono lette come dati e mai compilate: una condizione su di loro sarebbe ignorata.
+            $when = $child['visibility']['when'] ?? null;
+            if (in_array($child['type'] ?? null, [self::CARD, self::EMPTY, self::COUNT, self::RESET], true) && is_array($when) && $when !== []) {
+                $errors[] = $this->error(
+                    "$path/children/$i/visibility/when",
+                    __('collection parts do not take visibility conditions: the collection is cached and shared by every visitor', 'nucleo'),
+                    null,
+                    __('put filled or empty on a node inside the part; put visitor conditions on the nc/collection node', 'nucleo'),
+                    'card_block_not_allowed',
+                );
             }
         }
         if (count($cards) !== 1) {

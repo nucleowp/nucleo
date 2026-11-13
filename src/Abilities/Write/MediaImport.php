@@ -10,12 +10,14 @@ use Nucleo\Abilities\AbilityDefinition;
 use Nucleo\Media\ImageSaver;
 use Nucleo\OAuth\UrlGuard;
 use Nucleo\Support\HostResolver;
+use Nucleo\Support\PinnedHttp;
 
 /** nucleo/media-import: importa un'immagine pubblica da URL nella libreria media, con testo alternativo. */
 final class MediaImport implements AbilityDefinition
 {
     private const TIMEOUT = 15;
     private const MAX_BYTES = 10 * 1024 * 1024;
+    private const MAX_REDIRECTS = 3;
 
     public function name(): string
     {
@@ -75,10 +77,11 @@ final class MediaImport implements AbilityDefinition
             return self::failure('invalid_url', __('URL not allowed: it must be https and point to a public host.', 'nucleo'));
         }
 
-        $response = wp_safe_remote_get($url, [
+        // IP fissato a ogni passo; i redirect si seguono solo verso URL a loro volta verificati.
+        $response = PinnedHttp::request('GET', $url, [
             'timeout' => self::TIMEOUT,
             'limit_response_size' => self::MAX_BYTES,
-        ]);
+        ], $guard, self::MAX_REDIRECTS);
         if (is_wp_error($response) || wp_remote_retrieve_response_code($response) !== 200) {
             return self::failure('download_failed', __('Image download failed.', 'nucleo'));
         }

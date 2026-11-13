@@ -8,6 +8,7 @@ defined('ABSPATH') || exit;
 
 use Nucleo\Content\FieldValues;
 use Nucleo\Content\ModelRepository;
+use Nucleo\Runtime\Loop;
 use WC_Product;
 use WP_Post;
 use WP_Query;
@@ -21,6 +22,10 @@ final class BindingResolver
 {
     public static function value(string $source, string $field, int $postId): ?string
     {
+        if (!self::metaReadable($source, $field, $postId)) {
+            return null;
+        }
+
         return match ($source) {
             'post' => self::post($field, $postId),
             'site' => self::site($field),
@@ -35,6 +40,25 @@ final class BindingResolver
             'query' => self::query($field),
             default => null,
         };
+    }
+
+    /**
+     * Una scheda ripete il bind su post di altri autori: lì una chiave meta protetta ("_...") si legge solo
+     * se l'utente corrente può modificare quel post. Fuori dalle schede il bind legge il post del documento,
+     * già controllato da chi apre l'anteprima (contextPostId richiede edit_post).
+     */
+    private static function metaReadable(string $source, string $field, int $postId): bool
+    {
+        $key = match ($source) {
+            'post' => str_starts_with($field, 'meta:') ? substr($field, 5) : null,
+            'metabox', 'jetengine', 'acf' => $field,
+            default => null,
+        };
+        if ($key === null || !Loop::active() || !is_protected_meta($key, 'post')) {
+            return true;
+        }
+
+        return current_user_can('edit_post', $postId);
     }
 
     private static function post(string $field, int $postId): ?string

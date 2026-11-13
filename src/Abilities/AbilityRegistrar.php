@@ -18,6 +18,8 @@ use Nucleo\Abilities\Read\QualityCheck;
 use Nucleo\Abilities\Read\SiteDescribe;
 use Nucleo\Abilities\Read\Status;
 use Nucleo\Abilities\Read\TokensGet;
+use Nucleo\Abilities\Write\DocCreate;
+use Nucleo\Layout\PostTypes;
 use Nucleo\OAuth\CurrentToken;
 use Nucleo\OAuth\Scopes;
 
@@ -153,7 +155,7 @@ final class AbilityRegistrar
 
             return $definition->execute($input);
         };
-        $args['permission_callback'] = static function (mixed $input) use ($definition, $name): bool|\WP_Error {
+        $args['permission_callback'] = static function (mixed $input) use ($definition, $name, $readonly): bool|\WP_Error {
             $input = is_array($input) ? $input : [];
             if (!$definition->permitted($input)) {
                 return false;
@@ -166,6 +168,9 @@ final class AbilityRegistrar
             if ($missing === null && isset($input['postId']) && is_numeric($input['postId'])) {
                 $status = get_post_status((int) $input['postId']);
                 $missing = self::liveEditNeedsPublish($scopes, $short, is_string($status) ? $status : null) ? Scopes::PUBLISH : null;
+            }
+            if ($missing === null && !$readonly && self::designNeeded($scopes, $short, $input)) {
+                $missing = Scopes::DESIGN;
             }
             if ($missing === null) {
                 return true;
@@ -241,6 +246,26 @@ final class AbilityRegistrar
             && in_array($ability, self::LIVE_EDITS, true)
             && in_array($status, ['publish', 'future', 'private'], true)
             && !in_array(Scopes::PUBLISH, $scopes, true);
+    }
+
+    /**
+     * Scrivere un layout o una sezione globale cambia tutto il sito: con un token OAuth serve nucleo:design,
+     * anche se l'ability ha scope nucleo:write. Vale per il post indicato da postId e per doc-create di un layout
+     * o di una sezione. Senza token OAuth (scopes null) decide solo la capability.
+     * @param ?list<string> $scopes
+     * @param array<string,mixed> $input
+     */
+    public static function designNeeded(?array $scopes, string $ability, array $input): bool
+    {
+        if ($scopes === null || in_array(Scopes::DESIGN, $scopes, true)) {
+            return false;
+        }
+        $global = [PostTypes::LAYOUT, PostTypes::SECTION];
+        if (isset($input['postId']) && is_numeric($input['postId'])) {
+            return in_array(get_post_type((int) $input['postId']), $global, true);
+        }
+
+        return $ability === 'doc-create' && in_array(DocCreate::postType($input), $global, true);
     }
 
     /** Chiave del limite: utente corrente e gruppo di scope dell'ability. */

@@ -7,6 +7,7 @@ namespace Nucleo\OAuth;
 defined('ABSPATH') || exit;
 
 use Nucleo\Support\HostResolver;
+use Nucleo\Support\PinnedHttp;
 
 /**
  * Risolve il client_id: se è un URL https scarica il documento di metadati (Client ID Metadata Documents),
@@ -60,44 +61,11 @@ final class ClientFetcher
     /** @return array{client_id:string,client_name:string,redirect_uris:list<string>,kind:string}|null */
     private function fetch(string $url): ?array
     {
-        if (!$this->guard->isSafePublicUrl($url)) {
-            return null;
-        }
-
-        $host = strtolower((string) wp_parse_url($url, PHP_URL_HOST));
-        $port = (int) (wp_parse_url($url, PHP_URL_PORT) ?? 443);
-
-        // Un IP letterale è già stato verificato da isSafePublicUrl: il pin serve solo per gli host DNS.
-        $pin = null;
-        if (filter_var($host, FILTER_VALIDATE_IP) === false) {
-            $ip = self::pinnedIp($host);
-            if ($ip === null) {
-                return null;
-            }
-            $pin = static function ($handle, $args, $requestUrl) use ($host, $port, $ip): void {
-                if (
-                    defined('CURLOPT_RESOLVE')
-                    && strtolower((string) wp_parse_url((string) $requestUrl, PHP_URL_HOST)) === $host
-                ) {
-                    // phpcs:ignore WordPress.WP.AlternativeFunctions.curl_curl_setopt -- protezione SSRF: fissa l'IP già validato, WordPress non ha un'alternativa.
-                    curl_setopt($handle, CURLOPT_RESOLVE, ["$host:$port:$ip"]);
-                }
-            };
-            add_action('http_api_curl', $pin, 10, 3);
-        }
-
-        try {
-            $response = wp_safe_remote_get($url, [
-                'timeout' => self::TIMEOUT,
-                'redirection' => 0,
-                'limit_response_size' => self::MAX_BYTES,
-                'headers' => ['Accept' => 'application/json'],
-            ]);
-        } finally {
-            if ($pin !== null) {
-                remove_action('http_api_curl', $pin, 10);
-            }
-        }
+        $response = PinnedHttp::request('GET', $url, [
+            'timeout' => self::TIMEOUT,
+            'limit_response_size' => self::MAX_BYTES,
+            'headers' => ['Accept' => 'application/json'],
+        ], $this->guard);
 
         if (is_wp_error($response) || wp_remote_retrieve_response_code($response) !== 200) {
             return null;
@@ -116,27 +84,6 @@ final class ClientFetcher
         $normalized['kind'] = 'cimd';
 
         return $normalized;
-    }
-
-    /** Primo IPv4 dell'host, solo se tutti gli IP risolti sono pubblici. */
-    private static function pinnedIp(string $host): ?string
-    {
-        $ips = HostResolver::resolve($host);
-        if ($ips === []) {
-            return null;
-        }
-        foreach ($ips as $ip) {
-            if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false) {
-                return null;
-            }
-        }
-        foreach ($ips as $ip) {
-            if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) !== false) {
-                return $ip;
-            }
-        }
-
-        return null;
     }
 
     /**

@@ -44,9 +44,28 @@ final class CollectionCache
         }
 
         $page = CollectionQuery::page($config, $state, $template);
-        set_transient($key, $page->toArray(), $ttl);
+        // Solo stati con valori dichiarati: un visitatore non deve poter creare una voce per ogni valore inventato.
+        if (self::isBounded($state, $page)) {
+            set_transient($key, $page->toArray(), $ttl);
+        }
 
         return $page;
+    }
+
+    /** Ogni valore di opzione è tra le opzioni della pagina e nessun estremo di range è impostato. */
+    private static function isBounded(CollectionState $state, CollectionPage $page): bool
+    {
+        foreach ($state->values as $name => $value) {
+            if (!array_is_list($value)) {
+                return false;
+            }
+            $known = array_column($page->options[(string) $name] ?? [], 'value');
+            if (array_diff($value, $known) !== []) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /** Durata in secondi: schema()['ttl'] della sorgente component se intero >= 0, altrimenti 300; posts 12 ore. */

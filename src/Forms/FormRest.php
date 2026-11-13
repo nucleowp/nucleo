@@ -127,8 +127,20 @@ final class FormRest
             ]);
         }
 
+        // Verifica del codice a metà modulo (passo con "step").
+        $step = $config->otpStep();
+        $otp = $config->otp();
+        $otpMode = self::str($params, '_nc_otp');
+        if (!in_array($otpMode, ['', 'send', 'verify'], true)) {
+            return self::answer($request, $params, $node, 400, [
+                'ok' => false,
+                'code' => 'invalid',
+                'message' => $config->labels['error'],
+            ]);
+        }
+
         // La verifica del codice a metà modulo ha un contatore suo: send, verify e invio finale non si sommano.
-        $verifying = self::str($params, '_nc_otp') === 'verify';
+        $verifying = $step !== null && $otpMode === 'verify';
         $limitKey = ($verifying ? 'form-verify|' : 'form|') . $doc . '|' . $node . '|' . $ip;
         if (!RateLimiter::hit($limitKey, $verifying ? self::VERIFY_LIMIT : self::SUBMIT_LIMIT, self::SUBMIT_WINDOW)) {
             return self::answer($request, $params, $node, 429, [
@@ -140,22 +152,21 @@ final class FormRest
 
         $context = self::publicPost(is_numeric($params['_nc_ctx'] ?? null) ? (int) $params['_nc_ctx'] : 0);
 
-        // Verifica del codice a metà modulo (passo con "step").
-        $step = $config->otpStep();
-        $otpMode = self::str($params, '_nc_otp');
-
-        // Captcha sulle richieste che inviano email o salvano: invio del codice e invio senza ticket né prova.
-        // Codice e prova vengono da una richiesta che ha già superato il captcha.
-        $fresh = $otpMode === 'send'
-            || ($otpMode === '' && self::str($params, '_nc_ticket') === '' && self::str($params, '_nc_proof') === '');
-        if ($config->captcha && $fresh && !Captcha::verify($params, $ip)) {
+        // Captcha su ogni richiesta, tranne i passi che il server verifica su un ticket emesso dopo un captcha:
+        // la verifica del passo, il ticket del codice classico e la prova del passo verificato.
+        // L'esenzione dipende dalla configurazione del modulo, non dai campi di controllo inviati.
+        $ticket = self::str($params, '_nc_ticket');
+        $proof = self::str($params, '_nc_proof');
+        $exempt = ($step !== null && $otpMode === 'verify')
+            || ($otp !== null && $otpMode === '' && $ticket !== '' && $proof === '')
+            || ($step !== null && $otp !== null && $otpMode === '' && $proof !== '');
+        if ($config->captcha && !$exempt && !Captcha::verify($params, $ip)) {
             return self::answer($request, $params, $node, 403, [
                 'ok' => false,
                 'code' => 'captcha',
                 'message' => $config->labels['captcha'],
             ]);
         }
-        $otp = $config->otp();
         if ($step !== null && $otp !== null && $otpMode === 'send') {
             return self::sendStep($request, $params, $config, $otp, $doc, $node, $context);
         }
@@ -163,9 +174,8 @@ final class FormRest
             return self::verifyStep($request, $params, $config, $doc, $node);
         }
 
-        $ticket = self::str($params, '_nc_ticket');
         // Con la prova di un passo verificato vale l'invio finale, non il codice classico.
-        if ($ticket !== '' && self::str($params, '_nc_proof') === '') {
+        if ($ticket !== '' && $proof === '') {
             return self::fromTicket($request, $params, $config, $doc, $node, $ticket, $ip);
         }
 
@@ -192,7 +202,6 @@ final class FormRest
             $address = is_string($values[$field] ?? null) ? $values[$field] : '';
 
             // Invio finale dopo la verifica del passo: la prova vale una volta sola e per questo indirizzo.
-            $proof = self::str($params, '_nc_proof');
             if ($step !== null && $proof !== '') {
                 if (!OtpTickets::redeem($doc, $node, $proof, $address, self::stepSecret($doc, $node))) {
                     return self::answer($request, $params, $node, 410, [

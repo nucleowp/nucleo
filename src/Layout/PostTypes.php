@@ -32,10 +32,20 @@ final class PostTypes
 
     public static function registerTypes(): void
     {
+        // Layout e sezioni valgono per tutto il sito: ogni capability passa da edit_theme_options,
+        // anche quelle che map_meta_cap usa per i post di altri autori, pubblicati o privati.
         $capabilities = [
             'create_posts' => 'edit_theme_options',
             'edit_posts' => 'edit_theme_options',
+            'edit_others_posts' => 'edit_theme_options',
+            'edit_published_posts' => 'edit_theme_options',
+            'edit_private_posts' => 'edit_theme_options',
+            'read_private_posts' => 'edit_theme_options',
+            'publish_posts' => 'edit_theme_options',
             'delete_posts' => 'edit_theme_options',
+            'delete_others_posts' => 'edit_theme_options',
+            'delete_published_posts' => 'edit_theme_options',
+            'delete_private_posts' => 'edit_theme_options',
         ];
         $types = [
             self::LAYOUT => 'Layout Nucleo',

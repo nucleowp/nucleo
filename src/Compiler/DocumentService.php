@@ -62,6 +62,9 @@ final class DocumentService
     /** Vero durante recompile(): la scrittura rigenera l'uscita dello stesso documento, senza modificarlo. */
     private static bool $recompiling = false;
 
+    /** @var list<int> utenti i cui permessi limitano l'espansione durante expand() */
+    private array $expansionUsers = [];
+
     /**
      * Sezioni del dry-run in corso (push --dry-run), per slug: i documenti successivi dello stesso dry-run
      * le espandono come nel push vero, anche se il post non esiste ancora. Null fuori da planning().
@@ -936,6 +939,45 @@ final class DocumentService
     /** @param array<string,mixed> $doc */
     private function expand(array $doc, int $postId, ?string $self): Expansion
     {
+        $previous = $this->expansionUsers;
+        $this->expansionUsers = self::expansionUsers($postId);
+        try {
+            return $this->expandAs($doc, $postId, $self);
+        } finally {
+            $this->expansionUsers = $previous;
+        }
+    }
+
+    /**
+     * Utenti i cui permessi limitano l'espansione di sezioni e riferimenti: l'autore del post, più chi salva
+     * se il salvataggio è interattivo. Un rebuild da cron o la pubblicazione di un editor non aggiungono
+     * contenuti che l'autore non può vedere. [0]: nessun autore né utente (WP-CLI), si espande tutto.
+     * @return list<int>
+     */
+    private static function expansionUsers(int $postId): array
+    {
+        $users = [];
+        $author = $postId > 0 ? (int) get_post_field('post_author', $postId) : 0;
+        if ($author > 0) {
+            $users[] = $author;
+        }
+        $current = get_current_user_id();
+        if ($current > 0 && !self::$recompiling) {
+            $users[] = $current;
+        }
+
+        return $users === [] ? [0] : array_values(array_unique($users));
+    }
+
+    /** @return list<int> utenti della compilazione corrente; fuori da expand(), l'utente corrente */
+    private function users(): array
+    {
+        return $this->expansionUsers !== [] ? $this->expansionUsers : [get_current_user_id()];
+    }
+
+    /** @param array<string,mixed> $doc */
+    private function expandAs(array $doc, int $postId, ?string $self): Expansion
+    {
         $doc = $this->normalizer->normalize($doc, fn (string $ref): ?array => $this->resolveRef($ref));
         if ($self === null && $postId > 0 && get_post_type($postId) === PostTypes::SECTION) {
             $self = (string) get_post_field('post_name', $postId);
@@ -1003,8 +1045,9 @@ final class DocumentService
     }
 
     /**
-     * Sezione per slug, con documento già normalizzato. Bozze e sezioni private solo per chi gestisce il tema,
-     * o senza utente (WP-Cron, WP-CLI): un autore non pubblica il contenuto di una sezione che non può vedere.
+     * Sezione per slug, con documento già normalizzato. Bozze e sezioni private solo se tutti gli utenti della
+     * compilazione gestiscono il tema (vedi expansionUsers): un autore non pubblica il contenuto di una sezione
+     * che non può vedere, nemmeno quando il post viene ricompilato da cron o pubblicato da un altro utente.
      * @return array{id:int,doc:array<string,mixed>}|null
      */
     private function findSection(string $slug): ?array
@@ -1012,7 +1055,10 @@ final class DocumentService
         if ($this->inDryRun && isset($this->planned[$slug])) {
             return ['id' => $this->planned[$slug]['id'], 'doc' => $this->normalizer->normalize($this->planned[$slug]['doc'])];
         }
-        $all = !is_user_logged_in() || current_user_can('edit_theme_options');
+        $all = true;
+        foreach ($this->users() as $uid) {
+            $all = $all && ($uid === 0 || user_can($uid, 'edit_theme_options'));
+        }
         $ids = get_posts([
             'name' => $slug,
             'post_type' => PostTypes::SECTION,
@@ -1087,7 +1133,7 @@ final class DocumentService
     }
 
     /**
-     * Risolve "section:N" con il documento del post N.
+     * Risolve "section:N" con il documento del post N, se l'utente può vederlo.
      * @return array<string,mixed>|null
      */
     private function resolveRef(string $ref): ?array
@@ -1095,9 +1141,38 @@ final class DocumentService
         if (preg_match('/^section:(\d+)$/', $ref, $m) !== 1) {
             return null;
         }
-        $found = $this->repository->find((int) $m[1]);
+        $id = (int) $m[1];
+        foreach ($this->users() as $uid) {
+            if (!self::userMayExpand($uid, $id)) {
+                return null;
+            }
+        }
+        $found = $this->repository->find($id);
 
         return $found === null ? null : $found['document'];
+    }
+
+    /**
+     * Stessa regola di findSection: l'utente 0 (nessun autore né utente) o con edit_theme_options espande tutto.
+     * Gli altri utenti espandono una sezione pubblicata senza password, un post che possono modificare,
+     * o un post pubblicato senza password che possono leggere. read_post da solo non basta: WordPress lo concede
+     * anche sui post pubblicati protetti da password.
+     */
+    private static function userMayExpand(int $uid, int $id): bool
+    {
+        if ($uid === 0 || user_can($uid, 'edit_theme_options')) {
+            return true;
+        }
+        $post = get_post($id);
+        if ($post === null) {
+            return false;
+        }
+        if (user_can($uid, 'edit_post', $id)) {
+            return true;
+        }
+        $public = $post->post_status === 'publish' && $post->post_password === '';
+
+        return $public && ($post->post_type === PostTypes::SECTION || user_can($uid, 'read_post', $id));
     }
 
     /**

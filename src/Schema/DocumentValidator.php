@@ -10,6 +10,7 @@ use Nucleo\Blocks\Core\IconRenderer;
 use Nucleo\Blocks\Manifest;
 use Nucleo\Blocks\NodeValidator;
 use Nucleo\Blocks\Registry;
+use Nucleo\Compiler\DocumentService;
 use Nucleo\Compiler\LinkRefs;
 use Nucleo\Css\Motion;
 use Nucleo\Css\CustomRules;
@@ -182,8 +183,9 @@ final class DocumentValidator
         if (!is_array($bind)) {
             return;
         }
+        $content = array_keys($manifest->content);
         $allowed = array_merge(
-            array_map(static fn (string $k): string => "content.$k", array_map('strval', array_keys($manifest->content))),
+            array_map(static fn (string $k): string => "content.$k", array_map('strval', $content)),
             array_map(static fn (string $k): string => "settings.$k", array_map('strval', array_keys($manifest->settings))),
         );
         foreach (array_keys($bind) as $key) {

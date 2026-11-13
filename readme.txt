@@ -4,7 +4,7 @@ Tags: blocks, page builder, layout, mcp, ai
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 0.5.0
+Stable tag: 0.5.1
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -107,6 +107,15 @@ All PHP and JavaScript of Nucleo ships unminified. The only minified files are t
 The font metrics in data/font-metrics.json come from @capsizecss/metrics 3.7.0 (MIT, https://github.com/seek-oss/capsize). The license is in data/LICENSE-capsize-metrics.
 
 == Changelog ==
+
+= 0.5.1 =
+
+* Security: forms decide the captcha exemption from their configuration, not from the request fields; an unknown OTP code gets a 400 error.
+* Security: layouts and global sections require edit_theme_options; with an OAuth token, writing also requires the nucleo:design scope.
+* Security: a section included in a page shows drafts, private and protected content only to users who can edit them; publishing and rebuilds use the permissions of the page author.
+* Security: media import, form webhooks and the OAuth client connect only to the verified IP address and do not follow unverified redirects; the 100.64.0.0/10 and 198.18.0.0/15 ranges are blocked too.
+* Security: nc/query lists only the content types allowed by collections; nc/collection parts reject visibility conditions.
+* Security: in tabs, protected meta keys need the permission to edit the post; doc-preview with contextPostId needs the same permission.
 
 = 0.5.0 =
 

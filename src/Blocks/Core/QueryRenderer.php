@@ -13,6 +13,7 @@ use Nucleo\Blocks\NodeValidator;
 use Nucleo\Blocks\Renderer;
 use Nucleo\Blocks\RenderContext;
 use Nucleo\Runtime\CardRenderer;
+use Nucleo\Runtime\Collection\CollectionQuery;
 use Nucleo\Runtime\Collection\ContentVersion;
 use Nucleo\Runtime\Loop;
 use Nucleo\Runtime\Slots;
@@ -224,7 +225,8 @@ final class QueryRenderer implements Renderer, NodeValidator, DynamicRenderer
     private function args(array $settings): ?array
     {
         $postType = sanitize_key($this->str($settings['postType'] ?? null, 'post'));
-        if (!post_type_exists($postType)) {
+        // Stessa regola delle collezioni: solo tipi pubblici e non di sistema (niente coupon, blocchi, sezioni).
+        if (!CollectionQuery::postTypeAllowed($postType)) {
             return null;
         }
 

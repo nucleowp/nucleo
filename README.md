@@ -6,7 +6,7 @@ Nucleo includes an MCP server with OAuth 2.1. Claude, Cursor and other MCP clien
 
 - Website: [nucleowp.dev](https://nucleowp.dev/en/)
 - Documentation: [nucleowp.dev/en/docs](https://nucleowp.dev/en/docs/)
-- Version in this repository: 0.5.0
+- Version in this repository: 0.5.1
 
 ## Features
 

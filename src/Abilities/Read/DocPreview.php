@@ -94,7 +94,9 @@ final class DocPreview implements AbilityDefinition
 
     public function permitted(array $input): bool
     {
-        if (isset($input['contextPostId']) && (!is_int($input['contextPostId']) || !current_user_can('read_post', $input['contextPostId']))) {
+        // Gli slot riempiti su contextPostId leggono i suoi campi, anche meta protetti e campi di post con password:
+        // serve lo stesso permesso dell'anteprima di quel post.
+        if (isset($input['contextPostId']) && (!is_int($input['contextPostId']) || !current_user_can('edit_post', $input['contextPostId']))) {
             return false;
         }
         if (isset($input['postId'])) {
