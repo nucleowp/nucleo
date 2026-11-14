@@ -21,6 +21,11 @@ final class FormActions
 {
     public const SUBMISSION_TYPE = 'nucleo_submission';
 
+    /** Meta key di un invio salvato: chiave del modulo (<doc>:<node>), valori, id del post di contesto. */
+    public const META_FORM = '_nucleo_form';
+    public const META_DATA = '_nucleo_data';
+    public const META_CONTEXT = '_nucleo_context';
+
     /** Azioni gestite altrove: otp nel flusso del codice. */
     private const SKIPPED = ['otp'];
     private const POST_STATUSES = ['draft', 'pending'];
@@ -162,9 +167,9 @@ final class FormActions
             'post_status' => 'private',
             'post_title' => $submission->config->node . ' – ' . current_time('Y-m-d H:i:s'),
             'meta_input' => [
-                '_nc_form' => self::formKey($submission),
-                '_nc_data' => $submission->values,
-                '_nc_context' => $submission->context === null ? 0 : $submission->context->ID,
+                self::META_FORM => self::formKey($submission),
+                self::META_DATA => $submission->values,
+                self::META_CONTEXT => $submission->context === null ? 0 : $submission->context->ID,
             ],
         ], true);
 

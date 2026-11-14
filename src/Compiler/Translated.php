@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Nucleo\Compiler;
 
+defined('ABSPATH') || exit;
+
 /**
  * ID tradotti nella lingua della compilazione in corso. Senza plugin multilingua, o fuori da una compilazione, l'ID resta com'è.
  */

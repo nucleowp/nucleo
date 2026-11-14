@@ -1,1 +1,1 @@
-@friendlycaptcha/sdk 1.1.3 (MPL-2.0), da npm. Aggiornare insieme in Captcha.php.
+@friendlycaptcha/sdk 1.1.5 (MPL-2.0), da npm. Aggiornare insieme in Captcha.php.

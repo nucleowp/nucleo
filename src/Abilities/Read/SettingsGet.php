@@ -43,7 +43,6 @@ final class SettingsGet implements AbilityDefinition
                             'performance' => [
                                 'type' => 'object',
                                 'properties' => [
-                                    'wooFragments' => ['type' => 'string', 'enum' => ['keep', 'off']],
                                     'purgeSafelist' => ['type' => 'array', 'items' => ['type' => 'string']],
                                 ],
                             ],
@@ -144,7 +143,6 @@ final class SettingsGet implements AbilityDefinition
                 'textOnlyRoles' => is_array($roles) ? array_values(array_filter($roles, 'is_string')) : [],
             ],
             'performance' => [
-                'wooFragments' => get_option('nucleo_woo_fragments') === 'keep' ? 'keep' : 'off',
                 'purgeSafelist' => $purge,
             ],
             'assets' => [
@@ -175,24 +173,7 @@ final class SettingsGet implements AbilityDefinition
         $plugins = Access::plugins();
 
         return [
-            [
-                'id' => 'woocommerce',
-                'name' => 'WooCommerce',
-                'active' => $plugins['woocommerce'],
-                'does' => __('Adapts WooCommerce templates and styles to the Nucleo design system.', 'nucleo'),
-            ],
-            [
-                'id' => 'polylang',
-                'name' => 'Polylang',
-                'active' => $plugins['polylang'],
-                'does' => __('Uses the Polylang languages to create and link translations of documents.', 'nucleo'),
-            ],
-            [
-                'id' => 'wpml',
-                'name' => 'WPML',
-                'active' => $plugins['wpml'],
-                'does' => __('Uses the WPML languages to create and link translations of documents.', 'nucleo'),
-            ],
+            // Integrazioni del Pro: nel pacchetto per WordPress.org il loro codice manca, quindi l'elenco non le dichiara.
             [
                 'id' => 'yoast',
                 'name' => 'Yoast SEO',

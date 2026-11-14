@@ -21,6 +21,7 @@ final class Activation
         'Nucleo\\Compiler\\TokensPublisher',
         'Nucleo\\Assets\\RulesPublisher',
         'Nucleo\\Support\\LegacyTransients',
+        'Nucleo\\Support\\LegacyFormMeta',
         ];
     }
 

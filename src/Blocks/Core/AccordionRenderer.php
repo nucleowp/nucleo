@@ -82,6 +82,6 @@ final class AccordionRenderer implements Renderer
         // Senza flag wp_json_encode escapa "/": "</script>" nel testo diventa "<\/script>".
         $json = wp_json_encode(['@context' => 'https://schema.org', '@type' => 'FAQPage', 'mainEntity' => $entities]);
 
-        return is_string($json) ? '<script type="application/ld+json">' . $json . '</script>' : '';
+        return is_string($json) ? wp_get_inline_script_tag($json, ['type' => 'application/ld+json']) : '';
     }
 }

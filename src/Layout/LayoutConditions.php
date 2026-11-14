@@ -259,9 +259,10 @@ final class LayoutConditions
 
         // Senza rilevamento della lingua la condizione non limiterebbe nulla: il layout varrebbe in ogni lingua.
         if ($type === 'language' && !self::detectsLanguage()) {
+            $reason = __('this site has no language detection, so a language condition would have no effect', 'nucleo');
             $errors[] = self::error(
                 "$path/type",
-                __('the language condition needs the language detection of Nucleo Pro with WPML or Polylang, which this site does not have', 'nucleo'),
+                $reason,
                 $condition,
                 [],
                 __('remove the language condition', 'nucleo'),

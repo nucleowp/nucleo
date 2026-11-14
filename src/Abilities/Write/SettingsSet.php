@@ -46,7 +46,6 @@ final class SettingsSet implements AbilityDefinition
                             'performance' => [
                                 'type' => 'object',
                                 'properties' => [
-                                    'wooFragments' => ['type' => 'string', 'description' => '"keep" or "off". Validated by the ability.'],
                                     'purgeSafelist' => ['type' => 'array', 'items' => ['type' => 'string'], 'description' => 'CSS selectors to keep when purging.'],
                                 ],
                                 'additionalProperties' => false,
@@ -178,12 +177,6 @@ final class SettingsSet implements AbilityDefinition
             if (!is_array($settings['performance'])) {
                 return __('"performance" must be an object.', 'nucleo');
             }
-            if (
-                array_key_exists('wooFragments', $settings['performance'])
-                && !in_array($settings['performance']['wooFragments'], ['keep', 'off'], true)
-            ) {
-                return __('"wooFragments" must be "keep" or "off".', 'nucleo');
-            }
             if (array_key_exists('purgeSafelist', $settings['performance'])) {
                 $list = $settings['performance']['purgeSafelist'];
                 if (!is_array($list) || !array_is_list($list)) {
@@ -305,13 +298,6 @@ final class SettingsSet implements AbilityDefinition
         update_option('nucleo_settings', $stored);
 
         $performance = $settings['performance'] ?? [];
-        if (array_key_exists('wooFragments', $performance)) {
-            if ($performance['wooFragments'] === 'keep') {
-                update_option('nucleo_woo_fragments', 'keep');
-            } else {
-                delete_option('nucleo_woo_fragments');
-            }
-        }
         if (array_key_exists('purgeSafelist', $performance)) {
             $selectors = array_map('trim', $performance['purgeSafelist']);
             update_option('nucleo_purge_safelist', array_values(array_unique(array_filter($selectors, static fn (string $s): bool => $s !== ''))));

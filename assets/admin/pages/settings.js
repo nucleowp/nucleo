@@ -84,7 +84,6 @@
 			case 'performance':
 				return {
 					performance: {
-						wooFragments: draft.performance.wooFragments,
 						purgeSafelist: safelistFromText( draft.performance.safelistText ),
 					},
 					assets: { purgeMode: draft.assets.purgeMode },
@@ -112,7 +111,6 @@
 		return {
 			editor: { textOnlyRoles: Array.isArray( editor.textOnlyRoles ) ? editor.textOnlyRoles : [] },
 			performance: {
-				wooFragments: perf.wooFragments === 'keep' ? 'keep' : 'off',
 				safelistText: Array.isArray( perf.purgeSafelist ) ? perf.purgeSafelist.join( '\n' ) : '',
 			},
 			assets: { purgeMode: assets.purgeMode === 'strict' ? 'strict' : 'normal' },
@@ -221,23 +219,7 @@
 			const setPerf = ( patch ) => setDraft( ( d ) => ( { ...d, performance: { ...d.performance, ...patch } } ) );
 			const setAssets = ( patch ) => setDraft( ( d ) => ( { ...d, assets: { ...d.assets, ...patch } } ) );
 			const setFonts = ( patch ) => setDraft( ( d ) => ( { ...d, fonts: { ...d.fonts, ...patch } } ) );
-			const fragments = [
-				[ 'off', __( 'Turn off on pages without a cart', 'nucleo' ) ],
-				[ 'keep', __( 'Keep', 'nucleo' ) ],
-			];
 			return h( UI.Card, { title: __( 'Performance', 'nucleo' ) },
-				h( FormRow, {
-					label: __( 'WooCommerce cart fragments', 'nucleo' ),
-					help: __( 'Turn them off on pages without a cart to lighten the page.', 'nucleo' ),
-					htmlFor: 'nucleo-woo-fragments',
-				},
-					h( 'select', {
-						id: 'nucleo-woo-fragments',
-						className: 'nc-select',
-						style: { width: '100%' },
-						value: p.wooFragments,
-						onChange: ( e ) => setPerf( { wooFragments: e.target.value } ),
-					}, fragments.map( ( [ value, label ] ) => h( 'option', { key: value, value }, label ) ) ) ),
 				h( FormRow, {
 					label: __( 'Font subsets', 'nucleo' ),
 					help: __( 'Separated by commas. Empty means latin and latin-ext.', 'nucleo' ),

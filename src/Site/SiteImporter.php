@@ -1077,7 +1077,8 @@ final class SiteImporter
                 is_array($stored) ? LayoutConditions::languageConditions(LayoutConditions::normalize($stored)) : [],
             );
             if ($removed > 0) {
-                $this->warn($file, __('Language conditions removed: this site has no language detection (Nucleo Pro with WPML or Polylang), so they would have no effect.', 'nucleo'));
+                $notice = __('Language conditions removed: this site has no language detection, so they would have no effect.', 'nucleo');
+                $this->warn($file, $notice);
             }
         }
 
