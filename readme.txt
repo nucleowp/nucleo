@@ -4,7 +4,7 @@ Tags: blocks, page builder, layout, mcp, ai
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 0.5.2
+Stable tag: 0.5.3
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -90,7 +90,8 @@ Used only when an administrator connects an AI client to the site's MCP endpoint
 
 * Sign-in: the administrator approves the client on a WordPress consent page. Then WordPress redirects the browser to the client's callback address with a one-time authorization code. Examples: claude.ai/api/mcp/auth_callback for Claude and chatgpt.com/connector_platform_oauth_redirect for ChatGPT. Local clients use a localhost address. The client exchanges the code for an access token limited to the approved scopes.
 * Client metadata: if the client identifies itself with a URL, the site downloads that public JSON document once to read the client's name and callback addresses.
-* Use: the agent reads and writes pages, layouts, design tokens and content through the site's REST API, with the permissions of the approving user. The content it reads reaches the AI provider, which processes it under its own terms.
+* Use: the agent reads and writes pages, layouts, design tokens, content and site options (title, tagline, homepage, date formats, icons) through the site's MCP endpoint, within the approved scopes and the permissions of the approving user. The content it reads reaches the AI provider, which processes it under its own terms.
+* Limits: the MCP endpoint accepts only an OAuth token issued by this site; a WordPress cookie or an application password is refused. A token cannot install or activate plugins or themes, manage users, download language packs, change the plugin settings or import a site: these actions stay in the WordPress dashboard and in WP-CLI. Nucleo runs no server between the agent and the site: the OAuth server is the site itself.
 
 * Anthropic (Claude): [Terms](https://www.anthropic.com/legal/consumer-terms), [Privacy](https://www.anthropic.com/legal/privacy)
 * OpenAI (ChatGPT, Codex): [Terms](https://openai.com/policies/terms-of-use/), [Privacy](https://openai.com/policies/privacy-policy/)
@@ -108,9 +109,18 @@ These features contact only the address that you or a connected AI agent provide
 
 All PHP and JavaScript of Nucleo ships unminified. The only minified files are the Friendly Captcha widget scripts in assets/lib/friendlycaptcha (version 1.1.5, MPL-2.0). Their source is at https://github.com/FriendlyCaptcha/friendly-captcha-sdk and on npm as @friendlycaptcha/sdk.
 
-The font metrics in data/font-metrics.json come from @capsizecss/metrics 3.7.0 (MIT, https://github.com/seek-oss/capsize). The license is in data/LICENSE-capsize-metrics.
+The font metrics in data/font-metrics.json come from @capsizecss/metrics 3.7.0 (MIT, https://github.com/seek-oss/capsize). The license is in data/LICENSE-capsize-metrics.txt.
 
 == Changelog ==
+
+= 0.5.3 =
+
+* Action needed: The OAuth scope nucleo:admin no longer exists. A connected agent no longer runs site-import, settings-set and mail-log: they stay in the dashboard, in WP-CLI and in the Nucleo CLI.
+* Action needed: The MCP endpoint accepts only an OAuth token. A client set up with an application password gets 401 and connects again with OAuth.
+* Security: status, settings-get, site-export and wpml-check require the nucleo:read scope; cache-rebuild, icons-set and site-options-set require nucleo:design.
+* Security: With an OAuth token, site-options-set does not download language packs.
+* Improved: An authorization request that still contains nucleo:admin ignores that scope, without an error.
+* Fixed: The license files of the font metrics and of Friendly Captcha have the .txt extension.
 
 = 0.5.2 =
 

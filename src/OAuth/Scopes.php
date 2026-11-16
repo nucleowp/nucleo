@@ -6,14 +6,23 @@ namespace Nucleo\OAuth;
 
 defined('ABSPATH') || exit;
 
-/** Scope OAuth di Nucleo, con il gruppo di ability e la capability WordPress corrispondenti. */
+/**
+ * Scope OAuth di Nucleo, con il gruppo di ability e la capability WordPress corrispondenti.
+ *
+ * Un token OAuth non amministra il sito: non esiste uno scope di amministrazione. Le ability assenti da
+ * ABILITY_SCOPES (per esempio site-import, settings-set e mail-log) sono solo locali: con un token
+ * forAbility() restituisce null e la chiamata riceve insufficient_scope. Restano disponibili in wp-admin,
+ * con WP-CLI e con la CLI di Nucleo, dove decide la sola capability.
+ */
 final class Scopes
 {
     public const READ = 'nucleo:read';
     public const WRITE = 'nucleo:write';
     public const PUBLISH = 'nucleo:publish';
     public const DESIGN = 'nucleo:design';
-    public const ADMIN = 'nucleo:admin';
+
+    /** Scope ritirati: una richiesta di autorizzazione che li contiene li ignora, invece di fallire. */
+    public const RETIRED = ['nucleo:admin'];
 
     private const ABILITY_SCOPES = [
         'quality-scan' => self::READ,
@@ -42,10 +51,10 @@ final class Scopes
         'media-upload' => self::WRITE,
         'menu-list' => self::READ,
         'menu-set' => self::DESIGN,
-        'site-options-set' => self::ADMIN,
-        'icons-set' => self::ADMIN,
-        'woo-checkout-fields-set' => self::ADMIN,
-        'woo-checkout-parts-set' => self::ADMIN,
+        'site-options-set' => self::DESIGN,
+        'icons-set' => self::DESIGN,
+        'woo-checkout-fields-set' => self::DESIGN,
+        'woo-checkout-parts-set' => self::DESIGN,
         'gap-report' => self::WRITE,
         'gap-list' => self::READ,
         'media-formats' => self::WRITE,
@@ -62,15 +71,13 @@ final class Scopes
         'css-optimize' => self::DESIGN,
         'css-optimize-apply' => self::DESIGN,
         'css-optimize-off' => self::DESIGN,
-        'status' => self::ADMIN,
-        'cache-rebuild' => self::ADMIN,
-        'site-export' => self::ADMIN,
-        'site-import' => self::ADMIN,
+        'status' => self::READ,
+        'cache-rebuild' => self::DESIGN,
+        'site-export' => self::READ,
         'kit-list' => self::READ,
         'kit-apply' => self::DESIGN,
         'critical-set' => self::DESIGN,
-        'settings-get' => self::ADMIN,
-        'settings-set' => self::ADMIN,
+        'settings-get' => self::READ,
         'model-get' => self::READ,
         'components-list' => self::READ,
         'model-validate' => self::READ,
@@ -83,8 +90,7 @@ final class Scopes
         'content-upsert' => self::WRITE,
         'terms-set' => self::WRITE,
         'guide' => self::READ,
-        'mail-log' => self::ADMIN,
-        'wpml-check' => self::ADMIN,
+        'wpml-check' => self::READ,
     ];
 
     private const CAPABILITIES = [
@@ -92,13 +98,12 @@ final class Scopes
         self::WRITE => 'edit_posts',
         self::PUBLISH => 'publish_pages',
         self::DESIGN => 'edit_theme_options',
-        self::ADMIN => 'manage_options',
     ];
 
     /** @return list<string> */
     public static function all(): array
     {
-        return [self::READ, self::WRITE, self::PUBLISH, self::DESIGN, self::ADMIN];
+        return [self::READ, self::WRITE, self::PUBLISH, self::DESIGN];
     }
 
     /**

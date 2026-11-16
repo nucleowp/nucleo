@@ -203,7 +203,7 @@ final class SiteDescribe implements AbilityDefinition
         }
         $out = [];
         if (!in_array($locale, $installed, true)) {
-            $out[] = sprintf('Language pack %s is not installed: dates and default labels stay in English. Run site-options-set {"language": "%s"}: it downloads the pack, also when the language is already set.', $locale, $locale);
+            $out[] = sprintf('Language pack %s is not installed: dates and default labels stay in English. Ask the user to install it from Settings > General: an agent connected over OAuth cannot download it.', $locale);
         }
         if ($dateFormat === 'F j, Y') {
             $out[] = sprintf('date_format is "F j, Y", the English default: dates print in English word order ("ottobre 27, 2026") on a %s site. Set it with site-options-set {"dateFormat": "j F Y"} or site.json site.dateFormat. A later language change through site-options-set adapts a default format by itself.', $locale);

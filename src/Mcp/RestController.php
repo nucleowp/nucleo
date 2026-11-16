@@ -8,7 +8,8 @@ defined('ABSPATH') || exit;
 
 /**
  * Trasporto HTTP streamable di MCP: POST /wp-json/nucleo/v1/mcp con risposta application/json.
- * Autenticazione: utente loggato (token OAuth via BearerAuth, cookie o application password).
+ * Autenticazione: solo token OAuth (BearerAuth). Cookie e application password non bastano: non hanno
+ * scope, scadenza né consenso, e darebbero all'agente remoto tutte le ability dell'utente.
  */
 final class RestController
 {
@@ -47,7 +48,7 @@ final class RestController
             return new \WP_Error('https_required', 'HTTPS is required. Behind a reverse proxy, check that it forwards X-Forwarded-Proto: https.', ['status' => 400]);
         }
 
-        if (is_user_logged_in()) {
+        if (is_user_logged_in() && \Nucleo\OAuth\CurrentToken::scopes() !== null) {
             return true;
         }
 

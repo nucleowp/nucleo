@@ -137,6 +137,8 @@ final class Authorize
         }
 
         $raw = preg_split('/\s+/', trim(self::str($q, 'scope')), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+        // Un client configurato prima del ritiro di nucleo:admin lo chiede ancora: si ignora (RFC 6749, 3.3).
+        $raw = array_values(array_diff($raw, Scopes::RETIRED));
         $scopes = Scopes::parse(implode(' ', $raw));
         if ($scopes === [] || count(array_unique($raw)) !== count($scopes)) {
             return self::redirectError('invalid_scope', __('Scopes are missing or invalid.', 'nucleo'), $target);
@@ -349,11 +351,10 @@ final class Authorize
     private static function scopeLabel(string $scope): string
     {
         return match ($scope) {
-            Scopes::READ => __('Read documents, layouts and site status', 'nucleo'),
+            Scopes::READ => __('Read documents, layouts, settings and site status', 'nucleo'),
             Scopes::WRITE => __('Create and edit documents and media', 'nucleo'),
             Scopes::PUBLISH => __('Publish documents', 'nucleo'),
-            Scopes::DESIGN => __('Edit design, tokens, layouts and asset rules', 'nucleo'),
-            Scopes::ADMIN => __('Manage the cache, status and settings', 'nucleo'),
+            Scopes::DESIGN => __('Edit design, tokens, layouts, asset rules and site options; rebuild the cache', 'nucleo'),
             default => $scope,
         };
     }
