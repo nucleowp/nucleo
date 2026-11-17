@@ -4,7 +4,7 @@ Tags: blocks, page builder, layout, mcp, ai
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 0.5.3
+Stable tag: 0.5.4
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -112,6 +112,14 @@ All PHP and JavaScript of Nucleo ships unminified. The only minified files are t
 The font metrics in data/font-metrics.json come from @capsizecss/metrics 3.7.0 (MIT, https://github.com/seek-oss/capsize). The license is in data/LICENSE-capsize-metrics.txt.
 
 == Changelog ==
+
+= 0.5.4 =
+
+* Fixed: With critical CSS on, a Nucleo page no longer shifts its layout on mobile. In the lab test CLS goes from 0.77 to 0.
+* Improved: With a published critical CSS, the compiled CSS of the page is printed inline in place of its link. Over 50 kB it stays a link.
+* Improved: Deferred stylesheets apply all at once, when the last one has arrived.
+* Improved: critical-set accepts sheets, the list of stylesheets the page loads, and looks for rules only there. The nucleo critical command sends it on its own.
+* Action needed: The Critical CSS box of the Performance page is gone. Publish critical CSS with nucleo critical or with the external service.
 
 = 0.5.3 =
 

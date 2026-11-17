@@ -9,6 +9,7 @@ defined('ABSPATH') || exit;
 use Nucleo\Assets\CriticalCss;
 use Nucleo\Assets\LocalFile;
 use Nucleo\Assets\RulePlanner;
+use Nucleo\Compiler\CssFiles;
 use Nucleo\Storage\ArtifactStore;
 use Nucleo\Storage\ArtifactStoreFactory;
 
@@ -24,6 +25,8 @@ final class AssetRuntime
     private const INTERACTION_EVENTS = ['pointerdown', 'keydown', 'scroll'];
     /** Duplicato di CssPreview::PARAM: senza parametro la classe CssPreview non si carica. */
     private const PREVIEW_PARAM = 'nucleo_css';
+    /** Con il critical attivo il CSS di un documento va inline fino a questa misura (50 KB); oltre resta un <link>. */
+    private const DOCUMENT_INLINE_MAX = 51200;
 
     /** @var array<string, string> handle => strategia lazy ('interaction' o 'idle') */
     private static array $lazy = [];
@@ -31,12 +34,16 @@ final class AssetRuntime
     /** @var list<string> CSS originali sostituiti dalle varianti ridotte, da caricare al primo gesto */
     private static array $fullCss = [];
 
-    /** @var list<string|array{href: string, media: string}> fogli locali affidati al loader; con media diverso da "all" un oggetto */
+    /** @var list<string|array{href: string, media?: string, after?: string}> fogli locali affidati al loader; un oggetto se hanno un media proprio o un punto di inserimento */
     private static array $loaderUrls = [];
+
+    /** Id dell'ultimo CSS di documento lasciato nella pagina: i fogli rimandati che lo seguono tornano dopo di lui. */
+    private static ?string $documentAnchor = null;
 
     public static function apply(): void
     {
         self::$loaderUrls = [];
+        self::$documentAnchor = null;
         // Sul frontend normale la classe CssPreview non si carica: il parametro c'è solo nelle anteprime.
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- solo presenza del parametro; CssPreview::mode() verifica manage_options.
         $mode = isset($_GET[self::PREVIEW_PARAM]) ? CssPreview::mode() : null;
@@ -64,6 +71,8 @@ final class AssetRuntime
     /**
      * Critical CSS inline su nucleo-tokens. Con il normale critical pubblicato i fogli locali vanno al loader,
      * che li carica senza bloccare il rendering. Nell'anteprima critical niente fogli locali e niente loader.
+     * Il CSS compilato dei documenti resta nella pagina, inline: il critical vale per tipo di template
+     * e non contiene le regole di una singola pagina.
      */
     private static function applyCritical(?string $mode): void
     {
@@ -175,21 +184,45 @@ final class AssetRuntime
 
     /**
      * Toglie dalla coda i fogli con file locale e ne restituisce gli src, dipendenze comprese, nell'ordine di stampa.
+     * Restano nella pagina i fogli esterni e il CSS compilato dei documenti, stampato inline. Un foglio rimandato
+     * che segue il CSS di un documento porta "after" con l'id di quell'elemento.
      *
-     * @return list<string|array{href: string, media: string}>
+     * @return list<string|array{href: string, media?: string, after?: string}>
      */
     private static function takeLocalSheets(): array
     {
         $styles = wp_styles();
         $urls = [];
+        // Nei passaggi tardivi i fogli nuovi seguono i documenti già stampati.
+        $anchor = self::$documentAnchor;
         foreach (self::printOrder($styles) as $handle) {
             $item = $styles->registered[$handle] ?? null;
-            if ($handle === self::TOKENS_HANDLE || in_array($handle, $styles->done, true) || $item === null || !is_string($item->src) || $item->src === '' || LocalFile::path($item->src) === null) {
+            if ($handle === self::TOKENS_HANDLE || $item === null || !is_string($item->src) || $item->src === '') {
+                continue;
+            }
+            $path = LocalFile::path($item->src);
+            if ($path === null) {
+                continue;
+            }
+            if (CssFiles::isDocumentCss($path)) {
+                // Resta nella pagina: i fogli rimandati che lo seguono tornano dopo di lui, come nella pagina originale.
+                $inlined = !in_array($handle, $styles->done, true) && self::inlineDocumentCss($styles, $handle, $path);
+                $anchor = self::$documentAnchor = $inlined ? 'nucleo-inline-' . $handle . '-inline-css' : $handle . '-css';
+                continue;
+            }
+            if (in_array($handle, $styles->done, true)) {
                 continue;
             }
             // Il media del foglio resta: un foglio solo per schermi piccoli non deve valere su desktop.
             $media = is_string($item->args) ? trim($item->args) : '';
-            $urls[] = $media === '' || $media === 'all' ? $item->src : ['href' => $item->src, 'media' => $media];
+            $entry = ['href' => $item->src];
+            if ($media !== '' && $media !== 'all') {
+                $entry['media'] = $media;
+            }
+            if ($anchor !== null) {
+                $entry['after'] = $anchor;
+            }
+            $urls[] = count($entry) === 1 ? $item->src : $entry;
             wp_dequeue_style($handle);
             // Segnato come stampato: un foglio che dipende da questo non lo riporta nella pagina.
             $styles->done[] = $handle;
@@ -204,6 +237,39 @@ final class AssetRuntime
         }
 
         return $urls;
+    }
+
+    /**
+     * Stampa inline il CSS compilato di un documento al posto del suo <link>, nella stessa posizione della coda:
+     * un <link> bloccante costa una richiesta prima del primo rendering e annulla il guadagno del critical.
+     * Oltre DOCUMENT_INLINE_MAX il foglio resta un <link>.
+     */
+    private static function inlineDocumentCss(\WP_Styles $styles, string $handle, string $path): bool
+    {
+        $size = filesize($path);
+        $css = $size !== false && $size <= self::DOCUMENT_INLINE_MAX ? file_get_contents($path) : false;
+        if ($css === false) {
+            return false;
+        }
+        // Il compilatore non scrive url() nel CSS dei documenti: niente percorsi relativi da correggere.
+        // "</style" chiuderebbe il tag inline.
+        $css = (string) preg_replace('#</style#i', '', $css);
+        $after = $styles->get_data($handle, 'after');
+
+        $keep = 'nucleo-inline-' . $handle;
+        wp_register_style($keep, false, [], NUCLEO_VERSION);
+        $styles->add_data($keep, 'after', [$css, ...(is_array($after) ? array_values($after) : [])]);
+        // Stessa posizione nella coda: l'ordine con gli stili che restano non cambia.
+        $at = array_search($handle, $styles->queue, true);
+        if ($at === false) {
+            wp_enqueue_style($keep);
+        } else {
+            $styles->queue[$at] = $keep;
+        }
+        // Segnato come stampato: un foglio che dipende da questo non lo riporta nella pagina.
+        $styles->done[] = $handle;
+
+        return true;
     }
 
     /**

@@ -259,11 +259,14 @@ final class CriticalSubset
 
     private static function normalizeSelector(string $selector): string
     {
-        return (string) preg_replace(
+        $selector = (string) preg_replace(
             '#(?<!:):(before|after|first-line|first-letter)(?![\w-])#',
             '::$1',
             self::normalize($selector)
         );
+
+        // Il browser toglie il selettore universale davanti a classi, id, attributi e pseudo: "*::before" diventa "::before".
+        return (string) preg_replace('/(?<![\w|-])\*(?=[.#\[:])/', '', $selector);
     }
 
     /**

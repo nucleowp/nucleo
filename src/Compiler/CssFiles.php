@@ -42,6 +42,12 @@ final class CssFiles
         return $name;
     }
 
+    /** Vero se il percorso o l'URL è il CSS compilato di un documento: <uploads>/nucleo/css/p-<id>.<hash>.css. */
+    public static function isDocumentCss(string $file): bool
+    {
+        return preg_match('~[/\\\\]nucleo[/\\\\]css[/\\\\]p-\d+\.[0-9a-f]{8}\.css(?:[?#].*)?$~', $file) === 1;
+    }
+
     /** Toglie i file della pagina più vecchi di KEEP_SECONDS, tenendo sempre il corrente e i KEEP_FILES più recenti. */
     public static function prune(string $dir, int $id, string $current, int $now): void
     {

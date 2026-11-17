@@ -1,24 +1,44 @@
 (function () {
   'use strict';
 
-  // CSS completi di Nucleo: link con media="print", passa a "all" al caricamento (non blocca il rendering).
+  // CSS completi di Nucleo: link con media="print", che non blocca il rendering.
   var styles = Array.isArray(window.nucleoCss) ? window.nucleoCss : [];
   // I fogli vanno subito dopo il critical CSS (stile inline di nucleo-tokens), nell'ordine dato:
   // così gli stili inline stampati dopo (es. correzioni di WooCommerce) restano più forti, come nella pagina originale.
   var anchor = document.getElementById('nucleo-tokens-inline-css');
-  var parent = anchor ? anchor.parentNode : document.head;
-  var before = anchor ? anchor.nextSibling : null;
-  // Voce: href, oppure {href, media} per i fogli con media proprio (es. solo schermi piccoli).
+  var spots = { '': { parent: anchor ? anchor.parentNode : document.head, before: anchor ? anchor.nextSibling : null } };
+  // Una voce con "after" segue il CSS di un documento, rimasto nella pagina: va dopo quell'elemento.
+  function spot(after) {
+    if (after && !spots[after]) {
+      var ref = document.getElementById(after);
+      spots[after] = ref ? { parent: ref.parentNode, before: ref.nextSibling } : spots[''];
+    }
+    return spots[after || ''];
+  }
+  var links = [];
+  var left = styles.length;
+  // I fogli passano al loro media tutti insieme, quando l'ultimo è arrivato (o è fallito). Uno alla volta, un foglio
+  // già arrivato vince sulle regole del critical che appartengono a un foglio ancora in viaggio: il layout si sposta due volte.
+  function settle() {
+    this.onload = this.onerror = null;
+    left--;
+    if (left > 0) return;
+    links.forEach(function (item) {
+      item.link.media = item.media;
+      item.link.removeAttribute('data-nc-css');
+    });
+  }
+  // Voce: href, oppure {href, media, after} per i fogli con media proprio (es. solo schermi piccoli) o con un punto di inserimento.
   styles.forEach(function (entry) {
+    var at = spot(typeof entry === 'string' ? '' : entry.after);
     var link = document.createElement('link');
-    var media = typeof entry === 'string' ? 'all' : entry.media;
     link.rel = 'stylesheet';
     link.href = typeof entry === 'string' ? entry : entry.href;
     link.media = 'print';
     link.setAttribute('data-nc-css', '');
-    link.onload = function () { this.media = media; this.removeAttribute('data-nc-css'); };
-    link.onerror = function () { this.removeAttribute('data-nc-css'); };
-    parent.insertBefore(link, before);
+    link.onload = link.onerror = settle;
+    links.push({ link: link, media: typeof entry === 'string' ? 'all' : entry.media || 'all' });
+    at.parent.insertBefore(link, at.before);
   });
 
   var list = window.nucleoLazy || [];

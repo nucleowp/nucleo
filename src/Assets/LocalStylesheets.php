@@ -6,6 +6,7 @@ namespace Nucleo\Assets;
 
 defined('ABSPATH') || exit;
 
+use Nucleo\Compiler\CssFiles;
 use Nucleo\Storage\ArtifactStoreFactory;
 
 /**
@@ -48,6 +49,37 @@ final class LocalStylesheets
                 }
                 $bytes += $size;
                 $sheets[$url] = $css;
+            }
+        }
+
+        return $sheets;
+    }
+
+    /**
+     * Solo i fogli indicati, nell'ordine ricevuto: quelli che la pagina misurata carica.
+     * Gli URL che non puntano a un file .css locale del sito si saltano. Si salta anche il CSS compilato
+     * dei documenti: con il critical attivo resta nella pagina, inline, e le sue regole valgono per una pagina sola.
+     *
+     * @param list<mixed> $urls
+     * @return array<string, string> url del foglio => contenuto
+     */
+    public static function only(array $urls): array
+    {
+        $sheets = [];
+        $bytes = 0;
+        foreach (array_slice($urls, 0, self::MAX_FILES) as $url) {
+            $path = is_string($url) ? LocalFile::path($url) : null;
+            if ($path === null || strtolower(pathinfo($path, PATHINFO_EXTENSION)) !== 'css' || CssFiles::isDocumentCss($path)) {
+                continue;
+            }
+            $bytes += (int) filesize($path);
+            if ($bytes > self::MAX_BYTES) {
+                break;
+            }
+            $css = file_get_contents($path);
+            if ($css !== false) {
+                // Senza query né frammento: la stessa chiave per ?ver=1 e ?ver=2.
+                $sheets[explode('?', explode('#', $url, 2)[0], 2)[0]] = $css;
             }
         }
 
