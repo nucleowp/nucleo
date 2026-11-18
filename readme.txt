@@ -4,7 +4,7 @@ Tags: blocks, page builder, layout, mcp, ai
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 0.5.4
+Stable tag: 0.5.5
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -112,6 +112,13 @@ All PHP and JavaScript of Nucleo ships unminified. The only minified files are t
 The font metrics in data/font-metrics.json come from @capsizecss/metrics 3.7.0 (MIT, https://github.com/seek-oss/capsize). The license is in data/LICENSE-capsize-metrics.txt.
 
 == Changelog ==
+
+= 0.5.5 =
+
+* Improved: The Nucleo Canvas theme is ready for the WordPress.org theme directory. The package for the directory has no updater and contacts no external service.
+* Fixed: In the Nucleo Canvas theme, long titles, code blocks, tables and embeds no longer widen the page on mobile.
+* Fixed: In the Nucleo Canvas theme, the featured image no longer touches the text that follows.
+* Improved: The Nucleo Canvas theme has a new screenshot, which shows the theme without plugins.
 
 = 0.5.4 =
 
