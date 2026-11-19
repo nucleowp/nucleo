@@ -2,10 +2,13 @@
 
 /**
  * Plugin Name:       Nucleo
+ * Plugin URI:        https://nucleowp.dev/en/
  * Description:       AI-first block builder: JSON documents compiled at save time, zero runtime cost.
- * Version:           0.5.5
+ * Version:           0.5.6
  * Requires at least: 6.9
  * Requires PHP:      8.2
+ * Author:            Nucleo
+ * Author URI:        https://nucleowp.dev/
  * License:           GPL-2.0-or-later
  * Text Domain:       nucleo
  */
@@ -14,7 +17,7 @@ declare(strict_types=1);
 
 defined('ABSPATH') || exit;
 
-define('NUCLEO_VERSION', '0.5.5');
+define('NUCLEO_VERSION', '0.5.6');
 define('NUCLEO_FILE', __FILE__);
 define('NUCLEO_DIR', __DIR__ . '/');
 define('NUCLEO_MIN_PHP', '8.2');

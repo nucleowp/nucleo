@@ -4,7 +4,7 @@ Tags: blocks, page builder, layout, mcp, ai
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 0.5.5
+Stable tag: 0.5.6
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -27,6 +27,8 @@ Free version features:
 
 No runtime cost: the work happens on save, not on every visit.
 
+Read the [documentation](https://nucleowp.dev/en/docs/). To connect Claude or another AI agent, follow [Connect an agent](https://nucleowp.dev/en/docs/connect-agent/).
+
 == Installation ==
 
 1. Upload the nucleo folder to wp-content/plugins, or install the zip from Plugins, Add New.
@@ -45,11 +47,11 @@ No. The compiler works on save. The frontend receives ready-made HTML and CSS. I
 
 = Do layouts need a specific theme? =
 
-Pages built with Nucleo work with any theme: Nucleo fills the content area of the page. Header, footer and template layouts are printed by Nucleo Canvas, a free GPL theme that you can download from https://nucleowp.dev/download/. With another theme, the layouts you create are saved but not shown.
+Pages built with Nucleo work with any theme: Nucleo fills the content area of the page. Header, footer and template layouts are printed by Nucleo Canvas, a free GPL theme that you can download from [nucleowp.dev](https://nucleowp.dev/en/download/). With another theme, the layouts you create are saved but not shown.
 
 = What is the difference with the Pro version? =
 
-The Pro version adds WooCommerce, multilingual sites, popups, the CSS purger, the asset audit and starter kits.
+The Pro version adds WooCommerce, multilingual sites, popups, the CSS purger, the asset audit and starter kits. See [plans and pricing](https://nucleowp.dev/en/pro/).
 
 == External services ==
 
@@ -112,6 +114,11 @@ All PHP and JavaScript of Nucleo ships unminified. The only minified files are t
 The font metrics in data/font-metrics.json come from @capsizecss/metrics 3.7.0 (MIT, https://github.com/seek-oss/capsize). The license is in data/LICENSE-capsize-metrics.txt.
 
 == Changelog ==
+
+= 0.5.6 =
+
+* Improved: On the Plugins screen, Nucleo shows the author and the link to the plugin site.
+* Improved: The WordPress.org listing links to the documentation, the guide to connect an agent, the theme download and the plans.
 
 = 0.5.5 =
 
