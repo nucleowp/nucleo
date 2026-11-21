@@ -1,6 +1,7 @@
 # Nucleo: WordPress page builder with an MCP server for AI agents
 
 [![Listed on mcpservers.org](https://mcpservers.org/badge.svg)](https://mcpservers.org/servers/nucleowp/nucleo)
+[![M8ven Score](https://m8ven.ai/badge/mcp/nucleowp-nucleo-1p4wv7?variant=verified)](https://m8ven.ai/mcp/nucleowp-nucleo-1p4wv7?s=readme)
 
 Nucleo builds WordPress pages from JSON documents compiled on save. Every frontend request receives HTML and CSS that are already built, so the page builder adds no runtime cost.
 
@@ -8,7 +9,7 @@ Nucleo includes an MCP server with OAuth 2.1. Claude, Cursor and other MCP clien
 
 - Website: [nucleowp.dev](https://nucleowp.dev/en/)
 - Documentation: [nucleowp.dev/en/docs](https://nucleowp.dev/en/docs/)
-- Version in this repository: 0.5.6
+- Version in this repository: 0.5.7
 
 ## Features
 

@@ -1,18 +1,18 @@
-=== Nucleo ===
+=== Nucleo – AI Page Builder & MCP Server ===
 Contributors: nucleowp
-Tags: blocks, page builder, layout, mcp, ai
+Tags: page builder, ai, mcp, mcp server, ai agent
 Requires at least: 6.9
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 0.5.6
+Stable tag: 0.5.7
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Builds WordPress pages from JSON documents compiled on save, with an MCP server for AI agents. No runtime cost.
+AI page builder with a built-in MCP server: AI agents build pages as JSON, compiled to static HTML and CSS on save. Works with any MCP client.
 
 == Description ==
 
-Nucleo describes pages as JSON documents. The compiler turns them into HTML and CSS when you save, so every frontend request receives a page that is already built. Nucleo does not track visitors and does not call home. Third-party services load only when you turn them on: see External services.
+Nucleo is an AI page builder for WordPress with a built-in MCP server. It describes pages as JSON documents. The compiler turns them into HTML and CSS when you save, so every frontend request receives a page that is already built. Nucleo does not track visitors and does not call home. Third-party services load only when you turn them on: see External services.
 
 Free version features:
 
@@ -27,7 +27,7 @@ Free version features:
 
 No runtime cost: the work happens on save, not on every visit.
 
-Read the [documentation](https://nucleowp.dev/en/docs/). To connect Claude or another AI agent, follow [Connect an agent](https://nucleowp.dev/en/docs/connect-agent/).
+Read the [documentation](https://nucleowp.dev/en/docs/). To connect an AI agent, follow [Connect an agent](https://nucleowp.dev/en/docs/connect-agent/).
 
 == Installation ==
 
@@ -115,10 +115,15 @@ The font metrics in data/font-metrics.json come from @capsizecss/metrics 3.7.0 (
 
 == Changelog ==
 
+= 0.5.7 =
+
+* Improved: On the Plugins screen, the name of Nucleo says what the plugin does: AI page builder and MCP server.
+* Other: Updates to the plugin listing, the public repository and the changelog, to align the texts.
+
 = 0.5.6 =
 
 * Improved: On the Plugins screen, Nucleo shows the author and the link to the plugin site.
-* Improved: The WordPress.org listing links to the documentation, the guide to connect an agent, the theme download and the plans.
+* Other: Updates to the plugin listing and the theme documentation, to align the texts.
 
 = 0.5.5 =
 
