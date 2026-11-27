@@ -4,7 +4,7 @@
  * Plugin Name:       Nucleo – AI Page Builder & MCP Server
  * Plugin URI:        https://nucleowp.dev/en/
  * Description:       AI-first block builder: JSON documents compiled at save time, zero runtime cost.
- * Version:           0.5.8
+ * Version:           0.5.9
  * Requires at least: 6.9
  * Requires PHP:      8.2
  * Author:            Nucleo
@@ -17,7 +17,7 @@ declare(strict_types=1);
 
 defined('ABSPATH') || exit;
 
-define('NUCLEO_VERSION', '0.5.8');
+define('NUCLEO_VERSION', '0.5.9');
 define('NUCLEO_FILE', __FILE__);
 define('NUCLEO_DIR', __DIR__ . '/');
 define('NUCLEO_MIN_PHP', '8.2');

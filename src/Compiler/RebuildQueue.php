@@ -334,7 +334,15 @@ final class RebuildQueue
         if (wp_next_scheduled(self::HOOK) === false) {
             wp_schedule_single_event($at, self::HOOK);
             if ($at <= time()) {
-                spawn_cron();
+                // spawn_cron() legge WP_CRON_LOCK_TIMEOUT, che WordPress definisce dopo il caricamento dei plugin.
+                // Dopo un aggiornamento la coda si riempie prima (Activation::maybeUpgrade): la chiamata passa a init.
+                if (defined('WP_CRON_LOCK_TIMEOUT')) {
+                    spawn_cron();
+                } else {
+                    add_action('init', static function (): void {
+                        spawn_cron();
+                    }, 99);
+                }
             }
         }
     }

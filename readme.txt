@@ -4,7 +4,7 @@ Tags: page builder, ai, mcp, mcp server, ai agent
 Requires at least: 6.9
 Tested up to: 7.2
 Requires PHP: 8.2
-Stable tag: 0.5.8
+Stable tag: 0.5.9
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -114,6 +114,10 @@ All PHP and JavaScript of Nucleo ships unminified. The only minified files are t
 The font metrics in data/font-metrics.json come from @capsizecss/metrics 3.7.0 (MIT, https://github.com/seek-oss/capsize). The license is in data/LICENSE-capsize-metrics.txt.
 
 == Changelog ==
+
+= 0.5.9 =
+
+* Fixed: After a Nucleo update, the first request to the admin or to WP-CLI no longer ends in a fatal error. It happened once, on sites with at least one Nucleo page.
 
 = 0.5.8 =
 
