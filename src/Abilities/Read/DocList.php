@@ -70,7 +70,7 @@ final class DocList implements AbilityDefinition
                                     'properties' => [
                                         'errors' => ['type' => 'integer', 'minimum' => 0],
                                         'warnings' => ['type' => 'integer', 'minimum' => 0],
-                                        'score' => [],
+                                        'score' => ['type' => ['object', 'number', 'null'], 'description' => 'Scores of the last check, as returned by quality-check.'],
                                     ],
                                 ],
                             ],

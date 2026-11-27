@@ -15,7 +15,7 @@ use Nucleo\Support\ClientIp;
 /** POST nucleo/v1/form/<doc>/<node> e GET .../nonce. */
 final class FormRest
 {
-    private const NAMESPACE = 'nucleo/v1';
+    private const REST_NAMESPACE = 'nucleo/v1';
     private const ROUTE = '/form/(?P<doc>\d+)/(?P<node>[a-z0-9]+)';
     private const SUBMIT_LIMIT = 5;
     private const SUBMIT_WINDOW = 60;
@@ -37,12 +37,12 @@ final class FormRest
 
     public static function register(): void
     {
-        register_rest_route(self::NAMESPACE, self::ROUTE, [
+        register_rest_route(self::REST_NAMESPACE, self::ROUTE, [
             'methods' => 'POST',
             'callback' => [self::class, 'handle'],
             'permission_callback' => [self::class, 'publicFormEndpoint'],
         ]);
-        register_rest_route(self::NAMESPACE, self::ROUTE . '/nonce', [
+        register_rest_route(self::REST_NAMESPACE, self::ROUTE . '/nonce', [
             'methods' => 'GET',
             'callback' => [self::class, 'handleNonce'],
             'permission_callback' => [self::class, 'publicFormEndpoint'],

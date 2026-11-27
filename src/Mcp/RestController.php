@@ -16,7 +16,7 @@ final class RestController
     /** Transient impostato quando una richiesta non autenticata arriva senza header Authorization; letto da AgentsPage. */
     public const HEADER_MISSING_TRANSIENT = 'nucleo_oauth_auth_header_missing';
 
-    private const NAMESPACE = 'nucleo/v1';
+    private const REST_NAMESPACE = 'nucleo/v1';
     private const ROUTE = '/nucleo/v1/mcp';
 
     public static function register(): void
@@ -34,7 +34,7 @@ final class RestController
 
     public static function routes(): void
     {
-        register_rest_route(self::NAMESPACE, '/mcp', [
+        register_rest_route(self::REST_NAMESPACE, '/mcp', [
             'methods' => 'POST',
             'callback' => [self::class, 'handle'],
             'permission_callback' => [self::class, 'authorize'],

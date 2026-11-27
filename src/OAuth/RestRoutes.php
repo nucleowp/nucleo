@@ -13,7 +13,7 @@ defined('ABSPATH') || exit;
  */
 final class RestRoutes
 {
-    private const NAMESPACE = 'nucleo/v1';
+    private const REST_NAMESPACE = 'nucleo/v1';
 
     public static function register(): void
     {
@@ -32,17 +32,17 @@ final class RestRoutes
 
     public static function routes(): void
     {
-        register_rest_route(self::NAMESPACE, '/oauth/token', [
+        register_rest_route(self::REST_NAMESPACE, '/oauth/token', [
             'methods' => 'POST',
             'callback' => [self::class, 'handleToken'],
             'permission_callback' => [self::class, 'publicOAuthEndpoint'],
         ]);
-        register_rest_route(self::NAMESPACE, '/oauth/revoke', [
+        register_rest_route(self::REST_NAMESPACE, '/oauth/revoke', [
             'methods' => 'POST',
             'callback' => [self::class, 'handleRevoke'],
             'permission_callback' => [self::class, 'publicOAuthEndpoint'],
         ]);
-        register_rest_route(self::NAMESPACE, '/oauth/register', [
+        register_rest_route(self::REST_NAMESPACE, '/oauth/register', [
             'methods' => 'POST',
             'callback' => [self::class, 'handleRegister'],
             'permission_callback' => [self::class, 'publicOAuthEndpoint'],

@@ -98,10 +98,15 @@ final class Server
                 continue;
             }
 
+            $schema = $ability->get_input_schema() ?: ['type' => 'object'];
+            // Il default vuoto di uno schema oggetto è {}: l'array PHP vuoto uscirebbe come [].
+            if (($schema['type'] ?? null) === 'object' && ($schema['default'] ?? null) === []) {
+                $schema['default'] = new \stdClass();
+            }
             $tool = [
                 'name' => self::toolName($name),
                 'description' => $ability->get_description(),
-                'inputSchema' => $ability->get_input_schema() ?: ['type' => 'object'],
+                'inputSchema' => $schema,
             ];
             $annotations = $this->annotations($ability->get_meta());
             if ($annotations !== []) {

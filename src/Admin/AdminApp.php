@@ -119,6 +119,12 @@ final class AdminApp
         if ($key === 'performance' && is_file($root . '/' . $optimizer)) {
             wp_register_script('nucleo-css-optimizer', $base . $optimizer, [], Editor::assetVersion($optimizer), true);
             $handles[] = 'nucleo-css-optimizer';
+            // Stessa edizione: confronto e bisezione del ritardo degli script (window.nucleoJsOptimizer).
+            $jsOptimizer = 'assets/admin/js-optimizer.js';
+            if (is_file($root . '/' . $jsOptimizer)) {
+                wp_register_script('nucleo-js-optimizer', $base . $jsOptimizer, ['nucleo-css-optimizer'], Editor::assetVersion($jsOptimizer), true);
+                $handles[] = 'nucleo-js-optimizer';
+            }
         }
         // Pulsanti "Copia" (data-nc-copy) della pagina Strumenti: listener delegato sul documento.
         if ($key === 'tools') {

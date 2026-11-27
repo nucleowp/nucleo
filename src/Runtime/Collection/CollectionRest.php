@@ -13,7 +13,7 @@ use Nucleo\Support\ClientIp;
 /** GET nucleo/v1/collection/<doc>/<node>: frammento HTML dei risultati e conteggi. */
 final class CollectionRest
 {
-    private const NAMESPACE = 'nucleo/v1';
+    private const REST_NAMESPACE = 'nucleo/v1';
     private const ROUTE = '/collection/(?P<doc>\d+)/(?P<node>[a-z0-9]+)';
     private const CACHE_CONTROL = 'public, max-age=60';
 
@@ -28,7 +28,7 @@ final class CollectionRest
 
     public static function register(): void
     {
-        register_rest_route(self::NAMESPACE, self::ROUTE, [
+        register_rest_route(self::REST_NAMESPACE, self::ROUTE, [
             'methods' => 'GET',
             'callback' => [self::class, 'handle'],
             'permission_callback' => [self::class, 'publicReadEndpoint'],

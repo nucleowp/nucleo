@@ -2,9 +2,9 @@
 Contributors: nucleowp
 Tags: page builder, ai, mcp, mcp server, ai agent
 Requires at least: 6.9
-Tested up to: 7.1
+Tested up to: 7.2
 Requires PHP: 8.2
-Stable tag: 0.5.7
+Stable tag: 0.5.8
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -114,6 +114,17 @@ All PHP and JavaScript of Nucleo ships unminified. The only minified files are t
 The font metrics in data/font-metrics.json come from @capsizecss/metrics 3.7.0 (MIT, https://github.com/seek-oss/capsize). The license is in data/LICENSE-capsize-metrics.txt.
 
 == Changelog ==
+
+= 0.5.8 =
+
+* New: A defer rule can load a plugin script at the visitor's first interaction or when the browser is idle. With group it delays the script, its dependents and their inline code together; with replay it repeats the first click after the scripts run.
+* New: A rule can target a script printed outside the WordPress queue, by a part of its URL or of its code. Consent banners, payments and captchas are not delayed without force.
+* Improved: Rules also apply to scripts enqueued late and to script modules. jQuery, cart and checkout are not delayed without force.
+* Improved: assets-rules-set reports ignored rules and delays that do not apply, with the reason.
+* Improved: Nucleo is tested with WordPress 7.2 and PHP 8.6.
+* Fixed: A rule with no page types applies to all pages. Before, it was dropped without notice.
+* Fixed: The default rules for form plugins no longer remove assets where the form is on the page through a shortcode, a block or a widget.
+* Other: Updates to the website, the CLI and the documentation, for the new guides and the JavaScript commands.
 
 = 0.5.7 =
 

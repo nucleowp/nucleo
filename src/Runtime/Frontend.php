@@ -43,6 +43,11 @@ final class Frontend
         if (isset($_GET['nucleo_css'])) {
             CssPreview::register();
         }
+        // Anteprima JS, solo pacchetto Pro: sul frontend normale la classe non si carica, il parametro c'è solo nelle anteprime.
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- carica JsPreview solo se c'è il parametro; i permessi si verificano lì.
+        if (isset($_GET['nucleo_js'])) {
+            \Nucleo\Support\Optional::call('Nucleo\\Runtime\\JsPreview', 'register');
+        }
         self::$postId = 0;
         self::$slots = [];
 
@@ -64,6 +69,12 @@ final class Frontend
         Areas::prepare();
         // Asset rules and purged CSS run after every plugin has enqueued.
         add_action('wp_enqueue_scripts', ['Nucleo\\Runtime\\AssetRuntime', 'apply'], 9999);
+        // Shortcode e blocchi in uso nella richiesta: i filtri ci sono solo se una regola con uses li cita.
+        AssetRuntime::watchUses();
+        // Script fuori coda: il rewriter si carica solo se una regola sorgente vale per la pagina.
+        if (AssetRuntime::sources() !== []) {
+            ScriptRewriter::start();
+        }
         if (!is_singular()) {
             return;
         }

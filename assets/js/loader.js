@@ -121,35 +121,177 @@
     if (modes[entry.strategy]) modes[entry.strategy](entry);
   });
 
-  // Script di Nucleo con data-nc-load="interaction" o "idle": tag type="text/plain" con data-nc-src.
-  // Si attivano tutti insieme, nell'ordine del documento (async=false mantiene l'ordine di esecuzione).
-  var activated = {};
-  function activate(strategy) {
-    if (activated[strategy]) return;
-    activated[strategy] = true;
-    var nodes = Array.prototype.slice.call(document.querySelectorAll('script[data-nc-load="' + strategy + '"]'));
-    nodes.forEach(function (node) {
-      var s = document.createElement('script');
-      s.src = node.getAttribute('data-nc-src');
-      if (node.id) s.id = node.id;
-      s.async = false;
-      document.body.appendChild(s);
+  // Script di Nucleo con data-nc-load="interaction" o "idle": tag type="text/plain" con data-nc-src (o testo inline).
+  // Una catena li attiva uno alla volta, nell'ordine del documento: prima quelli senza defer e senza data-nc-module,
+  // poi gli altri. Un esterno passa al successivo a load o error; un inline parte subito.
+  var IDLE = 'script[data-nc-load="idle"]';
+  var DELAYED = 'script[data-nc-load="interaction"], script[data-nc-load="idle"]';
+  var running = false;
+  var queued = false;
+  var queuedGesture = false;
+  var gestureDone = false;
+
+  // jQuery: mentre la catena gira, fn.ready raccoglie i callback; alla fine si ripristina e ognuno passa a jQuery().
+  var jq = null;
+  var jqReady = null;
+  var jqHeld = [];
+  function holdJquery() {
+    if (!window.jQuery || jq) return;
+    jq = window.jQuery;
+    jqReady = jq.fn.ready;
+    jq.fn.ready = function (fn) {
+      if (typeof fn !== 'function') return jqReady.apply(this, arguments);
+      jqHeld.push(fn);
+      return this;
+    };
+  }
+  function releaseJquery() {
+    if (!jq) return;
+    jq.fn.ready = jqReady;
+    var held = jqHeld;
+    jqHeld = [];
+    held.forEach(function (fn) { jq(fn); });
+    jq = null;
+  }
+
+  // DOMContentLoaded (su document e su window) e load (solo su window), registrati durante la catena, si raccolgono:
+  // alla fine i metodi tornano nativi e ogni listener riceve un evento del suo tipo, una volta sola.
+  var nativeDocAdd = document.addEventListener;
+  var nativeWinAdd = window.addEventListener;
+  var collected = null;
+  function collect(target, nativeAdd) {
+    return function (type, fn) {
+      if (typeof fn === 'function' && (type === 'DOMContentLoaded' || (type === 'load' && target === window))) {
+        collected.push({ target: target, type: type, fn: fn });
+        return;
+      }
+      return nativeAdd.apply(target, arguments);
+    };
+  }
+  function holdEvents() {
+    collected = [];
+    document.addEventListener = collect(document, nativeDocAdd);
+    window.addEventListener = collect(window, nativeWinAdd);
+  }
+  function releaseEvents() {
+    document.addEventListener = nativeDocAdd;
+    window.addEventListener = nativeWinAdd;
+    var calls = collected;
+    collected = null;
+    calls.forEach(function (c) {
+      try { c.fn.call(c.target, new Event(c.type)); } catch (e) { if (window.console) console.error(e); }
     });
   }
 
-  // Primo gesto dell'utente: attiva gli script "interaction" e rimuove gli ascoltatori.
+  // Clic di ripetizione: selettori data-nc-replay dei tag in attesa. Un clic vero su un controllo che funziona solo
+  // con il JS, dentro un selettore e prima della fine della catena di gesto, viene ripetuto a catena finita (vince l'ultimo).
+  var replay = [];
+  Array.prototype.forEach.call(document.querySelectorAll(DELAYED), function (node) {
+    var sel = node.getAttribute('data-nc-replay');
+    if (sel) replay.push(sel);
+  });
+  var clicked = null;
+  function jsOnly(el) {
+    if (el.tagName === 'BUTTON') return el.type === 'button' || !el.form;
+    if (el.tagName === 'A') {
+      var href = el.getAttribute('href');
+      return href === null || href.charAt(0) === '#';
+    }
+    return true;
+  }
+  function remember(ev) {
+    if (!ev.isTrusted || !ev.target || !ev.target.closest) return;
+    var el = ev.target.closest('button, a, [role="button"]');
+    var inside = replay.some(function (sel) { return ev.target.closest(sel); });
+    if (el && inside && jsOnly(el)) clicked = el;
+  }
+  if (replay.length) document.addEventListener('click', remember, true);
+
+  // Tag in attesa del selettore, senza defer e senza data-nc-module prima degli altri, nell'ordine del documento.
+  function pending(sel) {
+    var all = Array.prototype.slice.call(document.querySelectorAll(sel));
+    var late = function (n) { return n.hasAttribute('defer') || n.hasAttribute('data-nc-module'); };
+    return all.filter(function (n) { return !late(n); }).concat(all.filter(late));
+  }
+
+  // Ogni tag viene sostituito sul posto da uno script vero; quando il giro finisce si interroga di nuovo il documento.
+  function chain(sel, gesture) {
+    var nodes = pending(sel);
+    var i = 0;
+    function next() {
+      holdJquery();
+      if (i >= nodes.length) {
+        nodes = pending(sel);
+        i = 0;
+        if (!nodes.length) return end(gesture);
+      }
+      var old = nodes[i++];
+      var s = document.createElement('script');
+      Array.prototype.forEach.call(old.attributes, function (a) {
+        if (a.name !== 'type' && a.name.indexOf('data-nc-') !== 0) s.setAttribute(a.name, a.value);
+      });
+      if (old.hasAttribute('data-nc-module')) s.type = 'module';
+      s.async = false;
+      var src = old.getAttribute('data-nc-src');
+      if (src !== null) {
+        s.src = src;
+        s.onload = s.onerror = next;
+        old.parentNode.replaceChild(s, old);
+      } else {
+        s.text = old.text;
+        old.parentNode.replaceChild(s, old);
+        next();
+      }
+    }
+    next();
+  }
+
+  function end(gesture) {
+    releaseJquery();
+    releaseEvents();
+    running = false;
+    if (gesture) {
+      gestureDone = true;
+      if (replay.length) document.removeEventListener('click', remember, true);
+      if (clicked) {
+        var el = clicked;
+        setTimeout(function () { el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true })); }, 300);
+      }
+    }
+    if (queued) {
+      var again = queuedGesture;
+      queued = false;
+      queuedGesture = false;
+      start(again);
+    }
+  }
+
+  // Una richiesta arrivata durante una catena aspetta la sua fine. Il gesto attiva anche gli "idle" ancora in attesa.
+  function start(gesture) {
+    if (running) {
+      queued = true;
+      queuedGesture = queuedGesture || gesture;
+      return;
+    }
+    if (!gesture && gestureDone) return;
+    running = true;
+    holdEvents();
+    chain(gesture ? DELAYED : IDLE, gesture);
+  }
+
+  // Primo gesto dell'utente: avvia la catena e rimuove gli ascoltatori.
   var gestures = ['pointerdown', 'keydown', 'scroll', 'touchstart'];
   function onGesture() {
     gestures.forEach(function (e) { window.removeEventListener(e, onGesture); });
-    activate('interaction');
+    start(true);
   }
   if (document.querySelector('script[data-nc-load="interaction"]')) {
     gestures.forEach(function (e) { window.addEventListener(e, onGesture, { passive: true }); });
   }
 
   // Idle: requestIdleCallback con timeout di 2 s; senza supporto, setTimeout di 2 s.
-  if (document.querySelector('script[data-nc-load="idle"]')) {
-    var runIdle = function () { activate('idle'); };
+  if (document.querySelector(IDLE)) {
+    var runIdle = function () { start(false); };
     if ('requestIdleCallback' in window) requestIdleCallback(runIdle, { timeout: 2000 });
     else setTimeout(runIdle, 2000);
   }

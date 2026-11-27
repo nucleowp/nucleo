@@ -36,11 +36,12 @@ final class AbilityRegistrar
     {
         $classes = ['Write\\DocCreate', 'Write\\DocPatch', 'Write\\DocPublish', 'Write\\DocRollback', 'Write\\TokensSet',
             'Write\\CacheRebuild', 'Write\\MediaImport', 'Write\\DocTextsSet', 'Write\\DocTranslate', 'Write\\FontsImport',
-            'Write\\AssetsAudit', 'Write\\AssetsRulesSet', 'Write\\CssPurge',
+            'Write\\AssetsAudit', 'Write\\AssetsRulesSet', 'Write\\AssetsCoverageSet', 'Write\\CssPurge',
             'Read\\AssetsReport', 'Read\\QualityScan', 'Read\\SiteExport', 'Write\\SiteImport',
             'Read\\KitList', 'Write\\KitApply', 'Write\\CriticalSet', 'Write\\LayoutConditionsSet',
             'Read\\SettingsGet', 'Write\\SettingsSet', 'Read\\ModelGet', 'Read\\ModelValidate', 'Write\\ModelSet', 'Read\\FieldsGet', 'Write\\FieldsSet',
             'Read\\CssStatus', 'Write\\CssOptimize', 'Write\\CssOptimizeApply', 'Write\\CssOptimizeOff',
+        'Read\\JsStatus', 'Write\\JsOptimize', 'Write\\JsOptimizeApply', 'Write\\JsOptimizeOff',
             'Write\\MediaUpload', 'Read\\MenuList', 'Write\\MenuSet', 'Write\\SiteOptionsSet', 'Write\\IconsSet', 'Write\\GapReport', 'Write\\MediaFormats', 'Read\\GapList', 'Read\\ComponentsList',
             'Read\\ContentList', 'Read\\ContentGet', 'Write\\ContentUpsert', 'Read\\TermsGet', 'Write\\TermsSet',
             'Read\\Guide', 'Read\\WpmlCheck', 'Write\\WooCheckoutFieldsSet', 'Write\\WooCheckoutPartsSet'];

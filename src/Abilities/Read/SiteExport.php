@@ -24,7 +24,6 @@ final class SiteExport implements AbilityDefinition
             'description' => 'Returns the site as a map of JSON files: site.json, pages, posts, layouts, sections, rules. References between documents are readable symbols (page:slug, section:slug).',
             'input_schema' => [
                 'type' => 'object',
-                'properties' => new \stdClass(),
                 'additionalProperties' => false,
             ],
             'output_schema' => [

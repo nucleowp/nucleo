@@ -9,6 +9,8 @@ defined('ABSPATH') || exit;
 use Nucleo\Assets\CriticalCss;
 use Nucleo\Assets\LocalFile;
 use Nucleo\Assets\RulePlanner;
+use Nucleo\Assets\ScriptPolicy;
+use Nucleo\Assets\SourceRules;
 use Nucleo\Compiler\CssFiles;
 use Nucleo\Storage\ArtifactStore;
 use Nucleo\Storage\ArtifactStoreFactory;
@@ -21,6 +23,8 @@ final class AssetRuntime
     private const FULL_CSS_HANDLE = 'nucleo-full-css';
     private const TOKENS_HANDLE = 'nucleo-tokens';
     private const LOADER_HANDLE = 'nucleo-loader';
+    /** Suffisso dell'id di un tag modulo: l'handle è l'id senza suffisso. */
+    private const MODULE_SUFFIX = '-js-module';
     /** Primo gesto dell'utente: da qui si caricano i CSS completi. */
     private const INTERACTION_EVENTS = ['pointerdown', 'keydown', 'scroll'];
     /** Duplicato di CssPreview::PARAM: senza parametro la classe CssPreview non si carica. */
@@ -31,6 +35,9 @@ final class AssetRuntime
     /** @var array<string, string> handle => strategia lazy ('interaction' o 'idle') */
     private static array $lazy = [];
 
+    /** @var array<string, string> handle => selettore CSS (data-nc-replay) della regola defer che lo riguarda */
+    private static array $replay = [];
+
     /** @var list<string> CSS originali sostituiti dalle varianti ridotte, da caricare al primo gesto */
     private static array $fullCss = [];
 
@@ -40,6 +47,193 @@ final class AssetRuntime
     /** Id dell'ultimo CSS di documento lasciato nella pagina: i fogli rimandati che lo seguono tornano dopo di lui. */
     private static ?string $documentAnchor = null;
 
+    /** @var array<string, array{action: string, applied: bool, reason: string, late: bool}> */
+    private static array $outcomes = [];
+
+    /** @var list<string> coda degli script al primo passaggio (wp_enqueue_scripts 9999) */
+    private static array $early = [];
+
+    /** @var array<string, true> handle degli script già visti da un passaggio degli script */
+    private static array $seen = [];
+
+    /** @var list<string> shortcode e blocchi in uso nella richiesta */
+    private static array $used = [];
+
+    /** @var array<string, array{type: string, uses: list<string>}> handle tolti da una regola con uses: tornano se il token compare in seguito */
+    private static array $byUses = [];
+
+    /** @var array<string, mixed>|null artefatto asset-rules, letto una sola volta per richiesta */
+    private static ?array $artifact = null;
+    private static bool $artifactRead = false;
+
+    /** Contesto degli script per i passaggi tardivi: template, chiave d'oggetto e tabella della pagina. */
+    private static string $template = '';
+    private static string $objectKey = '';
+    /** @var array<string, mixed> */
+    private static array $table = [];
+
+    /**
+     * Cosa ha fatto il runtime per ogni script con una regola, in questa richiesta.
+     * action: dequeue, replace, keep, defer, async, interaction, idle. applied false con il motivo in reason:
+     * un dequeue fermato da un dipendente ('dependents') o un ritardo al gesto declassato a defer (motivo di ScriptPolicy).
+     * late: deciso in un passaggio dopo il primo.
+     *
+     * @return array<string, array{action: string, applied: bool, reason: string, late: bool}>
+     */
+    public static function outcomes(): array
+    {
+        return self::$outcomes;
+    }
+
+    /** @return list<string> */
+    public static function early(): array
+    {
+        return self::$early;
+    }
+
+    /**
+     * Segna in uso uno shortcode o un blocco (nome con /) visto durante il rendering.
+     * Le regole con uses che lo citano non si applicano; gli handle già rimossi da quelle regole tornano in coda.
+     */
+    public static function noteUse(string $token): void
+    {
+        if ($token === '') {
+            return;
+        }
+        if (!in_array($token, self::$used, true)) {
+            self::$used[] = $token;
+        }
+        foreach (self::$byUses as $key => $entry) {
+            if (!in_array($token, $entry['uses'], true)) {
+                continue;
+            }
+            $handle = (string) $key;
+            unset(self::$byUses[$key]);
+            if ($handle === '') {
+                continue;
+            }
+            if ($entry['type'] === 'style') {
+                wp_enqueue_style($handle);
+            } else {
+                wp_enqueue_script($handle);
+            }
+        }
+    }
+
+    /**
+     * Registra i filtri dei token in uso solo se la tabella delle regole cita almeno un token in uses.
+     * Senza artefatto o senza uses nessun filtro: le pagine senza regole con uses non pagano il rendering.
+     */
+    public static function watchUses(): void
+    {
+        // Sempre una lettura nuova: una per richiesta, e apply() la riusa.
+        self::$artifact = self::store()->get('asset-rules');
+        self::$artifactRead = true;
+        $table = is_array(self::$artifact['table'] ?? null) ? self::$artifact['table'] : [];
+        if (self::usesOf($table) === []) {
+            return;
+        }
+        if (has_filter('pre_do_shortcode_tag', [self::class, 'noteShortcode']) === false) {
+            add_filter('pre_do_shortcode_tag', [self::class, 'noteShortcode'], 10, 2);
+        }
+        if (has_filter('pre_render_block', [self::class, 'noteBlock']) === false) {
+            add_filter('pre_render_block', [self::class, 'noteBlock'], 10, 2);
+        }
+    }
+
+    /**
+     * Filtro pre_do_shortcode_tag: il rendering non cambia, il primo argomento torna com'è.
+     *
+     * @internal
+     */
+    public static function noteShortcode(mixed $return, string $tag): mixed
+    {
+        self::noteUse($tag);
+
+        return $return;
+    }
+
+    /**
+     * Filtro pre_render_block: il rendering non cambia, il primo argomento torna com'è.
+     *
+     * @param array<string, mixed> $block
+     * @internal
+     */
+    public static function noteBlock(mixed $return, array $block): mixed
+    {
+        self::noteUse(is_string($block['blockName'] ?? null) ? $block['blockName'] : '');
+
+        return $return;
+    }
+
+    /**
+     * Artefatto asset-rules: se watchUses() l'ha già letto, lo consegna e lo consuma;
+     * una chiamata successiva di apply() nella stessa richiesta rilegge lo store.
+     *
+     * @return array<string, mixed>|null
+     */
+    private static function artifact(): ?array
+    {
+        if (!self::$artifactRead) {
+            return self::store()->get('asset-rules');
+        }
+        $artifact = self::$artifact;
+        self::$artifact = null;
+        self::$artifactRead = false;
+
+        return $artifact;
+    }
+
+    /**
+     * Regole sugli script fuori coda che valgono per la pagina (SourceRules::applicable). Legge l'artefatto come
+     * watchUses, senza consumarlo: apply() lo riusa. Senza template nessuna regola.
+     *
+     * @return list<array<string, mixed>>
+     * @internal
+     */
+    public static function sources(): array
+    {
+        $template = TemplateKey::current();
+        if ($template === null || $template === '') {
+            return [];
+        }
+        if (!self::$artifactRead) {
+            self::$artifact = self::store()->get('asset-rules');
+            self::$artifactRead = true;
+        }
+        $sources = is_array(self::$artifact['sources'] ?? null) ? self::$artifact['sources'] : [];
+        // Senza regole sorgente SourceRules non si carica: il budget dei file per richiesta resta quello.
+        if ($sources === []) {
+            return [];
+        }
+
+        return SourceRules::applicable($sources, $template, TemplateKey::objectKey() ?? '');
+    }
+
+    /**
+     * Azzera lo stato della richiesta. Solo per i test.
+     *
+     * @internal
+     */
+    public static function reset(): void
+    {
+        self::$lazy = [];
+        self::$replay = [];
+        self::$fullCss = [];
+        self::$loaderUrls = [];
+        self::$documentAnchor = null;
+        self::$outcomes = [];
+        self::$early = [];
+        self::$seen = [];
+        self::$used = [];
+        self::$byUses = [];
+        self::$template = '';
+        self::$objectKey = '';
+        self::$table = [];
+        self::$artifact = null;
+        self::$artifactRead = false;
+    }
+
     public static function apply(): void
     {
         self::$loaderUrls = [];
@@ -47,25 +241,89 @@ final class AssetRuntime
         // Sul frontend normale la classe CssPreview non si carica: il parametro c'è solo nelle anteprime.
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- solo presenza del parametro; CssPreview::mode() verifica manage_options.
         $mode = isset($_GET[self::PREVIEW_PARAM]) ? CssPreview::mode() : null;
-        $artifact = self::store()->get('asset-rules');
-        if ($artifact !== null) {
-            $table = is_array($artifact['table'] ?? null) ? $artifact['table'] : [];
-            $template = TemplateKey::current() ?? '';
-            $objectKey = TemplateKey::objectKey() ?? '';
+        // Anteprima JS (solo pacchetto Pro): la classe si carica solo se il parametro nucleo_js è nella richiesta.
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- solo presenza del parametro; JsPreview::mode() verifica manage_options o il token.
+        $jsMode = isset($_GET['nucleo_js']) ? \Nucleo\Support\Optional::call('Nucleo\\Runtime\\JsPreview', 'mode') : null;
+        $jsMode = is_string($jsMode) ? $jsMode : null;
+        $artifact = self::artifact();
+        $template = TemplateKey::current() ?? '';
+        $objectKey = TemplateKey::objectKey() ?? '';
+        $table = is_array($artifact['table'] ?? null) ? $artifact['table'] : [];
+        $withDelays = self::withJsDelays($table, $template, $objectKey, $jsMode, $artifact);
+        // Senza artefatto ci sono solo i ritardi JS: nessuna regola di stili e nessuna riduzione.
+        if ($artifact !== null || $withDelays !== $table) {
+            $table = $withDelays;
             $purged = match ($mode) {
                 // Originale e critical: nessuna variante ridotte, né quelle pubblicate né quelle candidate.
                 'original', 'critical' => [],
                 'candidate' => [$template => self::candidateEntry($template)['purged'] ?? []],
                 default => is_array($artifact['purged'] ?? null) ? $artifact['purged'] : [],
             };
+            $purged = $artifact === null ? [] : $purged;
 
             self::$lazy = [];
+            self::noteContent($table);
             self::applyStyles($template, $objectKey, $table, $purged, $mode);
             self::applyScripts($template, $objectKey, $table);
         }
 
         // Dopo le regole: il loader del CSS critico riceve già le varianti ridotte.
         self::applyCritical($mode);
+    }
+
+    /**
+     * Ritardi al gesto degli script JS del template, aggiunti alla tabella come regole defer interaction con force.
+     * Anteprima candidate: gli handle di JsPreview::delay(), senza replay. Anteprima original: nessuno.
+     * Altrimenti quelli pubblicati (handle e replay). Nessuno su carrello e cassa, né con template vuoto.
+     * Una regola già presente per l'handle (oggetto, template o '*') vince.
+     *
+     * @param array<string, mixed> $table
+     * @param array<string, mixed>|null $artifact
+     * @return array<string, mixed>
+     */
+    private static function withJsDelays(array $table, string $template, string $objectKey, ?string $jsMode, ?array $artifact): array
+    {
+        if ($template === '' || $jsMode === 'original' || (function_exists('is_cart') && (is_cart() || is_checkout()))) {
+            return $table;
+        }
+        if ($jsMode === 'candidate') {
+            $handles = \Nucleo\Support\Optional::call('Nucleo\\Runtime\\JsPreview', 'delay');
+            $handles = is_array($handles) ? array_filter($handles, 'is_string') : [];
+            $replay = null;
+        } else {
+            $entry = $artifact['delayed'][$template] ?? null;
+            $handles = is_array($entry) && is_array($entry['handles'] ?? null) ? array_filter($entry['handles'], 'is_string') : [];
+            $replay = is_array($entry) && is_string($entry['replay'] ?? null) ? $entry['replay'] : null;
+        }
+        // Una voce vale per la pagina se è un array e il suo except non contiene né il template né l'oggetto (come RulePlanner).
+        $applies = static fn(mixed $rule): bool => is_array($rule)
+            && !in_array($template, (array) ($rule['except'] ?? []), true)
+            && ($objectKey === '' || !in_array($objectKey, (array) ($rule['except'] ?? []), true));
+        foreach ($handles as $handle) {
+            $keys = $objectKey === '' ? [$template, '*'] : [$objectKey, $template, '*'];
+            $covered = false;
+            foreach ($keys as $key) {
+                if ($applies($table[$key][$handle] ?? null)) {
+                    $covered = true;
+                    break;
+                }
+            }
+            if ($covered) {
+                continue;
+            }
+            $rule = ['action' => 'defer', 'except' => [], 'strategy' => 'interaction', 'force' => true, 'group' => true];
+            if ($replay !== null) {
+                $rule['replay'] = $replay;
+            }
+            if (!isset($table[$template][$handle])) {
+                $table[$template][$handle] = $rule;
+            } elseif ($objectKey !== '') {
+                // Sul template c'è una voce che non vale per questa pagina: la regola va sull'oggetto.
+                $table[$objectKey][$handle] = $rule;
+            }
+        }
+
+        return $table;
     }
 
     /**
@@ -297,16 +555,63 @@ final class AssetRuntime
     }
 
     /**
+     * Token in uso dal contenuto della pagina: uno shortcode '[token' o un blocco '<!-- wp:token '.
+     * Solo i token citati da una regola con uses.
+     *
+     * @param array<string, mixed> $table
+     */
+    private static function noteContent(array $table): void
+    {
+        if (!is_singular()) {
+            return;
+        }
+        $content = (string) get_post_field('post_content', get_queried_object_id());
+        foreach (self::usesOf($table) as $token) {
+            if (str_contains($content, '[' . $token) || str_contains($content, '<!-- wp:' . $token . ' ')) {
+                if (!in_array($token, self::$used, true)) {
+                    self::$used[] = $token;
+                }
+            }
+        }
+    }
+
+    /**
+     * Tutti i token citati dalle regole con uses della tabella.
+     *
+     * @param array<string, mixed> $table
+     * @return list<string>
+     */
+    private static function usesOf(array $table): array
+    {
+        $tokens = [];
+        foreach ($table as $rules) {
+            if (!is_array($rules)) {
+                continue;
+            }
+            foreach ($rules as $rule) {
+                foreach (is_array($rule['uses'] ?? null) ? $rule['uses'] : [] as $token) {
+                    if (is_string($token) && $token !== '' && !in_array($token, $tokens, true)) {
+                        $tokens[] = $token;
+                    }
+                }
+            }
+        }
+
+        return $tokens;
+    }
+
+    /**
      * @param array<string, mixed> $table
      * @param array<string, mixed> $purged
      */
     private static function applyStyles(string $template, string $objectKey, array $table, array $purged, ?string $mode): void
     {
         $styles = wp_styles();
-        $plan = RulePlanner::plan($template, $objectKey, array_values($styles->queue), self::depsOf($styles), $table);
+        $plan = RulePlanner::plan($template, $objectKey, array_values($styles->queue), self::depsOf($styles), $table, self::$used);
         foreach ($plan['dequeue'] as $handle) {
             wp_dequeue_style($handle);
         }
+        self::rememberUses($plan['uses'], 'style');
         foreach ($plan['replace'] as $handle => $with) {
             wp_dequeue_style($handle);
             if ($with !== '' && isset($styles->registered[$with])) {
@@ -388,72 +693,298 @@ final class AssetRuntime
     }
 
     /**
+     * Primo passaggio sugli script (wp_enqueue_scripts 9999). I passaggi successivi, su wp_print_scripts e
+     * wp_print_footer_scripts, prendono gli script accodati dopo: vedi lateScripts.
+     *
      * @param array<string, mixed> $table
      */
     private static function applyScripts(string $template, string $objectKey, array $table): void
     {
         $scripts = wp_scripts();
-        $plan = RulePlanner::plan($template, $objectKey, array_values($scripts->queue), self::depsOf($scripts), $table);
+        self::$outcomes = [];
+        self::$early = array_values($scripts->queue);
+        self::$seen = [];
+        foreach (self::$early as $handle) {
+            self::$seen[$handle] = true;
+        }
+        self::$template = $template;
+        self::$objectKey = $objectKey;
+        self::$table = $table;
+
+        self::scriptPass(self::$early, false);
+        self::enableLazy();
+
+        // Il filtro dei moduli serve solo se la tabella ha un ritardo al gesto o in idle: altrimenti nessuna chiamata in più.
+        if (self::hasLazyRule($table) && has_filter('wp_script_attributes', [self::class, 'moduleAttributes']) === false) {
+            add_filter('wp_script_attributes', [self::class, 'moduleAttributes']);
+        }
+
+        if (!has_action('wp_print_scripts', [self::class, 'lateScripts'])) {
+            add_action('wp_print_scripts', [self::class, 'lateScripts'], 1);
+        }
+        if (!has_action('wp_print_footer_scripts', [self::class, 'lateScripts'])) {
+            add_action('wp_print_footer_scripts', [self::class, 'lateScripts'], 1);
+        }
+    }
+
+    /**
+     * Script accodati dopo il primo passaggio (blocchi, plugin tardivi): solo quelli che nessun passaggio precedente
+     * ha visto e che non sono già stampati. Regole con uses non si applicano qui.
+     *
+     * @internal
+     */
+    public static function lateScripts(): void
+    {
+        $scripts = wp_scripts();
+        $fresh = [];
+        foreach ($scripts->queue as $handle) {
+            if (!is_string($handle) || isset(self::$seen[$handle])) {
+                continue;
+            }
+            self::$seen[$handle] = true;
+            if (!in_array($handle, $scripts->done, true)) {
+                $fresh[] = $handle;
+            }
+        }
+        if ($fresh === []) {
+            return;
+        }
+
+        self::scriptPass($fresh, true);
+        if (self::$lazy !== []) {
+            self::joinLazyDependents($fresh);
+        }
+        self::enableLazy();
+    }
+
+    /**
+     * Un passaggio sugli script dati: dequeue, replace, keep e defer secondo la tabella.
+     * Le dipendenze non in coda e non ancora stampate passano da un secondo piano, solo per i ritardi al gesto o in idle.
+     *
+     * @param list<string> $handles
+     */
+    private static function scriptPass(array $handles, bool $late): void
+    {
+        $scripts = wp_scripts();
+        $deps = self::depsOf($scripts);
+        $plan = RulePlanner::plan(self::$template, self::$objectKey, $handles, $deps, self::$table, self::$used, $late);
         foreach ($plan['dequeue'] as $handle) {
             wp_dequeue_script($handle);
+            // Tolto dalla coda: se un widget lo riaccoda, il passaggio successivo deve rivederlo.
+            unset(self::$seen[$handle]);
+            self::outcome($handle, 'dequeue', true, '', $late);
+        }
+        foreach ($plan['blocked'] as $handle) {
+            self::outcome($handle, 'dequeue', false, ScriptPolicy::DEPENDENTS, $late);
         }
         foreach ($plan['replace'] as $handle => $with) {
             wp_dequeue_script($handle);
+            unset(self::$seen[$handle]);
             if ($with !== '' && isset($scripts->registered[$with])) {
                 wp_enqueue_script($with);
             }
+            self::outcome($handle, 'replace', true, '', $late);
         }
-        $deps = self::depsOf($scripts);
-        foreach ($plan['defer'] as $handle => $strategy) {
-            if (($strategy === 'interaction' || $strategy === 'idle') && self::canDelay($scripts, $handle, $deps)) {
-                // Il tag viene caricato in differita e il loader esistente lo attiva con data-nc-load.
-                wp_script_add_data($handle, 'strategy', 'defer');
-                self::$lazy[$handle] = $strategy;
-                continue;
-            }
-            $lazy = $strategy === 'interaction' || $strategy === 'idle';
-            wp_script_add_data($handle, 'strategy', $lazy ? 'defer' : $strategy);
+        foreach ($plan['keep'] as $handle) {
+            self::outcome($handle, 'keep', true, '', $late);
+        }
+        self::rememberUses($plan['uses'], 'script');
+
+        // Senza regole di ritardo al gesto o in idle bastano i defer: grafo e ScriptPolicy non si caricano.
+        if (!self::hasLazyRule(self::$table)) {
+            self::deferPass($plan['defer'], [], [], [], [], $late);
+
+            return;
         }
 
-        if (self::$lazy !== []) {
-            add_filter('script_loader_tag', [self::class, 'tagLazy'], 10, 2);
-            // Senza il loader i tag inerti non partono mai: lo accoda anche su una pagina senza blocchi lazy.
-            wp_enqueue_script(
-                self::LOADER_HANDLE,
-                plugins_url('assets/js/loader.js', NUCLEO_FILE),
-                [],
-                NUCLEO_VERSION,
-                ['strategy' => 'defer', 'in_footer' => true],
-            );
+        // Il grafo copre tutta la coda e le dipendenze, anche indirette: il verdetto del ritardo non dipende dal passaggio.
+        $graph = self::graphOf($scripts, array_values($scripts->queue));
+        $facts = self::scriptFacts($scripts, $graph);
+        self::deferPass($plan['defer'], $plan['force'], $plan['group'], $plan['replay'], $facts, $late);
+
+        // Dipendenze caricate senza essere in coda: solo i ritardi al gesto o in idle, come per la coda.
+        $extra = [];
+        foreach (ScriptPolicy::closure($handles, $graph) as $handle) {
+            if (in_array($handle, $handles, true) || in_array($handle, $scripts->queue, true) || in_array($handle, $scripts->done, true) || isset(self::$seen[$handle])) {
+                continue;
+            }
+            $extra[] = $handle;
+            self::$seen[$handle] = true;
+        }
+        if ($extra === []) {
+            return;
+        }
+        $second = RulePlanner::plan(self::$template, self::$objectKey, $extra, $graph, self::$table, self::$used, $late);
+        $lazy = array_filter(
+            $second['defer'],
+            static fn (string $strategy): bool => $strategy === 'interaction' || $strategy === 'idle',
+        );
+        self::deferPass($lazy, $second['force'], $second['group'], $second['replay'], $facts, $late);
+    }
+
+    /**
+     * Applica i defer di un passaggio. Il ritardo al gesto (interaction, idle) vale solo se la policy lo permette;
+     * con group ritarda anche tutti i dipendenti dello script.
+     *
+     * @param array<string, string> $defer handle => strategia della regola
+     * @param list<string> $force
+     * @param list<string> $group
+     * @param array<string, string> $replay handle => selettore CSS della regola
+     * @param array<string, array{deps?: list<string>, inline?: bool}> $facts
+     */
+    private static function deferPass(array $defer, array $force, array $group, array $replay, array $facts, bool $late): void
+    {
+        foreach ($defer as $handle => $strategy) {
+            $handle = (string) $handle;
+            if ($strategy !== 'interaction' && $strategy !== 'idle') {
+                wp_script_add_data($handle, 'strategy', $strategy);
+                self::outcome($handle, $strategy, true, '', $late);
+                continue;
+            }
+            $verdict = ScriptPolicy::verdict($handle, $facts, in_array($handle, $force, true), in_array($handle, $group, true));
+            if (!$verdict['delay']) {
+                wp_script_add_data($handle, 'strategy', 'defer');
+                self::outcome($handle, $strategy, false, $verdict['reasons'][0], $late);
+                continue;
+            }
+            // Uno script ritardato resta com'è stampato: con un defer aggiunto qui il loader lo metterebbe dopo i suoi dipendenti.
+            // Il tag viene caricato in differita e il loader esistente lo attiva con data-nc-load.
+            self::markLazy($handle, $strategy);
+            if (isset($replay[$handle])) {
+                self::$replay[$handle] = $replay[$handle];
+            }
+            self::outcome($handle, $strategy, true, '', $late);
+            foreach ($verdict['group'] as $member) {
+                if ($member === $handle) {
+                    continue;
+                }
+                self::markLazy($member, $strategy);
+                self::outcome($member, $strategy, true, 'group', $late);
+            }
+        }
+    }
+
+    /** Un handle già lazy resta su interaction: il gesto arriva prima dell'idle. */
+    private static function markLazy(string $handle, string $strategy): void
+    {
+        if ((self::$lazy[$handle] ?? null) === 'interaction') {
+            return;
+        }
+        self::$lazy[$handle] = $strategy;
+    }
+
+    /**
+     * Script non ancora stampati che dipendono, anche indirettamente, da un handle lazy: li segue nel ritardo,
+     * anche se protetti. Chi ha già un ritardo non cambia.
+     *
+     * @param list<string> $fresh
+     */
+    private static function joinLazyDependents(array $fresh): void
+    {
+        $scripts = wp_scripts();
+        $graph = self::graphOf($scripts, $fresh);
+        $changed = true;
+        while ($changed) {
+            $changed = false;
+            foreach (ScriptPolicy::closure($fresh, $graph) as $handle) {
+                if (isset(self::$lazy[$handle]) || in_array($handle, $scripts->done, true)) {
+                    continue;
+                }
+                foreach (ScriptPolicy::closure($graph[$handle] ?? [], $graph) as $dep) {
+                    if (!isset(self::$lazy[$dep])) {
+                        continue;
+                    }
+                    $strategy = self::$lazy[$dep];
+                    self::$lazy[$handle] = $strategy;
+                    self::outcome($handle, $strategy, true, 'group', true);
+                    $changed = true;
+                    break;
+                }
+            }
         }
     }
 
     /**
-     * Uno script si ritarda al gesto solo se nessuno script in coda dipende da lui e non ha script inline:
-     * altrimenti chi ne dipende e il codice inline girerebbero prima della libreria. In quel caso resta defer.
-     *
-     * @param array<string,list<string>> $deps handle in coda => dipendenze
+     * Filtro script_loader_tag e loader, una sola volta: servono appena c'è uno script lazy, anche in un passaggio tardivo.
      */
-    private static function canDelay(\WP_Scripts $scripts, string $handle, array $deps): bool
+    private static function enableLazy(): void
     {
-        foreach ($deps as $other => $list) {
-            if ($other !== $handle && in_array($handle, $list, true)) {
-                return false;
-            }
+        if (self::$lazy === []) {
+            return;
         }
+        if (has_filter('script_loader_tag', [self::class, 'tagLazy']) === false) {
+            add_filter('script_loader_tag', [self::class, 'tagLazy'], 10, 2);
+        }
+        self::enqueueLoader();
+    }
+
+    /**
+     * Il loader accodato da solo: serve anche a un modulo lazy, che non passa da script_loader_tag.
+     * Senza il loader i tag inerti non partono mai: lo accoda anche su una pagina senza blocchi lazy.
+     *
+     * @internal
+     */
+    public static function enqueueLoader(): void
+    {
+        wp_enqueue_script(
+            self::LOADER_HANDLE,
+            plugins_url('assets/js/loader.js', NUCLEO_FILE),
+            [],
+            NUCLEO_VERSION,
+            ['strategy' => 'defer', 'in_footer' => true],
+        );
+    }
+
+    /**
+     * Gli handle che un passaggio ha tolto per una regola con uses: tornano con noteUse.
+     *
+     * @param array<string, list<string>> $uses
+     */
+    private static function rememberUses(array $uses, string $type): void
+    {
+        foreach ($uses as $handle => $tokens) {
+            self::$byUses[(string) $handle] = ['type' => $type, 'uses' => $tokens];
+        }
+    }
+
+    private static function outcome(string $handle, string $action, bool $applied, string $reason, bool $late): void
+    {
+        self::$outcomes[$handle] = ['action' => $action, 'applied' => $applied, 'reason' => $reason, 'late' => $late];
+    }
+
+    /**
+     * Fatti per ScriptPolicy di ogni handle del grafo: dipendenze e presenza di codice inline.
+     *
+     * @param array<string, list<string>> $graph
+     * @return array<string, array{deps: list<string>, inline: bool}>
+     */
+    private static function scriptFacts(\WP_Scripts $scripts, array $graph): array
+    {
+        $facts = [];
+        foreach ($graph as $handle => $list) {
+            $facts[(string) $handle] = ['deps' => $list, 'inline' => self::hasInline($scripts, (string) $handle)];
+        }
+
+        return $facts;
+    }
+
+    /** Codice inline non vuoto prima o dopo lo script. */
+    private static function hasInline(\WP_Scripts $scripts, string $handle): bool
+    {
         foreach (['before', 'after'] as $position) {
             $inline = $scripts->get_data($handle, $position);
             if (is_array($inline) && array_filter($inline, static fn (mixed $line): bool => is_string($line) && trim($line) !== '') !== []) {
-                return false;
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 
     /**
-     * Filtro script_loader_tag: gli script con strategia lazy non hanno più src ma type="text/plain" e data-nc-src,
-     * con data-nc-load per la strategia; il loader li attiva al primo gesto o in idle.
+     * Filtro script_loader_tag: gli script con strategia lazy escono inerti, type="text/plain" e data-nc-load per la strategia;
+     * il src passa a data-nc-src. Ogni tag dello script (anche il codice inline before e after) viene riscritto,
+     * salvo i tipi diversi da JavaScript. Il loader li attiva al primo gesto o in idle.
      */
     public static function tagLazy(string $tag, string $handle): string
     {
@@ -462,12 +993,84 @@ final class AssetRuntime
             return $tag;
         }
 
-        return (string) preg_replace(
-            '/\ssrc=(["\'])(.*?)\1/',
-            ' type="text/plain" data-nc-src="$2" data-nc-load="' . esc_attr($strategy) . '"',
-            $tag,
-            1,
-        );
+        $processor = new \WP_HTML_Tag_Processor($tag);
+        while ($processor->next_tag(['tag_name' => 'SCRIPT'])) {
+            $type = $processor->get_attribute('type');
+            $kind = is_string($type) ? strtolower(trim($type)) : '';
+            if ($kind !== '' && !in_array($kind, ['text/javascript', 'application/javascript', 'module'], true)) {
+                continue;
+            }
+            $src = $processor->get_attribute('src');
+            $processor->set_attribute('type', 'text/plain');
+            $processor->set_attribute('data-nc-load', $strategy);
+            if (is_string($src)) {
+                $processor->remove_attribute('src');
+                $processor->set_attribute('data-nc-src', $src);
+                if (isset(self::$replay[$handle])) {
+                    $processor->set_attribute('data-nc-replay', self::$replay[$handle]);
+                }
+            }
+        }
+
+        return $processor->get_updated_html();
+    }
+
+    /**
+     * Filtro wp_script_attributes: un modulo (type module, id handle + -js-module) con regola al gesto o in idle
+     * esce come tag inerte con data-nc-module. Gli altri tag restano come sono.
+     *
+     * @param array<string, mixed> $attributes
+     * @return array<string, mixed>
+     * @internal
+     */
+    public static function moduleAttributes(array $attributes): array
+    {
+        $id = $attributes['id'] ?? null;
+        $src = $attributes['src'] ?? null;
+        if (($attributes['type'] ?? null) !== 'module' || !is_string($src) || $src === '' || !is_string($id) || !str_ends_with($id, self::MODULE_SUFFIX)) {
+            return $attributes;
+        }
+
+        $handle = substr($id, 0, -strlen(self::MODULE_SUFFIX));
+        $plan = RulePlanner::plan(self::$template, self::$objectKey, [$handle], [], self::$table, self::$used);
+        $strategy = $plan['defer'][$handle] ?? null;
+        if ($strategy !== 'interaction' && $strategy !== 'idle') {
+            return $attributes;
+        }
+
+        unset($attributes['src']);
+        $attributes['type'] = 'text/plain';
+        $attributes['data-nc-src'] = $src;
+        $attributes['data-nc-load'] = $strategy;
+        $attributes['data-nc-module'] = true;
+        if (isset($plan['replay'][$handle])) {
+            $attributes['data-nc-replay'] = $plan['replay'][$handle];
+        }
+        self::outcome($handle, $strategy, true, '', true);
+        self::enqueueLoader();
+
+        return $attributes;
+    }
+
+    /**
+     * Almeno una regola defer con interaction o idle nella tabella.
+     *
+     * @param array<string, mixed> $table
+     */
+    private static function hasLazyRule(array $table): bool
+    {
+        foreach ($table as $rules) {
+            if (!is_array($rules)) {
+                continue;
+            }
+            foreach ($rules as $rule) {
+                if (($rule['action'] ?? null) === 'defer' && in_array($rule['strategy'] ?? null, ['interaction', 'idle'], true)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -479,6 +1082,32 @@ final class AssetRuntime
         foreach ($dependencies->queue as $handle) {
             $item = $dependencies->registered[$handle] ?? null;
             $map[$handle] = $item !== null ? array_values($item->deps) : [];
+        }
+
+        return $map;
+    }
+
+    /**
+     * Gli handle dati più tutte le dipendenze registrate, anche indirette: handle => handle da cui dipende.
+     *
+     * @param list<string> $handles
+     * @return array<string, list<string>>
+     */
+    private static function graphOf(\WP_Dependencies $dependencies, array $handles): array
+    {
+        $map = [];
+        $visit = static function (string $handle) use (&$visit, &$map, $dependencies): void {
+            if (isset($map[$handle])) {
+                return;
+            }
+            $item = $dependencies->registered[$handle] ?? null;
+            $map[$handle] = $item !== null ? array_values($item->deps) : [];
+            foreach ($map[$handle] as $dep) {
+                $visit($dep);
+            }
+        };
+        foreach ($handles as $handle) {
+            $visit($handle);
         }
 
         return $map;

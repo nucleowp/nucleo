@@ -25,7 +25,6 @@ final class GapList implements AbilityDefinition
             'input_schema' => [
                 'type' => 'object',
                 'additionalProperties' => false,
-                'properties' => new \stdClass(),
             ],
             'output_schema' => [
                 'type' => 'object',

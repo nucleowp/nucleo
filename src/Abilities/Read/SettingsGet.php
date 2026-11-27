@@ -153,7 +153,7 @@ final class SettingsGet implements AbilityDefinition
             ],
             'quality' => [
                 'nonForcible' => $nonForcible,
-                'thinWords' => $thinWords,
+                'thinWords' => $thinWords === [] ? new \stdClass() : $thinWords,
             ],
             'captcha' => Captcha::settings(),
             'onboarding' => [
